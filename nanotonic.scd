@@ -2,15 +2,15 @@
 
 x=SynthDef("nanotonic", {
 	arg out,
-	oscFreq=20000,  oscAttack=0.003,oscDecay=0.193,
+	oscFreq=20000,  oscAttack=0.003,oscDecay=0.04,
 	pitchModRate=0.018,pitchModHz=20000,pitchModAmount=16,
 	oscSine=1,oscSaw=0,oscLine=0,
 	oscPitchImpulse=0,oscPitchSine=0,oscPitchWhite=1,
-	nozFreq=8802,nozRes=1.45,nozAttack=0.006,nozDecay=0.219,
-	nozLPF=0,nozBPF=1,nozHPF=0,nozStereoOn=1,
-	nozEnv1On=1.0,nozEnv2On=0.0,nozEnv3On=0.0,
-	eqFreq=158,eqGain=(-13),distort=0,
-	mixOsc=100,level=(-2);
+	nozFreq=4000,nozRes=1.0,nozAttack=0.027,nozDecay=0.152,
+	nozLPF=0,nozBPF=0,nozHPF=0,nozStereoOn=1,
+	nozEnv1On=0.0,nozEnv2On=0.0,nozEnv3On=1.0,
+	eqFreq=123,eqGain=(0),distort=0,
+	mixOsc=0,level=(0);
 	var osc,noz,snd,val,index,wn;
 	var pitchModImpulse,pitchModSine,pitchModRand,pitchMod;
 	var nozEnv1,nozEnv2,nozEnv3,nozEnv;
@@ -39,23 +39,33 @@ x=SynthDef("nanotonic", {
 	// noise envelopes
 	nozEnv1=EnvGen.kr(Env.perc(nozAttack,nozDecay,1,[4,-4]),doneAction:((oscAttack+oscDecay)<(nozAttack+nozDecay))*2);
 	nozEnv2=EnvGen.kr(Env.linen(nozAttack,0,nozDecay),doneAction:((oscAttack+oscDecay)<(nozAttack+nozDecay))*2);
-	nozEnv3={(wn*Trig.kr(1,nozAttack))+EnvGen.kr(Env.perc(nozAttack,nozDecay,1.0,-4),doneAction:((oscAttack+oscDecay)<(nozAttack+nozDecay))*2)}!2;
-	nozEnv=(nozEnv1On*nozEnv1)+(nozEnv2On*nozEnv2)+(nozEnv3On*nozEnv3);
-	noz=noz+(nozLPF*RLPF.ar(noz,nozFreq,nozRes));
-	noz=noz+(nozBPF*BPF.ar(noz,nozFreq,nozRes));
-	noz=noz+(nozHPF*RHPF.ar(noz,nozFreq,nozRes));
+	nozEnv3=(1-(LFPulse.ar((0.00001/nozAttack).poll,0,0.5,-1,1)*Trig.ar(1,nozAttack)))*EnvGen.ar(Env.linen(0.0,nozAttack,nozDecay,curve:\cubed));
+	// nozEnv=(nozEnv1On*nozEnv1)+(nozEnv2On*nozEnv2)+(nozEnv3On*nozEnv3);
+	nozEnv=nozEnv3;
+	// noz=noz+(nozLPF*RLPF.ar(noz,nozFreq,nozRes));
+	noz=BPF.ar(noz,nozFreq,nozRes);
+	// noz=noz+(nozHPF*RHPF.ar(noz,nozFreq,nozRes));
+
 	noz = noz*nozEnv;
 
 
 	snd=((mixOsc/100)*osc)+((1-(mixOsc/100))*noz);
-	snd=snd*0.05;
 	snd=(snd*(distort+1/5)*5).tanh/5;
 	snd=BPeakEQ.ar(snd,eqFreq,1,eqGain);
 	Out.ar(0, snd*level.dbamp*0.5);
 }).play;
 )
 
-Env.linen(0.03,0,0.1).plot
+(
+{
+	var nozAttack=0.08;
+	var nozDecay=0.5;
+	//LFPulse.ar(1/nozAttack,0.5,0.5,1)
+	(1-(LFPulse.ar(5/nozAttack,0,0.5,-1,1)*Trig.ar(1,nozAttack)))
+	*EnvGen.ar(Env.linen(0.0,nozAttack,nozDecay,curve:\cubed))
+}.plot(0.5);
+)
+
 Env.perc(0.05,0.5,1.0,[4,-4]).plot
 
 {(WhiteNoise.ar()*Trig.ar(1,0.05))+EnvGen.ar(Env.perc(0.01,0.5,1.0,-4))}.plot(1)
