@@ -39,7 +39,7 @@ x=SynthDef("nanotonic", {
 	// noise envelopes
 	nozEnv1=EnvGen.kr(Env.perc(nozAttack,nozDecay,1,[4,-4]),doneAction:((oscAttack+oscDecay)<(nozAttack+nozDecay))*2);
 	nozEnv2=EnvGen.kr(Env.linen(nozAttack,0,nozDecay),doneAction:((oscAttack+oscDecay)<(nozAttack+nozDecay))*2);
-	nozEnv3=(1-(LFPulse.ar(80,0,0.45,-1,1)*Trig.ar(1,nozAttack)))*EnvGen.ar(Env.linen(0.0,nozAttack,nozDecay,curve:\cubed));
+	nozEnv3=(1-(LFPulse.ar(100,0,0.45,-1,1)*Trig.ar(1,nozAttack)))*EnvGen.ar(Env.linen(0.0,nozAttack,nozDecay,curve:\cubed));
 	// nozEnv=(nozEnv1On*nozEnv1)+(nozEnv2On*nozEnv2)+(nozEnv3On*nozEnv3);
 	nozEnv=nozEnv3;
 	// noz=noz+(nozLPF*RLPF.ar(noz,nozFreq,nozRes));
