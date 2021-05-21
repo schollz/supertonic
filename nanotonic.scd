@@ -6,10 +6,10 @@ x=SynthDef("nanotonic", {
 	pitchModRate=0.018,pitchModHz=20000,pitchModAmount=16,
 	oscSine=1,oscSaw=0,oscLine=0,
 	oscPitchImpulse=0,oscPitchSine=0,oscPitchWhite=1,
-	nozFreq=4000,nozRes=1.0,nozAttack=0.027,nozDecay=0.152,
+	nozFreq=4000,nozRes=1.0,nozAttack=0.05,nozDecay=0.152,
 	nozLPF=0,nozBPF=0,nozHPF=0,nozStereoOn=1,
 	nozEnv1On=0.0,nozEnv2On=0.0,nozEnv3On=1.0,
-	eqFreq=123,eqGain=(0),distort=0,
+	eqFreq=400,eqGain=(-30),distort=20,
 	mixOsc=0,level=(0);
 	var osc,noz,snd,val,index,wn;
 	var pitchModImpulse,pitchModSine,pitchModRand,pitchMod;
@@ -39,7 +39,7 @@ x=SynthDef("nanotonic", {
 	// noise envelopes
 	nozEnv1=EnvGen.kr(Env.perc(nozAttack,nozDecay,1,[4,-4]),doneAction:((oscAttack+oscDecay)<(nozAttack+nozDecay))*2);
 	nozEnv2=EnvGen.kr(Env.linen(nozAttack,0,nozDecay),doneAction:((oscAttack+oscDecay)<(nozAttack+nozDecay))*2);
-	nozEnv3=(1-(LFPulse.ar((0.00001/nozAttack).poll,0,0.5,-1,1)*Trig.ar(1,nozAttack)))*EnvGen.ar(Env.linen(0.0,nozAttack,nozDecay,curve:\cubed));
+	nozEnv3=(1-(LFPulse.ar(20,0,0.45,-1,1)*Trig.ar(1,nozAttack)))*EnvGen.ar(Env.linen(0.0,nozAttack,nozDecay,curve:\cubed));
 	// nozEnv=(nozEnv1On*nozEnv1)+(nozEnv2On*nozEnv2)+(nozEnv3On*nozEnv3);
 	nozEnv=nozEnv3;
 	// noz=noz+(nozLPF*RLPF.ar(noz,nozFreq,nozRes));
@@ -61,7 +61,7 @@ x=SynthDef("nanotonic", {
 	var nozAttack=0.08;
 	var nozDecay=0.5;
 	//LFPulse.ar(1/nozAttack,0.5,0.5,1)
-	(1-(LFPulse.ar(5/nozAttack,0,0.5,-1,1)*Trig.ar(1,nozAttack)))
+	(1-(LFPulse.ar(5/nozAttack,0,LFNoise0.kr(100).range(0.2,0.6),-1,1)*Trig.ar(1,nozAttack)))
 	*EnvGen.ar(Env.linen(0.0,nozAttack,nozDecay,curve:\cubed))
 }.plot(0.5);
 )
