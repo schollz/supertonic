@@ -7,11 +7,11 @@ x=SynthDef("nanotonic", {
 	oscSine=1,oscSaw=0,oscLine=0,
 	oscPitchImpulse=0,oscPitchSine=0,oscPitchWhite=1,
 	nozFreq=1000,nozRes=1.0,nozAttack=0.05,nozDecay=0.152,
-	nozLPF=0,nozBPF=0,nozHPF=0,nozStereoOn=1,
+	nozLPF=0,nozBPF=1,nozHPF=0,nozStereoOn=1,
 	nozEnv1On=0.0,nozEnv2On=0.0,nozEnv3On=1.0,
-	eqFreq=400,eqGain=(-30),distort=20,
+	eqFreq=1500,eqGain=(-30),distort=0,
 	mixOsc=0,level=(0);
-	var osc,noz,snd,val,index,wn;
+	var osc,noz,nozPostF,snd,val,index,wn;
 	var pitchModImpulse,pitchModSine,pitchModRand,pitchMod;
 	var nozEnv1,nozEnv2,nozEnv3,nozEnv;
 	pitchModSine=SinOsc.ar(pitchModRate,0,pitchModHz);
@@ -43,10 +43,11 @@ x=SynthDef("nanotonic", {
 	// nozEnv=(nozEnv1On*nozEnv1)+(nozEnv2On*nozEnv2)+(nozEnv3On*nozEnv3);
 	nozEnv=nozEnv3;
 	// noz=noz+(nozLPF*RLPF.ar(noz,nozFreq,nozRes));
-	noz=BPF.ar(noz,nozFreq,nozRes);
-	// noz=noz+(nozHPF*RHPF.ar(noz,nozFreq,nozRes));
+	nozPostF=BPF.ar(noz,nozFreq,nozRes,nozBPF);
+	nozPostF=nozPostF+RHPF.ar(noz,nozFreq,nozRes,nozHPF);
+	nozPostF=nozPostF+RLPF.ar(noz,nozFreq,nozRes,nozLPF);
 
-	noz = noz*nozEnv;
+	noz = nozPostF*nozEnv;
 
 
 	snd=((mixOsc/100)*osc)+((1-(mixOsc/100))*noz);
