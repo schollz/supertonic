@@ -28,6 +28,10 @@ timekeeper_=include("lib/timekeeper")
 timekeeper=timekeeper_:new()
 drummer_=include("lib/drummer")
 dev_=include("lib/dev")
+patterns_=include("lib/patterns")
+drum_pattern=patterns_:init()
+patches_=include("lib/patches")
+nanotonic_patches=patches_:init()
 
 function init()
   -- start updater
