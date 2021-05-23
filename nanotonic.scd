@@ -7,7 +7,7 @@ SynthDef("nanotonic", {
 	nFilFrq=1000,nFilQ=2.5,nEnvAtk=26,nEnvDcy=200,
 	nFilMod=0,nStereo=1,nEnvMod=0,
 	eQFreq=632.4,eQGain=(-20),distAmt=2,
-	mix=50,level=(-5);
+	mix=50,level=(-5),oscLevel=1,nLevel=1;
 
 	// variables
 	var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps;
@@ -73,7 +73,7 @@ SynthDef("nanotonic", {
 	noz = nozPostF*nozEnv;
 
 	// mix oscillator and noise
-	snd=SelectX.ar(mix/100,[noz,osc]);
+	snd=SelectX.ar(mix/100,[noz*nLevel.dbamp,osc*oscLevel]);
 
 	// apply distortion
 	snd=SelectX.ar(distAmt/100*2,[
