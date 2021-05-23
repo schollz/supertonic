@@ -21,7 +21,12 @@ function Dev:new(o)
   for i=1,3 do 
     drummers[i].set_patch(patches[i])
   end
-  
+
+  for i=1,3 do 
+    drummers[i].enable()
+  end
+  timekeeper:start()
+
   return o
 end
 
