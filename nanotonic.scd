@@ -65,8 +65,8 @@ SynthDef("nanotonic", {
 	snd=((mix/100)*osc)+((1-(mix/100))*noz);
 	// snd=(snd*(distAmt+1/5)*5).tanh/5;
 	snd=((distAmt<0.01)*snd)+((distAmt>0)*SineShaper.ar(snd,1.0,1+(distAmt/5)));
+	// snd=((distAmt<50.001)*snd)+((distAmt>50)*((snd*distAmt/5)).tanh);
 	snd=BPeakEQ.ar(snd,eQFreq,1,eQGain);
-	snd=snd+((distAmt>50)*(snd*distAmt/10).tanh);
 	Out.ar(0, snd*level.dbamp*0.5);
 }).add;
 )
