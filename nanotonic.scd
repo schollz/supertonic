@@ -3,7 +3,7 @@ SynthDef("nanotonic", {
 	arg out,
 	oscFreq=54,oscAtk=0,oscDcy=500,
 	modRate=400,modAmt=18,
-	oscWaveSine=1,oscWaveTriangle=0,oscWaveRamp=0,
+	oscWaveSine=1,oscWaveTriangle=0,oscWaveSawtooth=0,
 	modModeDecay=1,modModeSine=0,modModeNoise=0,
 	nFilFrq=1000,nFilQ=2.5,nEnvAtk=26,nEnvDcy=200,
 	nFilModLP=0,nFilModBP=1,nFilModHP=0,nStereo=1,
@@ -23,7 +23,7 @@ SynthDef("nanotonic", {
 
 	// define pitch modulators
 	pitchModImpulse=Decay.ar(Impulse.ar(0.0001),modRate,modAmt.neg);
-	pitchModRand={LFNoise0.ar(1/modRate,modAmt)}!2;
+	pitchModRand={LPF.ar(WhiteNoise.ar(),1/modRate,modAmt)}!2;
 	pitchModSine=SinOsc.ar(modRate,0,1/modRate);
 
 	// define pitch modulation
@@ -35,8 +35,8 @@ SynthDef("nanotonic", {
 	// mix in the the pitch mod
 	oscFreq=(oscFreq.cpsmidi-pitchMod).midicps;
 	osc=(oscWaveSine*SinOsc.ar(oscFreq)) +
-	(oscWaveTriangle*Saw.ar(oscFreq))+
-		(oscWaveRamp*Phasor.ar(1,oscFreq/s.sampleRate,-0.4,0.4,0));
+	(oscWaveTriangle*LFTri.ar(oscFreq))+
+		(oscWaveSawtooth*Saw.ar(1,oscFreq));
 
 	// add oscillator envelope
 	osc = osc*EnvGen.kr(Env.perc(oscAtk, oscDcy,1,[0,-4]),doneAction:((oscAtk+oscDcy)>(nEnvAtk+nEnvDcy))*2);
@@ -49,7 +49,7 @@ SynthDef("nanotonic", {
 	// noise envelopes
 	nozEnv1=EnvGen.kr(Env.linen(nEnvAtk,0,nEnvDcy));
 	nozEnv2=EnvGen.kr(Env.perc(nEnvAtk,nEnvDcy,1,[4,-4]),doneAction:((oscAtk+oscDcy)<(nEnvAtk+nEnvDcy))*2);
-	nozEnv3=(1-(LFPulse.ar(100,0,0.45,-1,1)*Trig.ar(1,nEnvAtk)))*EnvGen.ar(Env.linen(0.0,nEnvAtk,nEnvDcy,curve:\cubed));
+	nozEnv3=(1-(LFPulse.ar(200,0,0.45,-1,1)*Trig.ar(1,nEnvAtk)))*EnvGen.ar(Env.linen(0.0,nEnvAtk,nEnvDcy,curve:\cubed));
 	nozEnv=(nEnvModLinear*nozEnv1)+(nEnvModExp*nozEnv2)+(nEnvModMod*nozEnv3);
 
 	// apply noise filter
@@ -63,8 +63,10 @@ SynthDef("nanotonic", {
 	// osc=Compander.ar(osc);
 	// noz=Compander.ar(noz);
 	snd=((mix/100)*osc)+((1-(mix/100))*noz);
-	snd=(snd*(distAmt+1/5)*5).tanh/5;
+	// snd=(snd*(distAmt+1/5)*5).tanh/5;
+	snd=((distAmt<0.01)*snd)+((distAmt>0)*SineShaper.ar(snd,1.0,1+(distAmt/5)));
 	snd=BPeakEQ.ar(snd,eQFreq,1,eQGain);
+	snd=snd+((distAmt>50)*(snd*distAmt/10).tanh);
 	Out.ar(0, snd*level.dbamp*0.5);
 }).add;
 )

@@ -30,13 +30,13 @@ for _,line in ipairs(lines) do
 		elseif line:find("OscWave")==1 then
 			patches[i].oscWaveSine=0
 			patches[i].oscWaveTriangle=0
-			patches[i].oscWaveRamp=0
+			patches[i].oscWaveSawtooth=0
 			if string.find(line,"Sine") then
 				patches[i].oscWaveSine=1
 			elseif string.find(line,"Triangle") then
 				patches[i].oscWaveTriangle=1
 			elseif string.find(line,"TODO") then
-				patches[i].oscWaveRamp=1
+				patches[i].oscWaveSawtooth=1
 			end
 		elseif line:find("OscFreq")==1 then
 			local val=0
@@ -74,7 +74,7 @@ for _,line in ipairs(lines) do
 			end
 			patches[i].modRate=val
 			if string.find(line,"Hz") then
-				patches[i].modRate=1/val
+				patches[i].modRate=1000/val
 			end
 		elseif line:find("ModAmt")==1 then
 			local val=0
