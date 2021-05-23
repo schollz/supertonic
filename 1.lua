@@ -28,15 +28,11 @@ for _,line in ipairs(lines) do
 			patches[i]={}
 			patches[i].name=line
 		elseif line:find("OscWave")==1 then
-			patches[i].oscWaveSine=0
-			patches[i].oscWaveTriangle=0
-			patches[i].oscWaveSawtooth=0
-			if string.find(line,"Sine") then
-				patches[i].oscWaveSine=1
-			elseif string.find(line,"Triangle") then
-				patches[i].oscWaveTriangle=1
+			patches[i].oscWave=0
+			if string.find(line,"Triangle") then
+				patches[i].oscWave=1
 			elseif string.find(line,"TODO") then
-				patches[i].oscWaveSawtooth=1
+				patches[i].oscWave=2
 			end
 		elseif line:find("OscFreq")==1 then
 			local val=0
@@ -57,15 +53,13 @@ for _,line in ipairs(lines) do
 			end
 			patches[i].oscDcy=val
 		elseif line:find("ModMode")==1 then
-			patches[i].modModeDecay=0
-			patches[i].modModeSine=0
-			patches[i].modModeNoise=0
+			patches[i].modMode=0
 			if string.find(line,"Decay") then
-				patches[i].modModeDecay=1
+				patches[i].modMode=0
 			elseif string.find(line,"Sine") then
-				patches[i].modModeSine=1
+				patches[i].modMode=1
 			elseif string.find(line,"Noise") then
-				patches[i].modModeNoise=1
+				patches[i].modMode=2
 			end
 		elseif line:find("ModRate")==1 then
 			local val=0
@@ -83,15 +77,13 @@ for _,line in ipairs(lines) do
 			end
 			patches[i].modAmt=val
 		elseif line:find("NFilMod")==1 then
-			patches[i].nFilModLP=0
-			patches[i].nFilModBP=0
-			patches[i].nFilModHP=0
+			patches[i].nFilMod=0
 			if string.find(line,"LP") then
-				patches[i].nFilModLP=1
+				patches[i].nFilMod=0
 			elseif string.find(line,"BP") then
-				patches[i].nFilModBP=1
+				patches[i].nFilMod=1
 			elseif string.find(line,"HP") then
-				patches[i].nFilModHP=1
+				patches[i].nFilMod=2
 			end
 		elseif line:find("NFilFrq")==1 then
 			local val=0
@@ -111,15 +103,13 @@ for _,line in ipairs(lines) do
 				patches[i].nStereo=0
 			end
 		elseif line:find("NEnvMod")==1 then
-			patches[i].nEnvModExp=0
-			patches[i].nEnvModMod=0
-			patches[i].nEnvModLinear=0
+			patches[i].nEnvMod=0
 			if string.find(line,"Exp") then
-				patches[i].nEnvModExp=1
-			elseif string.find(line,'"Mod"') then
-				patches[i].nEnvModMod=1
+				patches[i].nEnvMod=0
 			elseif string.find(line,"Linear") then
-				patches[i].nEnvModLinear=1
+				patches[i].nEnvMod=1
+			elseif string.find(line,'"Mod"') then
+				patches[i].nEnvMod=2
 			end
 		elseif line:find("NEnvAtk")==1 then
 			local val=0
