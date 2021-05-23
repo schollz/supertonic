@@ -14,16 +14,19 @@ function Dev:new(o)
 
   -- do dev stuff
   local dp=drum_pattern:random(0.2,0.4)
-  drummers[1].set_pattern(dp["kick"])
-  drummers[2].set_pattern(dp["sd"])
-  drummers[3].set_pattern(dp["ch"])
-  local patches=nanotonic_patches:load("/home/we/dust/data/nanotonic/data/microtonic.preset")
+  drummer[1]:set_pattern(dp["kick"])
+  drummer[2]:set_pattern(dp["sd"])
+  drummer[3]:set_pattern(dp["ch"])
+  local patches=nanotonic_patches:load("/home/we/dust/code/nanotonic/data/microtonic.preset")
   for i=1,3 do 
-    drummers[i].set_patch(patches[i])
+    drummer[i]:set_patch(patches[i])
   end
 
+  drummer[3]:enable()
+  print(drummer[3].patch.oscAtk)
+
   for i=1,3 do 
-    drummers[i].enable()
+    drummer[i]:enable()
   end
   timekeeper:start()
 

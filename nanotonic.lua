@@ -1,6 +1,6 @@
 -- thirtythree v0.1.0
 --
--- po-33 for the norns+grid
+--
 
 
 mode_debug=true
@@ -16,7 +16,7 @@ json=require("cjson")
 -- globals
 include("lib/utils")
 -- global state
-drummers={} -- drummers
+drummer={} -- drummers
 drummer_number=3
 
 -- engine
@@ -29,9 +29,9 @@ timekeeper=timekeeper_:new()
 drummer_=include("lib/drummer")
 dev_=include("lib/dev")
 patterns_=include("lib/patterns")
-drum_pattern=patterns_:init()
+drum_pattern=patterns_:new()
 patches_=include("lib/patches")
-nanotonic_patches=patches_:init()
+nanotonic_patches=patches_:new()
 
 function init()
   -- start updater
@@ -49,7 +49,7 @@ function startup()
 
   -- initialize drummers
   for i=1,drummer_number do 
-    drummers[i]=drummer_:new({name:""..i})
+    drummer[i]=drummer_:new({name=""..i})
   end
 
   -- after initializing operators, intialize time keeper
@@ -72,12 +72,22 @@ function enc(k,d)
 end
 
 function key(k,z)
+  if z==1 then
+    local dp=drum_pattern:random(0.2,0.4)
+    drummer[1]:set_pattern(dp["kick"])
+    drummer[2]:set_pattern(dp["sd"])
+    drummer[3]:set_pattern(dp["ch"])
+    redraw()
+  end
 end
 
 
 function redraw()
   screen.clear()
-
+  for i=1,drummer_number do 
+    screen.move(0,8+(i*12))
+    screen.text(drummer[i].pattern_string)
+  end
   screen.update()
 end
 

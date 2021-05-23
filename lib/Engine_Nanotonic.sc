@@ -26,7 +26,7 @@ Engine_Nanotonic : CroneEngine {
             oscLevel=1,nLevel=1;
 
             // variables
-            var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps;
+            var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf;
 
             // convert to seconds from milliseconds
             oscAtk=oscAtk/1000;
@@ -34,6 +34,10 @@ Engine_Nanotonic : CroneEngine {
             modRate=modRate/1000;
             nEnvAtk=nEnvAtk/1000;
             nEnvDcy=nEnvDcy/1000;
+
+
+            // determine who should free
+            oscFreeSelf=Select.kr(((oscAtk+oscDcy)>(nEnvAtk+nEnvDcy)),[0,2]);
 
             // define pitch modulation
             pitchMod=Select.ar(modMode,[
@@ -53,7 +57,8 @@ Engine_Nanotonic : CroneEngine {
             ]);
 
             // add oscillator envelope
-            osc = osc.dup*EnvGen.kr(Env.perc(oscAtk, oscDcy,1,[0,-4]),doneAction:((oscAtk+oscDcy+(rrand(0,1000)/1000000))>(nEnvAtk+nEnvDcy))*2);
+            osc=osc.dup;
+            osc = osc*EnvGen.kr(Env.perc(oscAtk, oscDcy,1,[0,-4]),doneAction:oscFreeSelf);
 
             // generate noise
             noz=WhiteNoise.ar();
@@ -73,9 +78,9 @@ Engine_Nanotonic : CroneEngine {
                 ]);
             ]);
             nozEnv=Select.kr(nEnvMod,[
-                EnvGen.kr(Env.perc(nEnvAtk,nEnvDcy,1,[4,-4]),doneAction:((oscAtk+oscDcy)<(nEnvAtk+nEnvDcy))*2),
+                EnvGen.kr(Env.perc(nEnvAtk,nEnvDcy,1,[4,-4]),doneAction:(2-oscFreeSelf)),
                 EnvGen.kr(Env.linen(nEnvAtk,0,nEnvDcy)),
-                (1-(LFPulse.ar(numClaps/nEnvAtk,0,0.45,-1,1)*Trig.ar(1,nEnvAtk)))*EnvGen.ar(Env.linen(0.0,nEnvAtk,nEnvDcy,curve:\cubed)),
+                (1-(LFPulse.kr(numClaps/nEnvAtk,0,0.45,-1,1)*Trig.ar(1,nEnvAtk)))*EnvGen.kr(Env.linen(0.0,nEnvAtk,nEnvDcy,curve:\cubed)),
             ]);
 
             // apply noise filter
@@ -95,19 +100,21 @@ Engine_Nanotonic : CroneEngine {
             snd=SelectX.ar(distAmt/100*2,[
                 snd,
                 SineShaper.ar(snd,1.0,distAmt),
-                (snd*distAmt).softclip;
-            ]);
+                (snd*distAmt);
+            ]).softclip;
 
             // apply eq after distortion
             snd=BPeakEQ.ar(snd,eQFreq,1,eQGain);
 
+            snd=HPF.ar(snd,20);
+
             // level
-            Out.ar(0, snd*level.dbamp*0.5);
+            Out.ar(0, snd*level.dbamp*0.005);
         }).add;
 
         context.server.sync;
 
-        this.addCommand("nanotonic","ffffffffffffffffffff", { arg msg;
+        this.addCommand("nanotonic","fffffffffffffffffff", { arg msg;
             // lua is sending 1-index
             Synth("nanotonic",[
                 \out,0,
@@ -126,11 +133,11 @@ Engine_Nanotonic : CroneEngine {
                 \nFilMod, msg[13],
                 \nFilQ, msg[14],
                 \nStereo, msg[15],
-                \oscAtk, msg[17],
-                \oscDcy, msg[18],
-                \oscFreq, msg[19],
-                \oscWave, msg[20],
-            ],context.server);
+                \oscAtk, msg[16],
+                \oscDcy, msg[17],
+                \oscFreq, msg[18],
+                \oscWave, msg[19],
+            ], target:context.server);
         });
         // ^ Nanotonic specific
 

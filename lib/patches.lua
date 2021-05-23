@@ -11,7 +11,6 @@ function Patches:new(o)
   o=o or {}
   setmetatable(o,self)
   self.__index=self
-
   return o
 end
 
@@ -174,6 +173,9 @@ function Patches:load(preset_file)
         patches[i].level=val
       end
     end
+  end
+  for i,p in ipairs(patches) do
+    print(p.name,p.oscAtk,p.oscDcy)
   end
   return patches
 end

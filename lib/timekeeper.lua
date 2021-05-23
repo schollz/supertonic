@@ -16,10 +16,9 @@ function Timekeeper:init()
   for i=1,drummer_number do
     self.pattern[i]=self.lattice:new_pattern{
       action=function(t)
-        --TODO: convert "t" to an actual beat
-        drummer[i]:step(t)
+        drummer[i]:step(t/16+1)
       end,
-      division=1/8
+      division=1/16
     }
   end
 

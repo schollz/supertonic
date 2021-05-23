@@ -61,7 +61,7 @@ function Drummer:step(beat)
       self.patch.oscAtk,
       self.patch.oscDcy,
       self.patch.oscFreq,
-      self.patch.oscWave,
+      self.patch.oscWave
     )
   end
   return true
