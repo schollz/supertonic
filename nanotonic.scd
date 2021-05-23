@@ -6,11 +6,11 @@ SynthDef("nanotonic", {
 	oscWave=0,modMode=0,
 	nFilFrq=1000,nFilQ=2.5,nEnvAtk=26,nEnvDcy=200,
 	nFilMod=0,nStereo=1,nEnvMod=0,
-	eQFreq=500,eQGain=(-20),distAmt=2,
-	mix=95,level=(-5);
+	eQFreq=632.4,eQGain=(-20),distAmt=2,
+	mix=50,level=(-5);
 
 	// variables
-	var osc,noz,nozPostF,snd,pitchMod,nozEnv;
+	var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps;
 
 	// convert to seconds from milliseconds
 	oscAtk=oscAtk/1000;
@@ -26,7 +26,6 @@ SynthDef("nanotonic", {
 		LPF.ar(WhiteNoise.ar(),1/modRate,modAmt), // random
 	]);
 
-
 	// mix in the the pitch mod
 	oscFreq=(oscFreq.cpsmidi-pitchMod).midicps;
 
@@ -34,7 +33,7 @@ SynthDef("nanotonic", {
 	osc=Select.ar(oscWave,[
 		SinOsc.ar(oscFreq),
 		LFTri.ar(oscFreq),
-		Saw.ar(oscFreq),
+		SawDPW.ar(oscFreq),
 	]);
 
 	// add oscillator envelope
@@ -47,10 +46,20 @@ SynthDef("nanotonic", {
 	noz=((1-nStereo)*noz)+(nStereo!2*{WhiteNoise.ar()}!2);
 
 	// define noise envelope
+	numClaps=Select.kr((nEnvAtk>0.06),[
+		2,
+		Select.kr((nEnvAtk>0.15),[
+			4,
+			Select.kr((nEnvAtk>0.15),[
+				8,
+				16,
+			]);
+		]);
+	]);
 	nozEnv=Select.kr(nEnvMod,[
 		EnvGen.kr(Env.perc(nEnvAtk,nEnvDcy,1,[4,-4]),doneAction:((oscAtk+oscDcy)<(nEnvAtk+nEnvDcy))*2),
 		EnvGen.kr(Env.linen(nEnvAtk,0,nEnvDcy)),
-		(1-(LFPulse.ar(200,0,0.45,-1,1)*Trig.ar(1,nEnvAtk)))*EnvGen.ar(Env.linen(0.0,nEnvAtk,nEnvDcy,curve:\cubed)),
+		(1-(LFPulse.ar(numClaps/nEnvAtk,0,0.45,-1,1)*Trig.ar(1,nEnvAtk)))*EnvGen.ar(Env.linen(0.0,nEnvAtk,nEnvDcy,curve:\cubed)),
 	]);
 
 	// apply noise filter
@@ -64,12 +73,16 @@ SynthDef("nanotonic", {
 	noz = nozPostF*nozEnv;
 
 	// mix oscillator and noise
-	snd=((mix/100)*osc)+((1-(mix/100))*noz);
+	snd=SelectX.ar(mix/100,[noz,osc]);
 
 	// apply distortion
-	snd=((distAmt<0.01)*snd)+((distAmt>0)*SineShaper.ar(snd,1.0,1+(distAmt/5)));
+	snd=SelectX.ar(distAmt/100*2,[
+		snd,
+		SineShaper.ar(snd,1.0,distAmt),
+		(snd*distAmt).softclip;
+	]);
 
-	// apply eq
+	// apply eq after distortion
 	snd=BPeakEQ.ar(snd,eQFreq,1,eQGain);
 
 	// level
@@ -93,10 +106,18 @@ mod=Select.kr(modMode,[
 
 (
 {
-	var nEnvAtk=0.08;
+	var nEnvAtk=0.16;
 	var nEnvDcy=0.5;
 	//LFPulse.ar(1/nEnvAtk,0.5,0.5,1)
-	(1-(LFPulse.ar(5/nEnvAtk,0,LFNoise0.kr(100).range(0.2,0.6),-1,1)*Trig.ar(1,nEnvAtk)))
+	var numClaps;
+	numClaps=Select.kr((nEnvAtk>0.15).asInteger,[
+		4,
+		Select.kr((nEnvAtk>0.3).asInteger,[
+			8,
+			16,
+		]);
+	]);
+	(1-(LFPulse.ar(numClaps/nEnvAtk,0,0.5,-1,1)*Trig.ar(1,nEnvAtk)))
 	*EnvGen.ar(Env.linen(0.0,nEnvAtk,nEnvDcy,curve:\cubed))
 }.plot(0.5);
 )
