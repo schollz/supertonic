@@ -37,10 +37,9 @@ Engine_Nanotonic : CroneEngine {
             nEnvAtk=nEnvAtk/1000;
             nEnvDcy=nEnvDcy/1000;
 
-            // white noise generators
+            // white noise generators (expensive)
             wn1=WhiteNoise.ar();
             wn2=WhiteNoise.ar();
-
 
             // determine who should free
             oscFreeSelf=Select.kr(((oscAtk+oscDcy)>(nEnvAtk+nEnvDcy)),[0,2]);
