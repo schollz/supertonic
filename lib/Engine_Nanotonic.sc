@@ -28,7 +28,7 @@ SynthDef("nanotonic", {
     oscLevel=1,nLevel=1;
     
     // variables
-    var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,click,clickTrigger;
+    var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,click,clickTrigger,clapFrequency;
     
     // convert to seconds from milliseconds
     oscAtk=oscAtk/1000;
@@ -42,7 +42,7 @@ SynthDef("nanotonic", {
     wn1=WhiteNoise.ar();
     wn2=WhiteNoise.ar();
     clickTrigger=Trig.ar(1,0.005);
-    
+    clapDuration=4311/(nEnvAtk+28.4)+11.44; // fit using matlab
     // determine who should free
     oscFreeSelf=Select.kr(((oscAtk+oscDcy)>(nEnvAtk+nEnvDcy)),[0,2]);
     
@@ -91,7 +91,7 @@ SynthDef("nanotonic", {
         EnvGen.kr(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential),doneAction:(2-oscFreeSelf)),
         EnvGen.kr(Env.linen(nEnvAtk,0,nEnvDcy)),
 // clap
-// EnvGen.kr(Env.perc(0,duration*4,curve:[4,-4]),Impulse.kr(1/duration))*Trig.kr(1,nEnvAtk)+
+// EnvGen.kr(Env.perc(0,4/clapFrequency,curve:[4,-4]),Impulse.kr(clapFrequency))*Trig.kr(1,nEnvAtk)+
 EnvGen.kr(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential))
         (1-(LFPulse.kr(numClaps/nEnvAtk,0,0.45,-1,1)*Trig.ar(1,nEnvAtk)))*EnvGen.kr(Env.linen(0.0,nEnvAtk,nEnvDcy,curve:\cubed)),
     ]);
