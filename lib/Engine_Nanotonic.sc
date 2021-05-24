@@ -37,7 +37,7 @@ SynthDef("nanotonic", {
     nEnvAtk=nEnvAtk/1000;
     nEnvDcy=nEnvDcy/1000*1.4;
     level=level*1.5;
-    nFilQ=nFilQ*1.5;
+    nFilQ=SelectX.kr(nFilQ>5000,[Clip.kr(nFilQ*5,0,5000),nFilQ]);
     
     // white noise generators (expensive)
     wn1=WhiteNoise.ar();
