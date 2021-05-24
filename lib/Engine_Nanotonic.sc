@@ -4,7 +4,7 @@
 Engine_Nanotonic : CroneEngine {
 
     // Nanotonic specific v0.1.0
-    var sampleBuffNanotonic;
+    var synNanotonic;
     // Nanotonic ^
 
     *new { arg context, doneCallback;
@@ -13,6 +13,8 @@ Engine_Nanotonic : CroneEngine {
 
     alloc {
         // Nanotonic specific v0.0.1
+        synNanotonic=Array.new(maxSize:3);
+
         SynthDef("nanotonic", {
             arg out,
             mix=50,level=(-5),distAmt=2,
@@ -121,9 +123,10 @@ Engine_Nanotonic : CroneEngine {
 
         context.server.sync;
 
-        this.addCommand("nanotonic","fffffffffffffffffff", { arg msg;
+        this.addCommand("nanotonic","fffffffffffffffffffi", { arg msg;
             // lua is sending 1-index
-            Synth("nanotonic",[
+            synNanotonic[msg[20]-1].free;
+            synNanotonic[msg[20]-1]=Synth("nanotonic",[
                 \out,0,
                 \distAmt, msg[1],
                 \eQFreq, msg[2],
@@ -152,6 +155,7 @@ Engine_Nanotonic : CroneEngine {
 
     free {
         // Nanotonic Specific v0.0.1
+        synNanotonic.free;
         // ^ Nanotonic specific
     }
 }

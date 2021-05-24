@@ -49,7 +49,7 @@ function startup()
 
   -- initialize drummers
   for i=1,drummer_number do 
-    drummer[i]=drummer_:new({name=""..i})
+    drummer[i]=drummer_:new({name=""..i,id=i})
   end
 
   -- after initializing operators, intialize time keeper

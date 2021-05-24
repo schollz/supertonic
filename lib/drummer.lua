@@ -13,6 +13,7 @@ function Drummer:new(o)
   setmetatable(o,self)
   self.__index=self
   self.enabled=false
+  self.id=o.id
   self.name=o.name 
   return o
 end
@@ -61,7 +62,8 @@ function Drummer:step(beat)
       self.patch.oscAtk,
       self.patch.oscDcy,
       self.patch.oscFreq,
-      self.patch.oscWave
+      self.patch.oscWave,
+      self.id
     )
   end
   return true
