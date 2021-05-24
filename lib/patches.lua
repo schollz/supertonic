@@ -167,6 +167,9 @@ function Patches:load(preset_file)
         for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
           val=tonumber(num)
         end
+        if string.find(line,"-") then 
+          val = val * -1
+        end
         patches[i].eQGain=val
       elseif line:find("Level")==1 then
         local val=0

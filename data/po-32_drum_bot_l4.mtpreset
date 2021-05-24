@@ -28,7 +28,7 @@ MicrotonicPresetV3: {
 			DistAmt: "34.06406342983246"
 			EQFreq: "80.66190966646349 Hz"
 			EQGain: "30.24681568145752 dB"
-			Level: "-5.120152232228721 dB"
+			Level: "-10.120152232228721 dB"
 			Pan: "0.0"
 			Output: "A"
 			Choke: "Off"
