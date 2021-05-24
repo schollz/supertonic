@@ -37,8 +37,7 @@ SynthDef("nanotonic", {
     nEnvAtk=nEnvAtk/1000;
     nEnvDcy=nEnvDcy/1000*1.4;
     level=level*1.5;
-    nFilQ=SelectX.kr(nFilQ>5000,[Clip.kr(nFilQ*5,0,5000),nFilQ]);
-    
+
     // white noise generators (expensive)
     wn1=WhiteNoise.ar();
     wn2=WhiteNoise.ar();
@@ -104,7 +103,7 @@ SynthDef("nanotonic", {
         BHiPass.ar(noz,nFilFrq,Clip.kr(1/nFilQ,0.5,3))
     ]);
     // special Q
-    nozPostF=SelectX.ar((((nFilQ+1).log)/(15002.log)),[nozPostF,SinOsc.ar(nFilFrq)]);
+    nozPostF=SelectX.ar((0.1092*(nFilQ.log)+0.0343),[nozPostF,SinOsc.ar(nFilFrq)]);
     
     // add click
     click = SelectX.ar(LinLin.kr(nEnvAtk,0, 0.002, 0, 1), [clickTrigger, DC.ar(0)]);
