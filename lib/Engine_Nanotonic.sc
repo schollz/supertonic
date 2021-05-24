@@ -13,7 +13,7 @@ Engine_Nanotonic : CroneEngine {
 
     alloc {
         // Nanotonic specific v0.0.1
-        synNanotonic=Array.new(maxSize:3);
+        synNanotonic=Array.new(maxSize:5);
 
         SynthDef("nanotonic", {
             arg out,
@@ -28,7 +28,7 @@ Engine_Nanotonic : CroneEngine {
             oscLevel=1,nLevel=1;
 
             // variables
-            var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf;
+            var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2;
 
             // convert to seconds from milliseconds
             oscAtk=oscAtk/1000;
@@ -92,11 +92,10 @@ Engine_Nanotonic : CroneEngine {
             nozPostF=Select.ar(nFilMod,[
                 RLPF.ar(noz,nFilFrq,Clip.kr(1/nFilQ,0.5,3)),
                 BPF.ar(noz,nFilFrq,Clip.kr(1/nFilQ,0.5,3)),
-        RHPF.ar(noz,nFilFrq,Clip.kr(1/nFilQ,0.5,3))
+                RHPF.ar(noz,nFilFrq,Clip.kr(1/nFilQ,0.5,3))
             ]);
             // special Q
             nozPostF=SelectX.ar(((nFilQ+1).log)/(10001.log),[nozPostF,SinOsc.ar(nFilFrq,0,0.1)]);
-//          nozPostF=SelectX.ar(((nFilQ+1).log)/(10001.log),[nozPostF,SinOsc.ar(nFilFrq,0,0.1)]);
 
             // apply envelope to noise
             noz = nozPostF*nozEnv;
@@ -123,9 +122,17 @@ Engine_Nanotonic : CroneEngine {
 
         context.server.sync;
 
+        synNanotonic = Array.fill(3,{arg i;
+            Synth("nanotonic", [\level,-100],target:context.xg);
+        });
+
+        context.server.sync;
+
         this.addCommand("nanotonic","fffffffffffffffffffi", { arg msg;
             // lua is sending 1-index
-            synNanotonic[msg[20]-1].free;
+            if (synNanotonic[msg[20]-1].isRunning,{
+                synNanotonic[msg[20]-1].free;
+            });
             synNanotonic[msg[20]-1]=Synth("nanotonic",[
                 \out,0,
                 \distAmt, msg[1],
@@ -155,7 +162,7 @@ Engine_Nanotonic : CroneEngine {
 
     free {
         // Nanotonic Specific v0.0.1
-        synNanotonic.free;
+        (0..3).do({arg i; synNanotonic[i].free});
         // ^ Nanotonic specific
     }
 }

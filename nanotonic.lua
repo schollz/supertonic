@@ -89,6 +89,9 @@ end
 
 
 function redraw()
+  if not startup_done then 
+    do return end 
+  end
   screen.clear()
   screen.move(32,8)
   screen.text_center(drummer_density[1].."-"..drummer_density[2])

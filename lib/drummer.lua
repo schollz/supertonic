@@ -42,6 +42,11 @@ function Drummer:step(beat)
   if not self.enabled then 
     do return false end
   end
+  local id=self.id
+  if id==nil then
+    print("NIL!?!?!")
+    id=1
+  end
   if self.pattern(beat) then
     engine.nanotonic(
       self.patch.distAmt,
