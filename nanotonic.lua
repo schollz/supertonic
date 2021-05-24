@@ -18,6 +18,7 @@ include("lib/utils")
 -- global state
 drummer={} -- drummers
 drummer_number=3
+drummer_density={0,1}
 
 -- engine
 engine.name="Nanotonic"
@@ -69,11 +70,16 @@ function updater(c)
 end
 
 function enc(k,d)
+  if k>1 then
+    drummer_density[k-1]=drummer_density[k-1]+d/50
+    drummer_density[k-1]=util.clamp(drummer_density[k-1],0,1)
+    redraw()
+  end
 end
 
 function key(k,z)
   if z==1 then
-    local dp=drum_pattern:random(0.0,0.9)
+    local dp=drum_pattern:random(drummer_density[1],drummer_density[2])
     drummer[1]:set_pattern(dp["kick"])
     drummer[2]:set_pattern(dp["sd"])
     drummer[3]:set_pattern(dp["ch"])
@@ -84,6 +90,8 @@ end
 
 function redraw()
   screen.clear()
+  screen.move(32,8)
+  screen.text_center(drummer_density[1].."-"..drummer_density[2])
   for i=1,drummer_number do 
     screen.move(0,8+(i*12))
     screen.text(drummer[i].pattern_string)
