@@ -136,8 +136,9 @@ Synth("nanotonic",[
 
 (
 {
-	var clapFrequency=30,nEnvAtk=200,nEnvDcy=0;
-	Trig.kr(Impulse.kr(clapFrequency),0.005)/2+EnvGen.kr(Env.perc(0,2/clapFrequency,curve:[0,-4]),(Impulse.kr(clapFrequency)))*Trig.kr(1,nEnvAtk)+EnvGen.kr(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential))
+	//(1-LFSaw.ar(100,pi,0.5,0.5));
+	Decay.ar(Impulse.ar(20),1/20,0.85,0.15)*WhiteNoise.ar;
+	//EnvGen.kr(Env.new(levels:[1,0.2,1],times:[1/100,0],curve:[\exponential,\step]),Impulse.kr(100));
 }.plot(0.5);
 )
 
