@@ -90,6 +90,9 @@ SynthDef("nanotonic", {
     nozEnv=Select.kr(nEnvMod,[
         EnvGen.kr(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential),doneAction:(2-oscFreeSelf)),
         EnvGen.kr(Env.linen(nEnvAtk,0,nEnvDcy)),
+// clap
+// EnvGen.kr(Env.perc(0,duration*4,curve:[4,-4]),Impulse.kr(1/duration))*Trig.kr(1,nEnvAtk)+
+EnvGen.kr(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential))
         (1-(LFPulse.kr(numClaps/nEnvAtk,0,0.45,-1,1)*Trig.ar(1,nEnvAtk)))*EnvGen.kr(Env.linen(0.0,nEnvAtk,nEnvDcy,curve:\cubed)),
     ]);
     
