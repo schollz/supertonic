@@ -92,6 +92,9 @@ function Patches:load(preset_file)
         for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
           val=tonumber(num)
         end
+        if string.find(line,"-") then 
+          val = val * -1
+        end
         patches[i].modAmt=val
       elseif line:find("NFilMod")==1 then
         patches[i].nFilMod=0
@@ -125,7 +128,7 @@ function Patches:load(preset_file)
           patches[i].nEnvMod=0
         elseif string.find(line,"Linear") then
           patches[i].nEnvMod=1
-        elseif string.find(line,'"Mod"') then
+        elseif string.find(line,'"Mod"') or string.find(line,': Mod') then
           patches[i].nEnvMod=2
         end
       elseif line:find("NEnvAtk")==1 then
@@ -169,6 +172,9 @@ function Patches:load(preset_file)
         local val=0
         for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
           val=tonumber(num)
+        end
+        if string.find(line,"-") then 
+          val = val * -1
         end
         patches[i].level=val
       end

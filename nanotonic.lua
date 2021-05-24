@@ -73,7 +73,7 @@ end
 
 function key(k,z)
   if z==1 then
-    local dp=drum_pattern:random(0.2,0.4)
+    local dp=drum_pattern:random(0.0,0.9)
     drummer[1]:set_pattern(dp["kick"])
     drummer[2]:set_pattern(dp["sd"])
     drummer[3]:set_pattern(dp["ch"])

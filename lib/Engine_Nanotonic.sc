@@ -78,38 +78,45 @@ Engine_Nanotonic : CroneEngine {
                 ]);
             ]);
             nozEnv=Select.kr(nEnvMod,[
-                EnvGen.kr(Env.perc(nEnvAtk,nEnvDcy,1,[4,-4]),doneAction:(2-oscFreeSelf)),
+                EnvGen.kr(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential),doneAction:(2-oscFreeSelf)),
                 EnvGen.kr(Env.linen(nEnvAtk,0,nEnvDcy)),
                 (1-(LFPulse.kr(numClaps/nEnvAtk,0,0.45,-1,1)*Trig.ar(1,nEnvAtk)))*EnvGen.kr(Env.linen(0.0,nEnvAtk,nEnvDcy,curve:\cubed)),
             ]);
+    
+    
+    
 
             // apply noise filter
             nozPostF=Select.ar(nFilMod,[
-                RLPF.ar(noz,nFilFrq,nFilQ),
-                BPF.ar(noz,nFilFrq,nFilQ),
-                HPF.ar(noz,nFilFrq,nFilQ)
+                RLPF.ar(noz,nFilFrq,Clip.kr(1/nFilQ,0.5,3)),
+                BPF.ar(noz,nFilFrq,Clip.kr(1/nFilQ,0.5,3)),
+        RHPF.ar(noz,nFilFrq,Clip.kr(1/nFilQ,0.5,3))
             ]);
+            // special Q
+            nozPostF=SelectX.ar(((nFilQ+1).log)/(10001.log),[nozPostF,SinOsc.ar(nFilFrq,0,0.1)]);
+//          nozPostF=SelectX.ar(((nFilQ+1).log)/(10001.log),[nozPostF,SinOsc.ar(nFilFrq,0,0.1)]);
 
             // apply envelope to noise
             noz = nozPostF*nozEnv;
+           
 
             // mix oscillator and noise
-            snd=SelectX.ar(mix/100,[noz*nLevel.dbamp,osc*oscLevel]);
+            snd=SelectX.ar(mix/100,[noz*nLevel.dbamp/2,osc*oscLevel/2]);
 
             // apply distortion
-            snd=SelectX.ar(distAmt/100*2,[
-                snd,
-                SineShaper.ar(snd,1.0,distAmt),
-                (snd*distAmt);
+            snd=SelectX.ar(distAmt/100,[
+                (snd+(snd*distAmt/10)),
+               SineShaper.ar(snd,1.0,Clip.kr(distAmt-40,1,100)),
             ]).softclip;
 
             // apply eq after distortion
             snd=BPeakEQ.ar(snd,eQFreq,1,eQGain);
+    
 
             snd=HPF.ar(snd,20);
 
             // level
-            Out.ar(0, snd*level.dbamp*0.005);
+            Out.ar(0, snd*level.dbamp*0.01);
         }).add;
 
         context.server.sync;
