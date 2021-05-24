@@ -37,6 +37,10 @@ Engine_Nanotonic : CroneEngine {
             nEnvAtk=nEnvAtk/1000;
             nEnvDcy=nEnvDcy/1000;
 
+            // white noise generators
+            wn1=WhiteNoise.ar();
+            wn2=WhiteNoise.ar();
+
 
             // determine who should free
             oscFreeSelf=Select.kr(((oscAtk+oscDcy)>(nEnvAtk+nEnvDcy)),[0,2]);
@@ -45,7 +49,7 @@ Engine_Nanotonic : CroneEngine {
             pitchMod=Select.ar(modMode,[
                 Decay.ar(Impulse.ar(0.0001),modRate,modAmt.neg), // decay
                 SinOsc.ar(modRate,0,modAmt), // sine
-                LPF.ar(WhiteNoise.ar(),1/modRate,modAmt), // random
+                LPF.ar(wn2,1/modRate,modAmt), // random
             ]);
 
             // mix in the the pitch mod
@@ -59,14 +63,14 @@ Engine_Nanotonic : CroneEngine {
             ]);
 
             // add oscillator envelope
-            osc=osc.dup;
-            osc = osc*EnvGen.kr(Env.perc(oscAtk, oscDcy,1,[0,-4]),doneAction:oscFreeSelf);
+            osc = Splay.ar(osc*EnvGen.kr(Env.perc(oscAtk, oscDcy,1,[0,-4]),doneAction:oscFreeSelf));
 
             // generate noise
-            noz=WhiteNoise.ar();
+            noz=wn1;
 
             // optional stereo noise
-            noz=((1-nStereo)*noz)+(nStereo!2*{WhiteNoise.ar()}!2);
+            noz=Select.ar(nStereo,[wn1,[wn1,wn2]]);
+
 
             // define noise envelope
             numClaps=Select.kr((nEnvAtk>0.06),[
@@ -98,7 +102,7 @@ Engine_Nanotonic : CroneEngine {
             nozPostF=SelectX.ar(((nFilQ+1).log)/(10001.log),[nozPostF,SinOsc.ar(nFilFrq,0,0.1)]);
 
             // apply envelope to noise
-            noz = nozPostF*nozEnv;
+            noz = Splay.ar(nozPostF*nozEnv);
            
 
             // mix oscillator and noise

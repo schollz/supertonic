@@ -60,6 +60,7 @@ function startup()
   dev_:new()
 
   startup_done=true
+  redraw()
 end
 
 function updater(c)
