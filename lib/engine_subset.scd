@@ -20,7 +20,7 @@ SynthDef("nanotonic", {
     modRate=DC.kr(modRate/1000);
     nEnvAtk=DC.kr(nEnvAtk/1000);
     nEnvDcy=DC.kr(nEnvDcy/1000*1.4);
-    level=DC.kr(level*1.5);
+    level=DC.kr(level);
 
     // white noise generators (expensive)
     wn1=WhiteNoise.ar();
@@ -34,7 +34,7 @@ SynthDef("nanotonic", {
     // define pitch modulation
     pitchMod=Select.ar(modMode,[
         Decay.ar(Impulse.ar(0.0001),modRate,modAmt.neg), // decay
-        SinOsc.ar(modRate,0,modAmt), // sine
+        SinOsc.ar(1/modRate,0,modAmt), // sine
         LPF.ar(wn2,1/modRate,modAmt), // random
     ]);
 
@@ -44,8 +44,8 @@ SynthDef("nanotonic", {
     // define the oscillator
     osc=Select.ar(oscWave,[
         SinOsc.ar(oscFreq+5),
-        LFTri.ar(oscFreq+5),
-        SawDPW.ar(oscFreq),
+        LFTri.ar(oscFreq+5)*0.5,
+        SawDPW.ar(oscFreq)*0.5,
     ]);
 
     // Add click to signal when attack is less than 2ms
@@ -62,7 +62,7 @@ SynthDef("nanotonic", {
 
 
     // define noise envelope
-    nozEnv=Select.kr(nEnvMod.poll,[
+    nozEnv=Select.kr(nEnvMod,[
         EnvGen.kr(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential),doneAction:(2-oscFreeSelf)),
         EnvGen.kr(Env.linen(nEnvAtk,0,nEnvDcy)),
         Decay.ar(Impulse.ar(clapFrequency),1/clapFrequency,0.85,0.15)*Trig.ar(1,nEnvAtk+0.001)+EnvGen.ar(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential)),
@@ -97,40 +97,67 @@ SynthDef("nanotonic", {
     ]).softclip;
 
     // apply eq after distortion
-    snd=BPeakEQ.ar(snd,eQFreq,1,eQGain);
+    snd=BPeakEQ.ar(snd,eQFreq,10,eQGain);
 
 
     snd=HPF.ar(snd,20);
 
     // level
-    Out.ar(0, snd*level.dbamp*0.1);
+    Out.ar(0, snd*level.dbamp*0.2);
 }).play;
 )
 
+// Name: "SC SD rorriM"
+(
+Synth("nanotonic",[
+\distAmt,24,
+\eQFreq,277.5367940572,
+\eQGain,0,
+\level,-2.3,
+\mix,6,
+\modAmt,-39.784556156785,
+\modMode,1,
+\modRate,2000,
+\nEnvAtk,396.43289315227,
+\nEnvDcy,10.0,
+\nEnvMod,0,
+\nFilFrq,5652.3834143292,
+\nFilMod,0,
+\nFilQ,0.70710682858809,
+\nStereo,0,
+\oscAtk,396,
+\oscDcy,10.0,
+\oscFreq,531,
+\oscWave,0,
+]);
+)
 
+// VT-909 Clap
 (
 Synth("nanotonic",[
     \distAmt,0,
-    \eQFreq,100,
-    \eQGain,0,
+    \eQFreq,784,
+    \eQGain,22,
     \level,0,
-    \mix,0,
-    \modAmt,0,
-    \modMode,0,
-    \modRate,18.406874794786,
-    \nEnvAtk,200,
-    \nEnvDcy,0,
+    \mix,4,
+    \modAmt,-45,
+    \modMode,3,
+    \modRate,1000/4100,
+    \nEnvAtk,31,
+    \nEnvDcy,152,
     \nEnvMod,2,
-    \nFilFrq,5000,
-    \nFilMod,2,
-    \nFilQ,0.70710682858809,
-    \nStereo,0,
-    \oscAtk,3.096678415559,
-    \oscDcy,53.623965431017,
-    \oscFreq,152.89335942216,
+    \nFilFrq,3748,
+    \nFilMod,1,
+    \nFilQ,0.44,
+    \nStereo,1,
+    \oscAtk,93,
+    \oscDcy,749,
+    \oscFreq,1084,
     \oscWave,1,
 ]);
 )
+
+
 
 
 (
