@@ -1,6 +1,36 @@
 (
+var wnBuffer=Buffer.alloc(s,s.sampleRate*0.1,0.1);
+SynthDef("whitenoisegen",{
+	arg bufnum,wnOut;
+	var wn=WhiteNoise.ar();
+	Out.ar(wnOut,[wn,BufDelayC.ar(bufnum,wn,0.1)]);
+}).add;
+SynthDef("whitenoisetest",{
+	arg wnIn;
+	var wn= In.ar(wnIn,2);
+	Out.ar(0,wn*0.05);
+}).add;
+)
+(
+var wnBus=Bus.audio(s,2);
+x=Synth.new("whitenoisegen",[\wnOut,wnBus]);
+y=Synth.after(x,"whitenoisetest",[\wnIn,wnBus]);
+)
+
+(
+var wnBuffer=Buffer.alloc(s,s.sampleRate*0.1,0.1);
+SynthDef("whitenoisegen",{
+	arg bufnum,wnOut;
+	var wn=WhiteNoise.ar();
+	Out.ar(wnOut,[wn,BufDelayC.ar(bufnum,wn,0.1)]);
+}).add;
+SynthDef("whitenoisetest",{
+	arg wnIn;
+	var wn= In.ar(wnIn,2);
+	Out.ar(0,wn*0.05);
+}).add;
 SynthDef("nanotonic", {
-    arg out,
+    arg out,wnIn,
     mix=50,level=(-5),distAmt=2,
     eQFreq=632.4,eQGain=(-20),
     oscAtk=0,oscDcy=500,
@@ -14,7 +44,7 @@ SynthDef("nanotonic", {
     ;
 
     // variables
-    var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,clapFrequency;
+    var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,clapFrequency,wn;
 
     // convert to seconds from milliseconds
     oscAtk=DC.kr(oscAtk/1000);
@@ -25,8 +55,8 @@ SynthDef("nanotonic", {
     level=DC.kr(level);
 
     // white noise generators (expensive)
-    wn1=WhiteNoise.ar();
-    wn2=WhiteNoise.ar();
+	wn=In.ar(wnIn,2);
+
     clapFrequency=DC.kr((4311/(nEnvAtk*1000+28.4))+11.44); // fit using matlab
     // determine who should free
     oscFreeSelf=DC.kr(Select.kr(((oscAtk+oscDcy)>(nEnvAtk+nEnvDcy)),[0,2]));
@@ -58,10 +88,8 @@ SynthDef("nanotonic", {
     ]);
 
     // generate noise
-    noz=wn1;
-
     // optional stereo noise
-    noz=Select.ar(nStereo,[wn1,[wn1,wn2]]);
+	noz=Select.ar(nStereo,[wn[0],wn]);
 
 
     // define noise envelope
@@ -137,10 +165,13 @@ Synth("nanotonic",[
     \oscVel,0,
 ]);
 )
-
 // Name: "RD GSn"
 (
-Synth("nanotonic",[
+a=Bus.audio(s,2);
+x=Synth.new("whitenoisegen",[\wnOut,a.index]);
+)
+(
+y=Synth.after(x,"nanotonic",[
     \distAmt,0,
     \eQFreq,59.707651558903,
     \eQGain,-22,
@@ -155,14 +186,16 @@ Synth("nanotonic",[
     \nFilFrq,245.05603577429,
     \nFilMod,2,
     \nFilQ,148.37726231182,
-    \nStereo,0,
+    \nStereo,1,
     \oscAtk,0,
     \oscDcy,68,
     \oscFreq,251,
     \oscWave,0,
     \oscVel,0,
+	\wnIn,a.index,
 ]);
 )
+y.free;
 
 
 
