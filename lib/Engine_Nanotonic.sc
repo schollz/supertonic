@@ -36,7 +36,7 @@ Engine_Nanotonic : CroneEngine {
             modRate=DC.kr(modRate/1000);
             nEnvAtk=DC.kr(nEnvAtk/1000);
             nEnvDcy=DC.kr(nEnvDcy/1000*1.4);
-            level=DC.kr(level*1.5);
+            level=DC.kr(level);
 
             // white noise generators (expensive)
             wn1=WhiteNoise.ar();
@@ -50,7 +50,7 @@ Engine_Nanotonic : CroneEngine {
             // define pitch modulation
             pitchMod=Select.ar(modMode,[
                 Decay.ar(Impulse.ar(0.0001),modRate,modAmt.neg), // decay
-                SinOsc.ar(modRate,0,modAmt), // sine
+                SinOsc.ar(1/modRate,0,modAmt), // sine
                 LPF.ar(wn2,1/modRate,modAmt), // random
             ]);
 
@@ -60,8 +60,8 @@ Engine_Nanotonic : CroneEngine {
             // define the oscillator
             osc=Select.ar(oscWave,[
                 SinOsc.ar(oscFreq+5),
-                LFTri.ar(oscFreq+5),
-                SawDPW.ar(oscFreq),
+                LFTri.ar(oscFreq+5)*0.5,
+                SawDPW.ar(oscFreq)*0.5,
             ]);
 
             // Add click to signal when attack is less than 2ms
@@ -78,7 +78,7 @@ Engine_Nanotonic : CroneEngine {
 
 
             // define noise envelope
-            nozEnv=Select.kr(nEnvMod.poll,[
+            nozEnv=Select.kr(nEnvMod,[
                 EnvGen.kr(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential),doneAction:(2-oscFreeSelf)),
                 EnvGen.kr(Env.linen(nEnvAtk,0,nEnvDcy)),
                 Decay.ar(Impulse.ar(clapFrequency),1/clapFrequency,0.85,0.15)*Trig.ar(1,nEnvAtk+0.001)+EnvGen.ar(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential)),
@@ -113,13 +113,13 @@ Engine_Nanotonic : CroneEngine {
             ]).softclip;
 
             // apply eq after distortion
-            snd=BPeakEQ.ar(snd,eQFreq,1,eQGain);
+            snd=BPeakEQ.ar(snd,eQFreq,10,eQGain);
 
 
             snd=HPF.ar(snd,20);
 
             // level
-            Out.ar(0, snd*level.dbamp*0.1);
+            Out.ar(0, snd*level.dbamp*0.2);
         }).add;
 
         context.server.sync;
