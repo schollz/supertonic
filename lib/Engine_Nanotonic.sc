@@ -21,7 +21,7 @@ Engine_Nanotonic : CroneEngine {
             eQFreq=632.4,eQGain=(-20),
             oscAtk=0,oscDcy=500,
             oscWave=0,oscFreq=54,
-            modMode=0,modRate=400,modAmt=18,
+            modMode=0,modRate=17.78,modAmt=18,
             nEnvAtk=26,nEnvDcy=200,
             nFilFrq=1000,nFilQ=2.5,
             nFilMod=0,nEnvMod=0,nStereo=1,
@@ -35,7 +35,6 @@ Engine_Nanotonic : CroneEngine {
             // convert to seconds from milliseconds
             oscAtk=DC.kr(oscAtk/1000);
             oscDcy=DC.kr(oscDcy/1000);
-            modRate=DC.kr(modRate/1000);
             nEnvAtk=DC.kr(nEnvAtk/1000);
             nEnvDcy=DC.kr(nEnvDcy/1000*1.4);
             level=DC.kr(level);
@@ -49,9 +48,9 @@ Engine_Nanotonic : CroneEngine {
 
             // define pitch modulation
             pitchMod=Select.ar(modMode,[
-                Decay.ar(Impulse.ar(0.0001),modRate), // decay
-                SinOsc.ar(-1/modRate), // sine
-                Lag.ar(LFNoise0.ar(4/modRate),modRate/4), // random
+                Decay.ar(Impulse.ar(0.0001),1/modRate), // decay
+                SinOsc.ar(-1*modRate), // sine
+                Lag.ar(LFNoise0.ar(4*modRate),1/(modRate*4)), // random
             ]);
 
             // mix in the the pitch mod
@@ -111,7 +110,7 @@ Engine_Nanotonic : CroneEngine {
             // apply eq after distortion
             snd=BPeakEQ.ar(snd,eQFreq,1,Select.kr(eQGain>0,[eQGain,eQGain/2]));
 
-            //snd=HPF.ar(snd,20);
+            snd=HPF.ar(snd,30);
 
             // level
             Out.ar(0, snd*level.dbamp*0.05);

@@ -33,6 +33,8 @@ patterns_=include("lib/patterns")
 drum_pattern=patterns_:new()
 patches_=include("lib/patches")
 nanotonic_patches=patches_:new()
+menu_=include("lib/menu")
+menu__=menu_:new()
 
 function init()
   -- start updater
@@ -47,6 +49,9 @@ end
 
 function startup()
   startup_initiated=true
+
+  -- initialize menu
+  menu__:init()
 
   -- initialize drummers
   for i=1,drummer_number do 
@@ -66,7 +71,7 @@ end
 function updater(c)
   if not startup_initiated then
     print("starting up")
-    clock.run(startup)
+    startup()
   end
 end
 
