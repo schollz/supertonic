@@ -50,6 +50,7 @@ function Menu:init()
     -- \oscFreq,48.060961337325,
     -- \oscWave,0,
   self.parameters={
+    -- TODO: add string of the current pattern
     {id="level",name="level",range={-100,10},default=0,unit='dB'},
     {id="distAmt",name="distortion",range={0,100},default=0,unit=''},
     {id="eQFreq",name="eq freq",range={20,20000},default=1000,freq=true},
