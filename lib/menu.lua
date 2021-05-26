@@ -52,7 +52,7 @@ function Menu:init()
   self.parameters={
     {id="level",name="level",range={-100,10},default=0,unit='dB'},
     {id="distAmt",name="distortion",range={0,100},default=0,unit=''},
-    {id="eqFreq",name="eq freq",range={20,20000},default=1000,freq=true},
+    {id="eQFreq",name="eq freq",range={20,20000},default=1000,freq=true},
     {id="eQGain",name="eq gain",range={-40,40},default=0,unit='dB'},
     {id="mix",name="mix",range={0,100},default=50,unit='',increment=1,formatter=function(v) 
       return math.floor(v.raw*100).."% tone, "..math.floor((1-v.raw)*100).."% noise"

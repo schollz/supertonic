@@ -19,7 +19,11 @@ function Drummer:new(o)
 end
 
 function Drummer:set_patch(patch)
-  self.patch=patch
+  for k,v in pairs(patch) do
+    if k~="name" then
+      params:set(self.id..k,v)
+    end
+  end
 end
 
 function Drummer:set_pattern(pattern_string)
@@ -28,7 +32,7 @@ function Drummer:set_pattern(pattern_string)
 end
 
 function Drummer:enable()
-  if self.patch == nil or self.pattern==nil then 
+  if self.pattern==nil then 
     do return end 
   end
   self.enabled=true
@@ -49,26 +53,26 @@ function Drummer:step(beat)
   end
   if self.pattern(beat) then
     engine.nanotonic(
-      self.patch.distAmt,
-      self.patch.eQFreq,
-      self.patch.eQGain,
-      self.patch.level,
-      self.patch.mix,
-      self.patch.modAmt,
-      self.patch.modMode,
-      self.patch.modRate,
-      self.patch.nEnvAtk,
-      self.patch.nEnvDcy,
-      self.patch.nEnvMod,
-      self.patch.nFilFrq,
-      self.patch.nFilMod,
-      self.patch.nFilQ,
-      self.patch.nStereo,
-      self.patch.oscAtk,
-      self.patch.oscDcy,
-      self.patch.oscFreq,
-      self.patch.oscWave,
-      self.id
+      params:get(id.."distAmt"),
+      params:get(id.."eQFreq"),
+      params:get(id.."eQGain"),
+      params:get(id.."level"),
+      params:get(id.."mix"),
+      params:get(id.."modAmt"),
+      params:get(id.."modMode"),
+      params:get(id.."modRate"),
+      params:get(id.."nEnvAtk"),
+      params:get(id.."nEnvDcy"),
+      params:get(id.."nEnvMod"),
+      params:get(id.."nFilFrq"),
+      params:get(id.."nFilMod"),
+      params:get(id.."nFilQ"),
+      params:get(id.."nStereo"),
+      params:get(id.."oscAtk"),
+      params:get(id.."oscDcy"),
+      params:get(id.."oscFreq"),
+      params:get(id.."oscWave"),
+      id
     )
   end
   return true

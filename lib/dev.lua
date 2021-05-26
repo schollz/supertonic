@@ -22,9 +22,6 @@ function Dev:new(o)
     drummer[i]:set_patch(patches[i])
   end
 
-  drummer[3]:enable()
-  print(drummer[3].patch.oscAtk)
-
   for i=1,3 do 
     drummer[i]:enable()
   end
