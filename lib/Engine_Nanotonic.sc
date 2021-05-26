@@ -16,107 +16,105 @@ Engine_Nanotonic : CroneEngine {
         synNanotonic=Array.new(maxSize:5);
 
         SynthDef("nanotonic", {
-            SynthDef("nanotonic", {
-                arg out,
-                mix=50,level=(-5),distAmt=2,
-                eQFreq=632.4,eQGain=(-20),
-                oscAtk=0,oscDcy=500,
-                oscWave=0,oscFreq=54,
-                modMode=0,modRate=400,modAmt=18,
-                nEnvAtk=26,nEnvDcy=200,
-                nFilFrq=1000,nFilQ=2.5,
-                nFilMod=0,nEnvMod=0,nStereo=1,
-                oscLevel=1,nLevel=1,
-                oscVel=100
-                ;
+            arg out,
+            mix=50,level=(-5),distAmt=2,
+            eQFreq=632.4,eQGain=(-20),
+            oscAtk=0,oscDcy=500,
+            oscWave=0,oscFreq=54,
+            modMode=0,modRate=400,modAmt=18,
+            nEnvAtk=26,nEnvDcy=200,
+            nFilFrq=1000,nFilQ=2.5,
+            nFilMod=0,nEnvMod=0,nStereo=1,
+            oscLevel=1,nLevel=1,
+            oscVel=100
+            ;
 
-                // variables
-                var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,clapFrequency;
+            // variables
+            var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,clapFrequency;
 
-                // convert to seconds from milliseconds
-                oscAtk=DC.kr(oscAtk/1000);
-                oscDcy=DC.kr(oscDcy/1000);
-                modRate=DC.kr(modRate/1000);
-                nEnvAtk=DC.kr(nEnvAtk/1000);
-                nEnvDcy=DC.kr(nEnvDcy/1000*1.4);
-                level=DC.kr(level);
+            // convert to seconds from milliseconds
+            oscAtk=DC.kr(oscAtk/1000);
+            oscDcy=DC.kr(oscDcy/1000);
+            modRate=DC.kr(modRate/1000);
+            nEnvAtk=DC.kr(nEnvAtk/1000);
+            nEnvDcy=DC.kr(nEnvDcy/1000*1.4);
+            level=DC.kr(level);
 
-                // white noise generators (expensive)
-                wn1=WhiteNoise.ar();
-                wn2=WhiteNoise.ar();
-                clapFrequency=DC.kr((4311/(nEnvAtk*1000+28.4))+11.44); // fit using matlab
-                // determine who should free
-                oscFreeSelf=DC.kr(Select.kr(((oscAtk+oscDcy)>(nEnvAtk+nEnvDcy)),[0,2]));
+            // white noise generators (expensive)
+            wn1=WhiteNoise.ar();
+            wn2=WhiteNoise.ar();
+            clapFrequency=DC.kr((4311/(nEnvAtk*1000+28.4))+11.44); // fit using matlab
+            // determine who should free
+            oscFreeSelf=DC.kr(Select.kr(((oscAtk+oscDcy)>(nEnvAtk+nEnvDcy)),[0,2]));
 
-                // define pitch modulation
-                pitchMod=Select.ar(modMode,[
-                    Decay.ar(Impulse.ar(0.0001),modRate), // decay
-                    SinOsc.ar(-1/modRate), // sine
-                    Lag.ar(LFNoise0.ar(4/modRate),modRate/4).poll, // random
-                ]);
+            // define pitch modulation
+            pitchMod=Select.ar(modMode,[
+                Decay.ar(Impulse.ar(0.0001),modRate), // decay
+                SinOsc.ar(-1/modRate), // sine
+                Lag.ar(LFNoise0.ar(4/modRate),modRate/4), // random
+            ]);
 
-                // mix in the the pitch mod
-                oscFreq=(oscFreq.cpsmidi+(pitchMod*modAmt)).poll.midicps;
+            // mix in the the pitch mod
+            oscFreq=(oscFreq.cpsmidi+(pitchMod*modAmt)).midicps;
 
-                // define the oscillator
-                osc=Select.ar(oscWave,[
-                    SinOsc.ar(oscFreq+5),
-                    LFTri.ar(oscFreq+5)*0.5,
-                    SawDPW.ar(oscFreq)*0.5,
-                ]);
+            // define the oscillator
+            osc=Select.ar(oscWave,[
+                SinOsc.ar(oscFreq+5),
+                LFTri.ar(oscFreq+5)*0.5,
+                SawDPW.ar(oscFreq)*0.5,
+            ]);
 
-                // increase volume
-                //osc=(osc*LinLin.kr(oscVel,0,200,2,0)).softclip;
+            // increase volume
+            //osc=(osc*LinLin.kr(oscVel,0,200,2,0)).softclip;
 
-                // add oscillator envelope
-                osc = osc*SelectX.ar(Clip.kr(LinLin.kr(oscAtk,0,0.1,0,1)).poll,[
-                    Decay.ar(Impulse.ar(0),oscDcy),
-                    EnvGen.ar(Env.perc(oscAtk, oscDcy,1,[0,-4]),doneAction:oscFreeSelf)
-                ]);
+            // add oscillator envelope
+            osc = osc*SelectX.ar(Clip.kr(LinLin.kr(oscAtk,0,0.1,0,1)),[
+                Decay.ar(Impulse.ar(0),oscDcy),
+                EnvGen.ar(Env.perc(oscAtk, oscDcy,1,[0,-4]),doneAction:oscFreeSelf)
+            ]);
 
-                // generate noise
-                noz=wn1;
+            // generate noise
+            noz=wn1;
 
-                // optional stereo noise
-                noz=Select.ar(nStereo,[wn1,[wn1,wn2]]);
+            // optional stereo noise
+            noz=Select.ar(nStereo,[wn1,[wn1,wn2]]);
 
 
-                // define noise envelope
-                nozEnv=Select.kr(nEnvMod,[
-                    EnvGen.kr(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential),doneAction:(2-oscFreeSelf)),
-                    EnvGen.kr(Env.linen(nEnvAtk,0,nEnvDcy)),
-                    Decay.ar(Impulse.ar(clapFrequency),1/clapFrequency,0.85,0.15)*Trig.ar(1,nEnvAtk+0.001)+EnvGen.ar(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential)),
-                ]);
+            // define noise envelope
+            nozEnv=Select.kr(nEnvMod,[
+                EnvGen.kr(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential),doneAction:(2-oscFreeSelf)),
+                EnvGen.kr(Env.linen(nEnvAtk,0,nEnvDcy)),
+                Decay.ar(Impulse.ar(clapFrequency),1/clapFrequency,0.85,0.15)*Trig.ar(1,nEnvAtk+0.001)+EnvGen.ar(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential)),
+            ]);
 
-                // apply noise filter
-                nozPostF=Select.ar(nFilMod,[
-                    BLowPass.ar(noz,nFilFrq,Clip.kr(1/nFilQ,0.5,3)),
-                    BBandPass.ar(noz,nFilFrq,Clip.kr(1/nFilQ,0.5,3)),
-                    BHiPass.ar(noz,nFilFrq,Clip.kr(1/nFilQ,0.5,3))
-                ]);
-                // special Q
-                nozPostF=SelectX.ar((0.1092*(nFilQ.log)+0.0343),[nozPostF,SinOsc.ar(nFilFrq)]);
+            // apply noise filter
+            nozPostF=Select.ar(nFilMod,[
+                BLowPass.ar(noz,nFilFrq,Clip.kr(1/nFilQ,0.5,3)),
+                BBandPass.ar(noz,nFilFrq,Clip.kr(1/nFilQ,0.5,3)),
+                BHiPass.ar(noz,nFilFrq,Clip.kr(1/nFilQ,0.5,3))
+            ]);
+            // special Q
+            nozPostF=SelectX.ar((0.1092*(nFilQ.log)+0.0343),[nozPostF,SinOsc.ar(nFilFrq)]);
 
-                // apply envelope to noise
-                noz=Splay.ar(nozPostF*nozEnv);
+            // apply envelope to noise
+            noz=Splay.ar(nozPostF*nozEnv);
 
-                // mix oscillator and noise
-                snd=SelectX.ar(mix/100,[noz*nLevel.dbamp,osc*oscLevel]);
+            // mix oscillator and noise
+            snd=SelectX.ar(mix/100,[noz*nLevel.dbamp,osc*oscLevel]);
 
-                // apply distortion
-                snd=SelectX.ar(distAmt/100,[
-                    (snd+(snd*distAmt/4)),
-                    SineShaper.ar(snd,1.0,Clip.kr(distAmt-40,1,100)),
-                ]).softclip;
+            // apply distortion
+            snd=SelectX.ar(distAmt/100,[
+                (snd+(snd*distAmt/4)),
+                SineShaper.ar(snd,1.0,Clip.kr(distAmt-40,1,100)),
+            ]).softclip;
 
-                // apply eq after distortion
-                snd=BPeakEQ.ar(snd,eQFreq,1,eQGain/2);
+            // apply eq after distortion
+            snd=BPeakEQ.ar(snd,eQFreq,1,Select.kr(eQGain>0,[eQGain,eQGain/2]));
 
-                snd=HPF.ar(snd,20);
+            //snd=HPF.ar(snd,20);
 
-                // level
-                Out.ar(0, snd*level.dbamp*0.05);
-            }).add;
+            // level
+            Out.ar(0, snd*level.dbamp*0.05);
         }).add;
 
         context.server.sync;

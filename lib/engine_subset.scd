@@ -35,11 +35,11 @@ SynthDef("nanotonic", {
     pitchMod=Select.ar(modMode,[
         Decay.ar(Impulse.ar(0.0001),modRate), // decay
         SinOsc.ar(-1/modRate), // sine
-        Lag.ar(LFNoise0.ar(4/modRate),modRate/4).poll, // random
+        Lag.ar(LFNoise0.ar(4/modRate),modRate/4), // random
     ]);
 
     // mix in the the pitch mod
-    oscFreq=(oscFreq.cpsmidi+(pitchMod*modAmt)).poll.midicps;
+    oscFreq=(oscFreq.cpsmidi+(pitchMod*modAmt)).midicps;
 
     // define the oscillator
     osc=Select.ar(oscWave,[
@@ -52,7 +52,7 @@ SynthDef("nanotonic", {
     //osc=(osc*LinLin.kr(oscVel,0,200,2,0)).softclip;
 
     // add oscillator envelope
-    osc = osc*SelectX.ar(Clip.kr(LinLin.kr(oscAtk,0,0.1,0,1)).poll,[
+    osc = osc*SelectX.ar(Clip.kr(LinLin.kr(oscAtk,0,0.1,0,1)),[
         Decay.ar(Impulse.ar(0),oscDcy),
         EnvGen.ar(Env.perc(oscAtk, oscDcy,1,[0,-4]),doneAction:oscFreeSelf)
     ]);
@@ -81,7 +81,7 @@ SynthDef("nanotonic", {
     nozPostF=SelectX.ar((0.1092*(nFilQ.log)+0.0343),[nozPostF,SinOsc.ar(nFilFrq)]);
 
     // apply envelope to noise
-	noz=Splay.ar(nozPostF*nozEnv);
+    noz=Splay.ar(nozPostF*nozEnv);
 
     // mix oscillator and noise
     snd=SelectX.ar(mix/100,[noz*nLevel.dbamp,osc*oscLevel]);
@@ -93,9 +93,9 @@ SynthDef("nanotonic", {
     ]).softclip;
 
     // apply eq after distortion
-    snd=BPeakEQ.ar(snd,eQFreq,1,eQGain/2);
+    snd=BPeakEQ.ar(snd,eQFreq,1,Select.kr(eQGain>0,[eQGain,eQGain/2]));
 
-    snd=HPF.ar(snd,20);
+    //snd=HPF.ar(snd,20);
 
     // level
     Out.ar(0, snd*level.dbamp*0.05);
