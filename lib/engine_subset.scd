@@ -105,19 +105,15 @@ SynthDef("nanotonic", {
 }).add;
 )
 
-
-
-{EnvGen.ar(Env.new([0,1,0.9,0],[0.01,0.1,0.2],[0,-2,-12]))}.plot(0.5)
-
 // Name: "SC BD Toxyk"
 (
 Synth("nanotonic",[
-\distAmt,26,
+\distAmt,26.06406211853,
 \eQFreq,80.661909666463,
 \eQGain,13.046813011169,
-\level,-10,
-\mix,88,
-\modAmt,43.019509360458,
+\level,-10.49999870510493,
+\mix,88.153877258301,
+\modAmt,33.019509360458,
 \modMode,0,
 \modRate,4.0523291566457,
 \nEnvAtk,2.1977363693469,
@@ -130,15 +126,15 @@ Synth("nanotonic",[
 \nVel,40.751650929451,
 \oscAtk,0.0,
 \oscDcy,726.5732892423,
-\oscFreq,48,
-\oscVel,36,
+\oscFreq,48.060961337325,
+\oscVel,38.951644301414,
 \oscWave,0,
 ]);
 )
 // Name: "RD GSn"
 (
 Synth("nanotonic",[
-\distAmt,0,
+\distAmt,0.0,
 \eQFreq,59.707651558903,
 \eQGain,-40.0,
 \level,6.9716982228375,
@@ -156,7 +152,7 @@ Synth("nanotonic",[
 \nVel,0.0,
 \oscAtk,0.0,
 \oscDcy,68.739970893796,
-\oscFreq,256.70428643266,
+\oscFreq,266.70428643266,
 \oscVel,0.0,
 \oscWave,0,
 ]);
@@ -164,7 +160,7 @@ Synth("nanotonic",[
 // Name: "LV HH HT"
 (
 Synth("nanotonic",[
-\distAmt,0,
+\distAmt,0.0,
 \eQFreq,111.80335896926,
 \eQGain,-36.059684753418,
 \level,0.0,
@@ -190,26 +186,25 @@ Synth("nanotonic",[
 // Name: "VT-808 CP"
 (
 Synth("nanotonic",[
-\distAmt,0,
-\eQFreq,981.49547151245,
-\eQGain,28.736724853516,
-\level,0,
-\mix,4,
-\modAmt,-48.0,
+\distAmt,0.3341009169817,
+\eQFreq,825,
+\eQGain,18.736724853516,
+\level,0.0,
+\mix,8.7251434326172,
+\modAmt,38.0,
 \modMode,2,
-\modRate,10995.78120095,
-\modVel,0,
+\modRate,1995.78120095,
 \nEnvAtk,34.526091455159,
 \nEnvDcy,199.32752864136,
 \nEnvMod,2,
-\nFilFrq,3571.0693697945,
+\nFilFrq,1000,
 \nFilMod,1,
-\nFilQ,0.37636863434079,
+\nFilQ,0.05636863434079,
 \nStereo,0,
 \nVel,25.0,
 \oscAtk,0.44352287396344,
-\oscDcy,1402.7378979947,
-\oscFreq,2459.9589879903,
+\oscDcy,202.7378979947,
+\oscFreq,259.9589879903,
 \oscVel,25.0,
 \oscWave,0,
 ]);
@@ -217,11 +212,11 @@ Synth("nanotonic",[
 // Name: "SC BD Schmack"
 (
 Synth("nanotonic",[
-\distAmt,20,
+\distAmt,80.160900354385,
 \eQFreq,479.95005904163,
 \eQGain,-40.0,
-\level,10.9318368442652,
-\mix,100,
+\level,2.9318368442652,
+\mix,82.0,
 \modAmt,36.902400567627,
 \modMode,0,
 \modRate,2.9422735268749,
@@ -237,7 +232,7 @@ Synth("nanotonic",[
 \oscDcy,859.40729368463,
 \oscFreq,44.774409098621,
 \oscVel,65.99999666214,
-\oscWave,0,
+\oscWave,1,
 ]);
 )
 // Name: "SC SD Zeroto9 Short"
@@ -247,7 +242,7 @@ Synth("nanotonic",[
 \eQFreq,694.40079396646,
 \eQGain,-17.492098808289,
 \level,7.0444581469742,
-\mix,57.398193359375,
+\mix,67.398193359375,
 \modAmt,19.722088125357,
 \modMode,0,
 \modRate,5.2224226206798,
@@ -295,10 +290,10 @@ Synth("nanotonic",[
 // Name: "VT-K55 Tom Low"
 (
 Synth("nanotonic",[
-\distAmt,20.6050708293915,
+\distAmt,6.6050708293915,
 \eQFreq,40.963648646408,
-\eQGain,-30.0,
-\level,10.0,
+\eQGain,-40.0,
+\level,0.0,
 \mix,85.114639282227,
 \modAmt,2.2941263972371,
 \modMode,0,
