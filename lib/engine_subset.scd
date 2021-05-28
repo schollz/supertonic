@@ -10,19 +10,19 @@ SynthDef("nanotonic", {
     nFilFrq=1000,nFilQ=2.5,
     nFilMod=0,nEnvMod=0,nStereo=1,
     oscLevel=1,nLevel=1,
-    oscVel=100
+	oscVel=100,nVel=100,modVel=100
     ;
 
     // variables
-    var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,clapFrequency;
+    var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,clapFrequency,decayer;
 
     // convert to seconds from milliseconds
     oscAtk=DC.kr(oscAtk/1000);
     oscDcy=DC.kr(oscDcy/1000);
-    modRate=DC.kr(modRate/1000);
     nEnvAtk=DC.kr(nEnvAtk/1000);
     nEnvDcy=DC.kr(nEnvDcy/1000*1.4);
     level=DC.kr(level);
+	oscFreq=oscFreq-10;
 
     // white noise generators (expensive)
     wn1=WhiteNoise.ar();
@@ -31,15 +31,15 @@ SynthDef("nanotonic", {
     // determine who should free
     oscFreeSelf=DC.kr(Select.kr(((oscAtk+oscDcy)>(nEnvAtk+nEnvDcy)),[0,2]));
 
-    // define pitch modulation
+    // define pitch modulation1
     pitchMod=Select.ar(modMode,[
-        Decay.ar(Impulse.ar(0.0001),modRate), // decay
-        SinOsc.ar(-1/modRate), // sine
-        Lag.ar(LFNoise0.ar(4/modRate),modRate/4), // random
+		Decay.ar(Impulse.ar(0.0001),(1/modRate)), // decay
+        SinOsc.ar(-1*modRate), // sine
+		Lag.ar(LFNoise0.ar(4*modRate),1/(4*modRate)), // random
     ]);
 
     // mix in the the pitch mod
-    oscFreq=(oscFreq.cpsmidi+(pitchMod*modAmt)).midicps;
+	oscFreq=((oscFreq).cpsmidi+((pitchMod*modAmt).midicps*LinLin.kr(modVel,0,200,4.0,0)));
 
     // define the oscillator
     osc=Select.ar(oscWave,[
@@ -47,15 +47,18 @@ SynthDef("nanotonic", {
         LFTri.ar(oscFreq+5)*0.5,
         SawDPW.ar(oscFreq)*0.5,
     ]);
+	osc=SelectX.ar((modMode>1)*(modAmt.abs/48),[
+		osc,
+		LPF.ar(wn2,modRate),
+	]);
 
-    // increase volume
-    //osc=(osc*LinLin.kr(oscVel,0,200,2,0)).softclip;
 
     // add oscillator envelope
-    osc = osc*SelectX.ar(Clip.kr(LinLin.kr(oscAtk,0,0.1,0,1)),[
-        Decay.ar(Impulse.ar(0),oscDcy),
-        EnvGen.ar(Env.perc(oscAtk, oscDcy,1,[0,-4]),doneAction:oscFreeSelf)
-    ]);
+	decayer=Select.kr(distAmt>50,[0.05,(distAmt-50)/50*0.3]);
+	osc=osc*EnvGen.ar(Env.new([0,1,0.9,0],[oscAtk,oscDcy*decayer,oscDcy],[0,-2,-12]),doneAction:oscFreeSelf);
+
+    // apply velocity
+    osc=(osc*LinLin.kr(oscVel,0,200,2,0)).softclip;
 
     // generate noise
     noz=wn1;
@@ -83,172 +86,235 @@ SynthDef("nanotonic", {
     // apply envelope to noise
     noz=Splay.ar(nozPostF*nozEnv);
 
+	// apply velocities
+    noz=(noz*LinLin.kr(nVel,0,200,2,0)).softclip;
+
+    // apply distortion
+	osc=SineShaper.ar(osc,1.0,1+(distAmt/10)).softclip;
+
     // mix oscillator and noise
     snd=SelectX.ar(mix/100,[noz*nLevel.dbamp,osc*oscLevel]);
 
-    // apply distortion
-    snd=SelectX.ar(distAmt/100,[
-        (snd+(snd*distAmt/4)),
-        SineShaper.ar(snd,1.0,Clip.kr(distAmt-40,1,100)),
-    ]).softclip;
-
     // apply eq after distortion
-    snd=BPeakEQ.ar(snd,eQFreq,1,Select.kr(eQGain>0,[eQGain,eQGain/2]));
+    snd=BPeakEQ.ar(snd,eQFreq,0.5,eQGain);
 
-    //snd=HPF.ar(snd,20);
+    snd=HPF.ar(snd,10);
 
     // level
-    Out.ar(0, snd*level.dbamp*0.05);
+    Out.ar(0, snd*level.dbamp*0.5);
 }).add;
 )
 
+
+
+{EnvGen.ar(Env.new([0,1,0.9,0],[0.01,0.1,0.2],[0,-2,-12]))}.plot(0.5)
+
+// Name: "SC BD Toxyk"
 (
 Synth("nanotonic",[
-    \distAmt,0,
-    \eQFreq,50,
-    \eQGain,0,
-    \level,0,
-    \mix,50,
-    \nEnvMod,0,
-    \nFilFrq,500,
-    \nFilMod,2,
-    \nFilQ,0.7,
-    \nStereo,0,
-    \nEnvAtk,0,
-    \nEnvDcy,84,
-	\nLevel,1,
+\distAmt,26,
+\eQFreq,80.661909666463,
+\eQGain,13.046813011169,
+\level,-10,
+\mix,88,
+\modAmt,43.019509360458,
+\modMode,0,
+\modRate,4.0523291566457,
+\nEnvAtk,2.1977363693469,
+\nEnvDcy,1104.977660676,
+\nEnvMod,0,
+\nFilFrq,392.00617432122,
+\nFilMod,0,
+\nFilQ,1.463421337541,
+\nStereo,1,
+\nVel,40.751650929451,
+\oscAtk,0.0,
+\oscDcy,726.5732892423,
+\oscFreq,48,
+\oscVel,36,
+\oscWave,0,
 ]);
 )
-
-
-(
-Synth("nanotonic",[
-    \distAmt,0,
-    \eQGain,0,
-    \level,0,
-    \mix,100,
-    \modAmt,29,
-    \modMode,2,
-    \modRate,1000/7515,
-    \oscAtk,0,
-    \oscDcy,68,
-    \oscFreq,251,
-    \oscWave,0,
-    \oscVel,0,
-]);
-)
-
 // Name: "RD GSn"
 (
 Synth("nanotonic",[
-    \distAmt,0,
-    \eQFreq,59.707651558903,
-    \eQGain,-22,
-    \level,10,
-    \mix,50,
-    \modAmt,29,
-    \modMode,2,
-    \modRate,1000/7515,
-    \nEnvAtk,0,
-    \nEnvDcy,372,
-    \nEnvMod,0,
-    \nFilFrq,245.05603577429,
-    \nFilMod,2,
-    \nFilQ,148.37726231182,
-    \nStereo,0,
-    \oscAtk,0,
-    \oscDcy,68,
-    \oscFreq,251,
-    \oscWave,0,
-    \oscVel,0,
+\distAmt,0,
+\eQFreq,59.707651558903,
+\eQGain,-40.0,
+\level,6.9716982228375,
+\mix,60.833332061768,
+\modAmt,30.521283094447,
+\modMode,2,
+\modRate,7571.3339922825,
+\nEnvAtk,0.0,
+\nEnvDcy,316.22776601684,
+\nEnvMod,0,
+\nFilFrq,245.05603577429,
+\nFilMod,2,
+\nFilQ,148.37726231182,
+\nStereo,1,
+\nVel,0.0,
+\oscAtk,0.0,
+\oscDcy,68.739970893796,
+\oscFreq,256.70428643266,
+\oscVel,0.0,
+\oscWave,0,
 ]);
 )
-
-
-
-// Name: "SC SD rorriM"
+// Name: "LV HH HT"
 (
 Synth("nanotonic",[
-    \distAmt,24,
-    \eQFreq,277.5367940572,
-    \eQGain,0,
-    \level,-2.3,
-    \mix,6,
-    \modAmt,-39.784556156785,
-    \modMode,1,
-    \modRate,2000,
-    \nEnvAtk,396.43289315227,
-    \nEnvDcy,10.0,
-    \nEnvMod,0,
-    \nFilFrq,5652.3834143292,
-    \nFilMod,0,
-    \nFilQ,0.70710682858809,
-    \nStereo,0,
-    \oscAtk,396,
-    \oscDcy,10.0,
-    \oscFreq,531,
-    \oscWave,0,
+\distAmt,0,
+\eQFreq,111.80335896926,
+\eQGain,-36.059684753418,
+\level,0.0,
+\mix,0.0,
+\modAmt,0.0,
+\modMode,0,
+\modRate,2.8301886792453,
+\nEnvAtk,1.7076868541052,
+\nEnvDcy,55.259588908601,
+\nEnvMod,0,
+\nFilFrq,7447.9779098801,
+\nFilMod,2,
+\nFilQ,0.70710500896458,
+\nStereo,0,
+\nVel,46.002021431923,
+\oscAtk,0.0,
+\oscDcy,10.0,
+\oscFreq,20.0,
+\oscVel,0.0,
+\oscWave,0,
 ]);
 )
-
-// VT-909 Clap
+// Name: "VT-808 CP"
 (
 Synth("nanotonic",[
-    \distAmt,0,
-    \eQFreq,784,
-    \eQGain,22,
-    \level,0,
-    \mix,4,
-    \modAmt,-45,
-    \modMode,3,
-    \modRate,1000/4100,
-    \nEnvAtk,31,
-    \nEnvDcy,152,
-    \nEnvMod,2,
-    \nFilFrq,3748,
-    \nFilMod,1,
-    \nFilQ,0.44,
-    \nStereo,1,
-    \oscAtk,93,
-    \oscDcy,749,
-    \oscFreq,1084,
-    \oscWave,1,
+\distAmt,0,
+\eQFreq,981.49547151245,
+\eQGain,28.736724853516,
+\level,0,
+\mix,4,
+\modAmt,-48.0,
+\modMode,2,
+\modRate,10995.78120095,
+\modVel,0,
+\nEnvAtk,34.526091455159,
+\nEnvDcy,199.32752864136,
+\nEnvMod,2,
+\nFilFrq,3571.0693697945,
+\nFilMod,1,
+\nFilQ,0.37636863434079,
+\nStereo,0,
+\nVel,25.0,
+\oscAtk,0.44352287396344,
+\oscDcy,1402.7378979947,
+\oscFreq,2459.9589879903,
+\oscVel,25.0,
+\oscWave,0,
 ]);
 )
-
-
-
-
+// Name: "SC BD Schmack"
 (
-{
-    //(1-LFSaw.ar(100,pi,0.5,0.5));
-    Decay.ar(Impulse.ar(20),1/20,0.85,0.15)*WhiteNoise.ar;
-    //EnvGen.kr(Env.new(levels:[1,0.2,1],times:[1/100,0],curve:[\exponential,\step]),Impulse.kr(100));
-}.plot(0.5);
+Synth("nanotonic",[
+\distAmt,20,
+\eQFreq,479.95005904163,
+\eQGain,-40.0,
+\level,10.9318368442652,
+\mix,100,
+\modAmt,36.902400567627,
+\modMode,0,
+\modRate,2.9422735268749,
+\nEnvAtk,26.68178034809,
+\nEnvDcy,181.96632325047,
+\nEnvMod,0,
+\nFilFrq,69.347309273301,
+\nFilMod,0,
+\nFilQ,2.5692426661038,
+\nStereo,0,
+\nVel,32.99999833107,
+\oscAtk,0.0,
+\oscDcy,859.40729368463,
+\oscFreq,44.774409098621,
+\oscVel,65.99999666214,
+\oscWave,0,
+]);
 )
-
+// Name: "SC SD Zeroto9 Short"
 (
-{
-    var nEnvAtk=0.0,nEnvDcy=0.1;
-    EnvGen.kr(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential));
-}.plot(0.02)
+Synth("nanotonic",[
+\distAmt,18.17979067564,
+\eQFreq,694.40079396646,
+\eQGain,-17.492098808289,
+\level,7.0444581469742,
+\mix,57.398193359375,
+\modAmt,19.722088125357,
+\modMode,0,
+\modRate,5.2224226206798,
+\nEnvAtk,0.0,
+\nEnvDcy,114.19789555739,
+\nEnvMod,1,
+\nFilFrq,1764.3930506381,
+\nFilMod,1,
+\nFilQ,1.4096421051983,
+\nStereo,1,
+\nVel,100.0,
+\oscAtk,0.0,
+\oscDcy,119.99570374329,
+\oscFreq,97.962603166918,
+\oscVel,26.324200630188,
+\oscWave,1,
+]);
 )
-
+// Name: "LV HH HT 2"
 (
-{
-    var clapFrequency=30;
-    var nEnvAtk=0.1;
-    var nEnvDcy=0.2;
-    Decay.ar(Impulse.ar(clapFrequency),1/clapFrequency,0.85,0.15)*Trig.ar(1,nEnvAtk+0.001)+EnvGen.ar(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential))*WhiteNoise.ar
-}.plot(0.1)
+Synth("nanotonic",[
+\distAmt,0.0,
+\eQFreq,111.80335896926,
+\eQGain,-36.059684753418,
+\level,0.0,
+\mix,0.0,
+\modAmt,0.0,
+\modMode,0,
+\modRate,2.8301886792453,
+\nEnvAtk,0.0,
+\nEnvDcy,258.8188153688,
+\nEnvMod,0,
+\nFilFrq,7447.9779098801,
+\nFilMod,2,
+\nFilQ,0.70710500896458,
+\nStereo,1,
+\nVel,46.002021431923,
+\oscAtk,0.0,
+\oscDcy,19.158122536198,
+\oscFreq,20.0,
+\oscVel,0.0,
+\oscWave,0,
+]);
 )
-
+// Name: "VT-K55 Tom Low"
 (
-{
-    Decay.ar(Impulse.ar(0),0.01);
-}.plot(0.5)
-)
-
-(
-{LFNoise0.ar(10)}.plot(1)
+Synth("nanotonic",[
+\distAmt,20.6050708293915,
+\eQFreq,40.963648646408,
+\eQGain,-30.0,
+\level,10.0,
+\mix,85.114639282227,
+\modAmt,2.2941263972371,
+\modMode,0,
+\modRate,1.3025102245623,
+\nEnvAtk,5.2391506244795,
+\nEnvDcy,313.58177894808,
+\nEnvMod,1,
+\nFilFrq,327.22092304425,
+\nFilMod,0,
+\nFilQ,1.1181320436858,
+\nStereo,0,
+\nVel,0.0,
+\oscAtk,1.4000000090385,
+\oscDcy,418.07695787332,
+\oscFreq,129.23803254906,
+\oscVel,0.0,
+\oscWave,0,
+]);
 )

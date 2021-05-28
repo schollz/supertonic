@@ -83,8 +83,9 @@ function Patches:load(preset_file)
         for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
           val=tonumber(num)
         end
-        patches[i].modRate=val
         if string.find(line,"Hz") then
+          patches[i].modRate=val
+        else
           patches[i].modRate=1000/val
         end
       elseif line:find("ModAmt")==1 then
@@ -162,6 +163,24 @@ function Patches:load(preset_file)
           val=tonumber(num)
         end
         patches[i].eQFreq=val
+      elseif line:find("OscVel")==1 then
+        local val=0
+        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+          val=tonumber(num)
+        end
+        patches[i].oscVel=val
+      elseif line:find("NVel")==1 then
+        local val=0
+        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+          val=tonumber(num)
+        end
+        patches[i].nVel=val
+      elseif line:find("modVel")==1 then
+        local val=0
+        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+          val=tonumber(num)
+        end
+        patches[i].modVel=val
       elseif line:find("EQGain")==1 then
         local val=0
         for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
