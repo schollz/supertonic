@@ -118,7 +118,7 @@ Engine_Nanotonic : CroneEngine {
 
         context.server.sync;
 
-        synNanotonic = Array.fill(3,{arg i;
+        synNanotonic = Array.fill(5,{arg i;
             Synth("nanotonic", [\level,-100],target:context.xg);
         });
 
@@ -126,9 +126,9 @@ Engine_Nanotonic : CroneEngine {
 
         this.addCommand("nanotonic","fffffffffffffffffffi", { arg msg;
             // lua is sending 1-index
-            if (synNanotonic[msg[20]-1].isRunning,{
-                synNanotonic[msg[20]-1].free;
-            });
+            synNanotonic[msg[20]-1].free;
+            // if (synNanotonic[msg[20]-1].isRunning,{
+            // });
             synNanotonic[msg[20]-1]=Synth("nanotonic",[
                 \out,0,
                 \distAmt, msg[1],
@@ -158,7 +158,7 @@ Engine_Nanotonic : CroneEngine {
 
     free {
         // Nanotonic Specific v0.0.1
-        (0..3).do({arg i; synNanotonic[i].free});
+        (0..5).do({arg i; synNanotonic[i].free});
         // ^ Nanotonic specific
     }
 }

@@ -17,12 +17,12 @@ end
 
 
 function Menu:rebuild_menu(v)
-  for _,param_name in ipairs(self.param_names) do
+  for _,p in ipairs(self.parameters) do
     for i=1,drummer_number do
-      if i==v then
-        params:show(i..param_name)
+      if i==v and p.hidden==nil then
+        params:show(i..p.id)
       else
-        params:hide(i..param_name)
+        params:hide(i..p.id)
       end
     end
   end
@@ -128,11 +128,9 @@ function Menu:init()
         return "?"
       end
     end},
+    {id="pos",name="pos",range={1,32},default=1,hidden=true,isnumber=true},
+    {id="pattern",name="pattern",hidden=true,textmenu=true},
   }
-  self.param_names={}
-  for _, p in ipairs(self.parameters) do
-    table.insert(self.param_names,p.id)
-  end
   params:add_group("DRUMMY",1+#self.parameters*drummer_number)
   local drum_options={}
   for i=1,drummer_number do 
@@ -149,6 +147,10 @@ function Menu:init()
       if p.freq==true then 
         params:add{type="control",id=i..p.id,name=p.name,controlspec=controlspec.new(p.range[1],p.range[2],'exp',0,p.default,'Hz'),formatter=Formatters.format_freq,action=function(v)
         end}
+      elseif p.textmenu~=nil then
+        params:add_text(i..p.id,p.name,"")
+      elseif p.isnumber~=nil then
+        params:add_number(i..p.id,p.name,p.range[1],p.range[2],1)
       else
         params:add{type="control",id=i..p.id,name=p.name,controlspec=controlspec.new(p.range[1],p.range[2],p.curve or 'lin',0,p.default,p.unit,(p.increment or 0.1)/(p.range[2]-p.range[1])),formatter=p.formatter,action=function(v)
         end}

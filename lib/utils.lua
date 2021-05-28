@@ -8,3 +8,11 @@ function os.capture(cmd,raw)
   s=string.gsub(s,'[\n\r]+',' ')
   return s
 end
+
+function sign(d)
+  if d<0 then
+    return -1
+  else
+    return 1
+  end
+end

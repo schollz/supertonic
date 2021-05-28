@@ -17,8 +17,11 @@ json=require("cjson")
 include("lib/utils")
 -- global state
 drummer={} -- drummers
-drummer_number=3
+drummer_number=5
 drummer_density={0,1}
+shift=false
+update_screen=false
+current_page=1
 
 -- engine
 engine.name="Nanotonic"
@@ -73,24 +76,32 @@ function updater(c)
     print("starting up")
     startup()
   end
+  if update_screen then
+    redraw()
+  end
 end
 
 function enc(k,d)
-  if k>1 then
-    drummer_density[k-1]=drummer_density[k-1]+d/50
-    drummer_density[k-1]=util.clamp(drummer_density[k-1],0,1)
-    redraw()
+  if current_page==1 then
+    if k==2 then 
+      params:delta("selected",sign(d))
+    elseif k==3 then
+      params:delta(params:get("selected").."pos",d)
+    end
   end
+  update_screen=true
 end
 
 function key(k,z)
-  if z==1 then
-    local dp=drum_pattern:random(drummer_density[1],drummer_density[2])
-    drummer[1]:set_pattern(dp["kick"])
-    drummer[2]:set_pattern(dp["sd"])
-    drummer[3]:set_pattern(dp["ch"])
-    redraw()
+  if k==1 then 
+    shift=z==1
   end
+  if current_page==1 then
+    if k==3 and z==1 then
+      drummer[params:get("selected")]:toggle_pattern(params:get(params:get("selected").."pos"))
+    end
+  end
+  update_screen=true
 end
 
 
@@ -99,12 +110,23 @@ function redraw()
     do return end 
   end
   screen.clear()
-  screen.move(32,8)
-  screen.text_center(drummer_density[1].."-"..drummer_density[2])
+
+  -- draw tracks
   for i=1,drummer_number do 
-    screen.move(0,8+(i*12))
-    screen.text(drummer[i].pattern_string)
+    if params:get("selected")==i then 
+      screen.level(15)
+    else
+      screen.level(4)
+    end
+    screen.move(0,16+(i*9))
+    screen.text(params:get(i.."pattern"))
   end
+  -- draw current position
+  print(params:get(params:get("selected").."pos"))
+  screen.move((params:get(params:get("selected").."pos")-1)*4,19+(params:get("selected")*9))
+  screen.level(15)
+  screen.line_rel(3,0)
+  screen.stroke()
   screen.update()
 end
 

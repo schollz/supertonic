@@ -15,6 +15,7 @@ function Drummer:new(o)
   self.enabled=false
   self.id=o.id
   self.name=o.name 
+  o:set_pattern("--------------------------------")
   return o
 end
 
@@ -27,8 +28,20 @@ function Drummer:set_patch(patch)
 end
 
 function Drummer:set_pattern(pattern_string)
+  params:set(self.id.."pattern",pattern_string)
   self.pattern_string=pattern_string
   self.pattern=self:xox(pattern_string)
+end
+
+function Drummer:toggle_pattern(pos)
+  pos=math.floor(pos)
+  local current=self.pattern_string:sub(pos,pos)
+  if current=="-" then
+    current="x"
+  else
+    current="-"
+  end
+  self:set_pattern(self.pattern_string:sub(0,pos-1)..current..self.pattern_string:sub(pos+1))
 end
 
 function Drummer:enable()
