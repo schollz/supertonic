@@ -9,6 +9,18 @@ function os.capture(cmd,raw)
   return s
 end
 
+
+function string.split(s,sep)
+  local fields={}
+
+  local sep=sep or " "
+  local pattern=string.format("([^%s]+)",sep)
+  string.gsub(s,pattern,function(c) fields[#fields+1]=c end)
+
+  return fields
+end
+
+
 function sign(d)
   if d<0 then
     return -1

@@ -40,6 +40,8 @@ patches_=include("lib/patches")
 nanotonic_patches=patches_:new()
 menu_=include("lib/menu")
 menu__=menu_:new()
+db_=include("lib/db")
+db_pattern=db_:new()
 
 function init()
   -- start updater
@@ -110,7 +112,27 @@ function key(k,z)
   end
   if current_page==1 then
     if k==3 and z==1 then
-      drummer[params:get("selected")]:toggle_pattern(current_pos)
+      if shift then 
+      local pattern_string=params:get(params:get("selected").."pattern")
+        local pid1=db_pattern:pattern_to_num(pattern_string:sub(1,16))
+        local pid2=db_pattern:pattern_to_num(pattern_string:sub(17))
+        print(pid1,pid2)
+        local pid1new=db_pattern:like(params:get("selected"),1,pid1)
+        local pid2new=db_pattern:like(params:get("selected"),1,pid2)
+        if pid1new ~= nil and pid2new~=nil then
+          pattern_string=db_pattern:num_to_pattern(pid1new)..db_pattern:num_to_pattern(pid2new)
+          drummer[params:get("selected")]:set_pattern(pattern_string)
+        end
+      else
+        drummer[params:get("selected")]:toggle_pattern(current_pos)
+      end
+    elseif k==2 and z==1 then
+      local pattern_string=params:get(params:get("selected").."pattern")
+      local pid1=db_pattern:pattern_to_num(pattern_string:sub(1,16))
+      local pid2=db_pattern:adj(params:get("selected"),pid1)
+      if pid2~=nil then 
+        drummer[params:get("selected")]:set_pattern(pattern_string:sub(1,16)..db_pattern:num_to_pattern(pid2))
+      end
     end
   end
   update_screen=true
