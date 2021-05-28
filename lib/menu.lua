@@ -128,7 +128,6 @@ function Menu:init()
         return "?"
       end
     end},
-    {id="pos",name="pos",range={1,32},default=1,hidden=true,isnumber=true},
     {id="pattern",name="pattern",hidden=true,textmenu=true},
   }
   params:add_group("DRUMMY",1+#self.parameters*drummer_number)

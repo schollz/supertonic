@@ -20,8 +20,10 @@ drummer={} -- drummers
 drummer_number=5
 drummer_density={0,1}
 shift=false
+k3=false
 update_screen=false
 current_page=1
+current_pos=1
 
 -- engine
 engine.name="Nanotonic"
@@ -86,7 +88,15 @@ function enc(k,d)
     if k==2 then 
       params:delta("selected",sign(d))
     elseif k==3 then
-      params:delta(params:get("selected").."pos",d)
+      current_pos = current_pos + sign(d)
+      if current_pos > 32 then 
+        current_pos=1
+      elseif current_pos < 1 then 
+        current_pos = 32
+      end
+    end
+    if k3 then
+      drummer[params:get("selected")]:toggle_pattern(current_pos)
     end
   end
   update_screen=true
@@ -95,10 +105,12 @@ end
 function key(k,z)
   if k==1 then 
     shift=z==1
+  elseif k==3 then
+    k3=z==1
   end
   if current_page==1 then
     if k==3 and z==1 then
-      drummer[params:get("selected")]:toggle_pattern(params:get(params:get("selected").."pos"))
+      drummer[params:get("selected")]:toggle_pattern(current_pos)
     end
   end
   update_screen=true
@@ -122,8 +134,7 @@ function redraw()
     screen.text(params:get(i.."pattern"))
   end
   -- draw current position
-  print(params:get(params:get("selected").."pos"))
-  screen.move((params:get(params:get("selected").."pos")-1)*4,19+(params:get("selected")*9))
+  screen.move((current_pos-1)*4,19+(params:get("selected")*9))
   screen.level(15)
   screen.line_rel(3,0)
   screen.stroke()
