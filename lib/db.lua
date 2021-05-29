@@ -48,8 +48,10 @@ end
 -- assert(num_to_pattern(pattern_to_num("xxxxxxxxxxxxxxxx"))=="xxxxxxxxxxxxxxxx","BAD NUM")
 
 
-function DB:db_sql_weighted_(query)
-  local result=os.capture(string.format('sqlite3 /home/we/dust/code/nanotonic/db.db "%s"',query))
+function DB:db_sql_weighted_(query,dbname)
+  local cmd=string.format('sqlite3 /home/we/dust/code/nanotonic/%s "%s"',dbname,query)
+  print(cmd)
+  local result=os.capture(cmd)
   print(result)
   local pids={}
   local weights={}
@@ -57,7 +59,7 @@ function DB:db_sql_weighted_(query)
   for line in result:gmatch("%S+") do
     foo=string.split(line,"|")
     pid=tonumber(foo[1])
-    weight=tonumber(foo[2])
+    weight=math.floor(tonumber(foo[2]))
     table.insert(weights,weight)
     table.insert(pids,pid)
     total_weight=total_weight+weight
@@ -85,7 +87,7 @@ function DB:adj(ins,pid_base,not_pid)
   end
   local query=string.format([[SELECT pid,count(pid) FROM drum INDEXED BY idx_pidadj WHERE ins==%d AND pidadj==%d AND pid!=%d GROUP BY pid ORDER BY count(pid) DESC LIMIT 100]],ins,pid_base,not_pid==nil and-1 or not_pid)
   print(query)
-  self.last_pattern=self:db_sql_weighted_(query)
+  self.last_pattern=self:db_sql_weighted_(query,"db.db")
   return self.last_pattern
 end
 
@@ -93,9 +95,9 @@ function DB:like(ins,ins_base,pid_base,not_pid)
   if not_pid==nil then 
     not_pid=self.last_pattern
   end
-  local query=string.format([[SELECT pid,count(pid) FROM drum INDEXED BY idx_gid WHERE gid in (SELECT gid FROM drum INDEXED BY idx_pid WHERE ins==%d AND pid==%d) AND ins==%d AND pid!=%d GROUP BY pid ORDER BY count(pid) DESC LIMIT 100]],ins_base,pid_base,ins,not_pid==nil and-1 or not_pid)
+  local query=string.format([[SELECT pid,prob*100000 FROM prob INDEXED BY idx_inspid WHERE ins1==%d AND pidbase==%d AND ins2==%d AND pid!=%d]],ins_base,pid_base,ins,not_pid==nil and-1 or not_pid)
   print(query)
-  self.last_pattern=self:db_sql_weighted_(query)
+  self.last_pattern=self:db_sql_weighted_(query,"db2.db")
   return self.last_pattern
 end
 

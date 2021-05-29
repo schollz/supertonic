@@ -128,6 +128,9 @@ function Menu:init()
         return "?"
       end
     end},
+    {id="oscVel",name="osc velocity",range={0,200},default=100,increment=1,unit='%'},
+    {id="modVel",name="mod velocity",range={0,200},default=100,increment=1,unit='%'},
+    {id="nVel",name="noise velocity",range={0,200},default=100,increment=1,unit='%'},
     {id="pattern",name="pattern",hidden=true,textmenu=true},
   }
   params:add_group("DRUMMY",1+#self.parameters*drummer_number)

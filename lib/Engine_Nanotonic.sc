@@ -21,16 +21,16 @@ Engine_Nanotonic : CroneEngine {
             eQFreq=632.4,eQGain=(-20),
             oscAtk=0,oscDcy=500,
             oscWave=0,oscFreq=54,
-            modMode=0,modRate=17.78,modAmt=18,
+            modMode=0,modRate=400,modAmt=18,
             nEnvAtk=26,nEnvDcy=200,
             nFilFrq=1000,nFilQ=2.5,
             nFilMod=0,nEnvMod=0,nStereo=1,
             oscLevel=1,nLevel=1,
-            oscVel=100
+            oscVel=100,nVel=100,modVel=100
             ;
 
             // variables
-            var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,clapFrequency;
+            var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,clapFrequency,decayer;
 
             // convert to seconds from milliseconds
             oscAtk=DC.kr(oscAtk/1000);
@@ -38,6 +38,7 @@ Engine_Nanotonic : CroneEngine {
             nEnvAtk=DC.kr(nEnvAtk/1000);
             nEnvDcy=DC.kr(nEnvDcy/1000*1.4);
             level=DC.kr(level);
+            oscFreq=oscFreq-10;
 
             // white noise generators (expensive)
             wn1=WhiteNoise.ar();
@@ -46,15 +47,15 @@ Engine_Nanotonic : CroneEngine {
             // determine who should free
             oscFreeSelf=DC.kr(Select.kr(((oscAtk+oscDcy)>(nEnvAtk+nEnvDcy)),[0,2]));
 
-            // define pitch modulation
+            // define pitch modulation1
             pitchMod=Select.ar(modMode,[
-                Decay.ar(Impulse.ar(0.0001),1/modRate), // decay
+                Decay.ar(Impulse.ar(0.0001),(1/modRate)), // decay
                 SinOsc.ar(-1*modRate), // sine
-                Lag.ar(LFNoise0.ar(4*modRate),1/(modRate*4)), // random
+                Lag.ar(LFNoise0.ar(4*modRate),1/(4*modRate)), // random
             ]);
 
             // mix in the the pitch mod
-            oscFreq=(oscFreq.cpsmidi+(pitchMod*modAmt)).midicps;
+            oscFreq=((oscFreq).cpsmidi+((pitchMod*modAmt).midicps*LinLin.kr(modVel,0,200,4.0,0)));
 
             // define the oscillator
             osc=Select.ar(oscWave,[
@@ -62,15 +63,18 @@ Engine_Nanotonic : CroneEngine {
                 LFTri.ar(oscFreq+5)*0.5,
                 SawDPW.ar(oscFreq)*0.5,
             ]);
+            osc=SelectX.ar((modMode>1)*(modAmt.abs/48),[
+                osc,
+                LPF.ar(wn2,modRate),
+            ]);
 
-            // increase volume
-            //osc=(osc*LinLin.kr(oscVel,0,200,2,0)).softclip;
 
             // add oscillator envelope
-            osc = osc*SelectX.ar(Clip.kr(LinLin.kr(oscAtk,0,0.1,0,1)),[
-                Decay.ar(Impulse.ar(0),oscDcy),
-                EnvGen.ar(Env.perc(oscAtk, oscDcy,1,[0,-4]),doneAction:oscFreeSelf)
-            ]);
+            decayer=Select.kr(distAmt>50,[0.05,(distAmt-50)/50*0.3]);
+            osc=osc*EnvGen.ar(Env.new([0,1,0.9,0],[oscAtk,oscDcy*decayer,oscDcy],[0,-2,-12]),doneAction:oscFreeSelf);
+
+            // apply velocity
+            osc=(osc*LinLin.kr(oscVel,0,200,2,0)).softclip;
 
             // generate noise
             noz=wn1;
@@ -98,19 +102,19 @@ Engine_Nanotonic : CroneEngine {
             // apply envelope to noise
             noz=Splay.ar(nozPostF*nozEnv);
 
+            // apply velocities
+            noz=(noz*LinLin.kr(nVel,0,200,2,0)).softclip;
+
+            // apply distortion
+            osc=SineShaper.ar(osc,1.0,1+(distAmt/10)).softclip;
+
             // mix oscillator and noise
             snd=SelectX.ar(mix/100,[noz*nLevel.dbamp,osc*oscLevel]);
 
-            // apply distortion
-            snd=SelectX.ar(distAmt/100,[
-                (snd+(snd*distAmt/4)),
-                SineShaper.ar(snd,1.0,Clip.kr(distAmt-40,1,100)),
-            ]).softclip;
-
             // apply eq after distortion
-            snd=BPeakEQ.ar(snd,eQFreq,1,Select.kr(eQGain>0,[eQGain,eQGain/2]));
+            snd=BPeakEQ.ar(snd,eQFreq,0.5,eQGain);
 
-            snd=HPF.ar(snd,30);
+            snd=HPF.ar(snd,10);
 
             // level
             Out.ar(0, snd*level.dbamp*0.05);

@@ -19,7 +19,7 @@ function Dev:new(o)
   -- drummer[3]:set_pattern(dp["ch"])
   -- drummer[4]:set_pattern(dp["ch"])
   -- drummer[5]:set_pattern(dp["ch"])
-  local patches=nanotonic_patches:load("/home/we/dust/code/nanotonic/data/po-32_drum_bot_l4.mtpreset")
+  local patches=nanotonic_patches:load("/home/we/dust/code/nanotonic/data/defaults1")
   for i=1,5 do 
     drummer[i]:set_patch(patches[i])
   end
@@ -27,6 +27,8 @@ function Dev:new(o)
   for i=1,5 do 
     drummer[i]:enable()
   end
+
+  drummer[1]:set_pattern("x---x---x-----x-x-----x-x---x---")
   timekeeper:start()
 
   return o
