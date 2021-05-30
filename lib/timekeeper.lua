@@ -12,7 +12,7 @@ function Timekeeper:init()
     ppqn=64
   })
 
-  self.confettis={4,8,16,24}
+  self.confettis={4,8,16,24,32,48}
   self.next=8
   self.step=1
   self.pattern={}

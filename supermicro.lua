@@ -178,7 +178,7 @@ function redraw()
     line(x+u,y+v)
   end
   screen.level(0)
-  screen.rect(0,20,128,64)
+  screen.rect(0,19,128,64)
   screen.fill()
 
   if shift then
