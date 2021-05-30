@@ -202,9 +202,6 @@ function Patches:load(preset_file)
       end
     end
   end
-  for i,p in ipairs(patches) do
-    print(p.name,p.oscAtk,p.oscDcy)
-  end
   return patches
 end
 
