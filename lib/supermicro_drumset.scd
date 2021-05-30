@@ -103,9 +103,6 @@
 
 // 3. define the rhythms
 (
-// ~kick=~er.(4).rotate(0)+~er.(1).rotate(15);
-//~kick=~er.(4).rotate(2)+~er.(7);
-// ~kick=~er.(3).rotate(2)+~er.(7);
 ~kick=~er.(0);
 ~kick=~er.(2).rotate(2);
 ~kick=~er.(3).rotate(2)+~er.(1);

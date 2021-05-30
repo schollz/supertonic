@@ -128,10 +128,12 @@ Engine_Supermicro : CroneEngine {
             snd=BPeakEQ.ar(snd,eQFreq,1,eQGain/2);
 
             snd=HPF.ar(snd,20);
-
-            // level
-            Out.ar(0, snd*level.dbamp*0.05);
-        }).add;
+			// level
+			snd=snd*level.dbamp*0.2;
+			// free self if its quiet
+			FreeSelf.kr(Amplitude.kr(snd)<0.0001);
+			Out.ar(0, snd);
+		}).add;
 
         context.server.sync;
 

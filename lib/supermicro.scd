@@ -115,7 +115,40 @@ SynthDef("supermicro", {
 
 	snd=HPF.ar(snd,20);
 
-    // level
-	Out.ar(0, snd*level.dbamp*0.2);
+	snd=snd*level.dbamp*0.2;
+	// free self if its quiet
+	FreeSelf.kr(Amplitude.kr(snd)<0.0001);
+
+	// level
+	Out.ar(0, snd);
 }).add;
+)
+
+
+// Name: "SC BD Toxyk"
+(
+Synth("supermicro",[
+\distAmt,34.064063429832,
+\eQFreq,80.661909666463,
+\eQGain,30.246815681458,
+\level,-5.1201522322287,
+\mix,88.153877258301,
+\modAmt,33.019509360458,
+\modMode,0,
+\modRate,4.0523291566457,
+\modVel,35.558253526688,
+\nEnvAtk,2.1977363693469,
+\nEnvDcy,1104.977660676,
+\nEnvMod,0,
+\nFilFrq,392.00617432122,
+\nFilMod,0,
+\nFilQ,1.463421337541,
+\nStereo,1,
+\nVel,40.751650929451,
+\oscAtk,0,
+\oscDcy,726.5732892423,
+\oscFreq,48.060961337325,
+\oscVel,38.951644301414,
+\oscWave,0,
+]);
 )
