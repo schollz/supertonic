@@ -14,10 +14,14 @@ function Timekeeper:init()
 
   self.confettis={4,8,16,24}
   self.next=8
+  self.step=1
   self.pattern={}
   for i=1,drummer_number do
     self.pattern[i]=self.lattice:new_pattern{
       action=function(t)
+        if i==1 then 
+          self.step=(t/16+1)%32+1
+        end
         if i==1 and (t/16+1)%self.next==0 then 
           self.next=self.confettis[math.random(#self.confettis)]
           reset_confetti()

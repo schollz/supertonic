@@ -46,7 +46,7 @@ db_pattern=db_:new()
 function init()
   -- start updater
   runner=metro.init()
-  runner.time=1/15
+  runner.time=1/12
   runner.count=-1
   runner.event=updater
   runner:start()
@@ -188,6 +188,12 @@ function redraw()
     screen.rect(0,10+(i*9),128,8)
     screen.fill()
   end
+
+  -- draw beat
+  screen.level(4)
+  screen.rect((timekeeper.step-1)*4,19,4,64)
+  screen.fill()
+
   -- draw tracks
   for i=1,drummer_number do 
     if shift and i==math.floor(params:get(params:get("selected").."basis")) then

@@ -48,8 +48,8 @@ end
 -- assert(num_to_pattern(pattern_to_num("xxxxxxxxxxxxxxxx"))=="xxxxxxxxxxxxxxxx","BAD NUM")
 
 
-function DB:db_sql_weighted_(query,dbname)
-  local cmd=string.format('sqlite3 /home/we/dust/code/supermicro/%s "%s"',dbname,query)
+function DB:db_sql_weighted_(query)
+  local cmd=string.format('sqlite3 /home/we/dust/data/supermicro/drum_ai_patterns.db "%s"',query)
   print(cmd)
   local result=os.capture(cmd)
   print(result)
@@ -91,7 +91,7 @@ function DB:like(ins,ins_base,pid_base,not_pid)
   end
   local query=string.format([[SELECT pid,prob*100000 FROM prob INDEXED BY idx_inspid WHERE ins1==%d AND pidbase==%d AND ins2==%d AND pid!=%d]],ins_base,pid_base,ins,not_pid==nil and-1 or not_pid)
   print(query)
-  self.last_pattern=self:db_sql_weighted_(query,"db2.db")
+  self.last_pattern=self:db_sql_weighted_(query)
   return self.last_pattern
 end
 
