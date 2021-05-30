@@ -65,7 +65,7 @@ function Drummer:step(beat)
     id=1
   end
   if self.pattern(beat) then
-    engine.supermicro(
+    engine.supertonic(
       params:get(id.."distAmt"),
       params:get(id.."eQFreq"),
       params:get(id.."eQGain"),

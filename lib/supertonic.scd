@@ -1,5 +1,5 @@
 (
-SynthDef("supermicro", {
+SynthDef("supertonic", {
     arg out,
     mix=50,level=(-5),distAmt=2,
     eQFreq=632.4,eQGain=(-20),
@@ -127,7 +127,7 @@ SynthDef("supermicro", {
 
 // Name: "SC BD Toxyk"
 (
-Synth("supermicro",[
+Synth("supertonic",[
 \distAmt,34.064063429832,
 \eQFreq,80.661909666463,
 \eQGain,30.246815681458,

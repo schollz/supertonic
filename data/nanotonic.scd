@@ -1,5 +1,5 @@
 (
-SynthDef("supermicro", {
+SynthDef("supertonic", {
 	arg out,
 	mix=50,level=(-5),distAmt=2,
 	eQFreq=632.4,eQGain=(-20),

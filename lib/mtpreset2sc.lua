@@ -212,7 +212,7 @@ patches=patchloader:load(arg[1])
 for _,p in ipairs(patches) do
 	print("// "..p.name)
 	print("(")
-	print('Synth("supermicro",[')
+	print('Synth("supertonic",[')
 	keys={}
 	for k,v in pairs(p) do
 		table.insert(keys,k)

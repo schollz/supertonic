@@ -49,7 +49,7 @@ end
 
 
 function DB:db_sql_weighted_(query)
-  local cmd=string.format('sqlite3 /home/we/dust/data/supermicro/drum_ai_patterns.db "%s"',query)
+  local cmd=string.format('sqlite3 /home/we/dust/data/supertonic/drum_ai_patterns.db "%s"',query)
   print(cmd)
   local result=os.capture(cmd)
   print(result)

@@ -2,7 +2,7 @@
 (
 ~er = { | o = 1, p = 16 |(o / p * (0..p - 1)).floor.differentiate.asInteger.min(1)[0] = if (o <= 0) { 0 } { 1 };};
 
-~kicksound={Synth("supermicro",[
+~kicksound={Synth("supertonic",[
 \distAmt,34.064063429832,
 \eQFreq,80.661909666463,
 \eQGain,30.246815681458,
@@ -26,7 +26,7 @@
 \oscVel,38.951644301414,
 \oscWave,0,
 ])};
-~hhsound={Synth("supermicro",[
+~hhsound={Synth("supertonic",[
 \distAmt,1.9999999552965,
 \eQFreq,111.80335896926,
 \eQGain,-36.059684753418,
@@ -50,7 +50,7 @@
 \oscVel,40.999999642372,
 \oscWave,0,
 ])};
-~sdsound={Synth("supermicro",[
+~sdsound={Synth("supertonic",[
 \distAmt,35.499998927116,
 \eQFreq,59.707651558903,
 \eQGain,-40,
@@ -74,7 +74,7 @@
 \oscVel,33.000001311302,
 \oscWave,0,
 ])};
-~clapsound={Synth("supermicro",[
+~clapsound={Synth("supertonic",[
 \distAmt,18.334101140499,
 \eQFreq,981.49547151245,
 \eQGain,28.736724853516,
