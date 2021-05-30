@@ -12,10 +12,16 @@ function Timekeeper:init()
     ppqn=64
   })
 
+  self.confettis={4,8,16,24}
+  self.next=8
   self.pattern={}
   for i=1,drummer_number do
     self.pattern[i]=self.lattice:new_pattern{
       action=function(t)
+        if i==1 and (t/16+1)%self.next==0 then 
+          self.next=self.confettis[math.random(#self.confettis)]
+          reset_confetti()
+        end
         drummer[i]:step(t/16+1)
       end,
       division=1/16

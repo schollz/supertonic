@@ -132,6 +132,7 @@ function Menu:init()
     {id="modVel",name="mod velocity",range={0,200},default=100,increment=1,unit='%'},
     {id="nVel",name="noise velocity",range={0,200},default=100,increment=1,unit='%'},
     {id="pattern",name="pattern",hidden=true,textmenu=true},
+    {id="basis",name="basis",range={1,5},default=1,increment=1,hidden=true},
   }
   params:add_group("DRUMMY",1+#self.parameters*drummer_number)
   local drum_options={}

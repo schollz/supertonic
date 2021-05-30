@@ -28,7 +28,7 @@ function Dev:new(o)
     drummer[i]:enable()
   end
 
-  drummer[1]:set_pattern("x---x---x-----x-x---x---x---x---")
+  -- drummer[1]:set_pattern("x---x---x-----x-x---x---x---x---")
   timekeeper:start()
 
   return o
