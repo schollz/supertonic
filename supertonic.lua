@@ -194,6 +194,11 @@ function redraw()
   screen.rect((timekeeper.step-1)*4,19,4,64)
   screen.fill()
 
+  -- draw current position
+  screen.level(3)
+  screen.rect((current_pos-1)*4,10+(params:get("selected")*9),3,8)
+  screen.fill()
+
   -- draw tracks
   for i=1,drummer_number do 
     if shift and i==math.floor(params:get(params:get("selected").."basis")) then
@@ -206,10 +211,5 @@ function redraw()
     screen.move(0,16+(i*9))
     screen.text(params:get(i.."pattern"))
   end
-  -- draw current position
-  screen.move((current_pos-1)*4,19+(params:get("selected")*9))
-  screen.level(15)
-  screen.line_rel(3,0)
-  screen.stroke()
   screen.update()
 end
