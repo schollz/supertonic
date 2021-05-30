@@ -79,7 +79,7 @@ SynthDef("nanotonic", {
     // define noise envelope
     nozEnv=Select.ar(nEnvMod,[
         EnvGen.ar(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential),doneAction:(2-oscFreeSelf)),
-		EnvGen.ar(Env.new([0.0001,1,0.9,0.0001],[nEnvAtk,nEnvDcy*decayer,nEnvDcy],\linear)),
+		EnvGen.ar(Env.new([0.0001,1,0.9,0.0001],[nEnvAtk,nEnvDcy*decayer,nEnvDcy*(1-decayer)],\linear)),
         Decay.ar(Impulse.ar(clapFrequency),1/clapFrequency,0.85,0.15)*Trig.ar(1,nEnvAtk+0.001)+EnvGen.ar(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential)),
     ]);
 
@@ -102,7 +102,13 @@ SynthDef("nanotonic", {
 	osc=SineShaper.ar(osc,1.0,1+(10/(1+(2.7182**((50-distAmt)/8))))).softclip;
 
     // mix oscillator and noise
-	snd=Mix.ar([osc*(mix/100),2*noz*(1-(mix/100))]);
+	snd=SelectX.ar(mix/100*2,[
+		noz*0.5,
+		noz*2,
+  		osc*1
+    ]);
+
+
 
     // apply eq after distortion
    snd=BPeakEQ.ar(snd,eQFreq,1,eQGain/2);
