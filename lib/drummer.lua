@@ -85,6 +85,9 @@ function Drummer:step(beat)
       params:get(id.."oscDcy"),
       params:get(id.."oscFreq"),
       params:get(id.."oscWave"),
+      params:get(id.."oscVel"),
+      params:get(id.."nVel"),
+      params:get(id.."modVel"),
       id
     )
   end

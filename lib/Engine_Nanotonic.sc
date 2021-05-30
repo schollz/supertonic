@@ -169,7 +169,7 @@ Engine_Nanotonic : CroneEngine {
                 \oscWave, msg[19],
                 \oscVel, msg[20],
                 \nVel, msg[21],
-                \modeVel, msg[22],
+                \modVel, msg[22],
             ], target:context.server);
         });
         // ^ Nanotonic specific
