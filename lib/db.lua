@@ -82,13 +82,7 @@ function DB:db_sql_weighted_(query,dbname)
 end
 
 function DB:adj(ins,pid_base,not_pid)
-  if not_pid==nil then 
-    not_pid=self.last_pattern
-  end
-  local query=string.format([[SELECT pid,count(pid) FROM drum INDEXED BY idx_pidadj WHERE ins==%d AND pidadj==%d AND pid!=%d GROUP BY pid ORDER BY count(pid) DESC LIMIT 100]],ins,pid_base,not_pid==nil and-1 or not_pid)
-  print(query)
-  self.last_pattern=self:db_sql_weighted_(query,"db.db")
-  return self.last_pattern
+  return self:like(ins,ins,pid_base,not_pid)
 end
 
 function DB:like(ins,ins_base,pid_base,not_pid)

@@ -113,10 +113,6 @@ function key(k,z)
   if current_page==1 then
     if k==3 and z==1 then
       if shift then 
-      else
-        drummer[params:get("selected")]:toggle_pattern(current_pos)
-      end
-    elseif k==2 and z==1 then
         local pattern_string=params:get(params:get("selected").."pattern")
         local pid1=db_pattern:pattern_to_num(pattern_string:sub(1,16))
         local pid2=db_pattern:pattern_to_num(pattern_string:sub(17))
@@ -127,12 +123,18 @@ function key(k,z)
           pattern_string=db_pattern:num_to_pattern(pid1new)..db_pattern:num_to_pattern(pid2new)
           drummer[params:get("selected")]:set_pattern(pattern_string)
         end
-      -- local pattern_string=params:get(params:get("selected").."pattern")
-      -- local pid1=db_pattern:pattern_to_num(pattern_string:sub(1,16))
-      -- local pid2=db_pattern:adj(params:get("selected"),pid1)
-      -- if pid2~=nil then 
-      --   drummer[params:get("selected")]:set_pattern(pattern_string:sub(1,16)..db_pattern:num_to_pattern(pid2))
-      -- end
+      else
+        drummer[params:get("selected")]:toggle_pattern(current_pos)
+      end
+    elseif k==2 and z==1 then
+      if shift then
+        local pattern_string=params:get(params:get("selected").."pattern")
+        local pid1=db_pattern:pattern_to_num(pattern_string:sub(1,16))
+        local pid2=db_pattern:adj(params:get("selected"),pid1)
+        if pid2~=nil then 
+          drummer[params:get("selected")]:set_pattern(pattern_string:sub(1,16)..db_pattern:num_to_pattern(pid2))
+        end
+      end
     end
   end
   update_screen=true
