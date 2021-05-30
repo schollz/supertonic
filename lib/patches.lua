@@ -175,7 +175,7 @@ function Patches:load(preset_file)
           val=tonumber(num)
         end
         patches[i].nVel=val
-      elseif line:find("modVel")==1 then
+      elseif line:find("ModVel")==1 then
         local val=0
         for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
           val=tonumber(num)

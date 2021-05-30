@@ -57,7 +57,7 @@ for i=1,16 do
 end
 
 patchloader=require("patches")
-patches=patchloader:load("../data/defaults1.mtpreset")
+patches=patchloader:load("../data/po-32_drum_bot_l4.mtpreset")
 
 for _,p in ipairs(patches) do
 	print("// "..p.name)
