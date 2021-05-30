@@ -1,6 +1,18 @@
--- supertonic v0.0.0
+-- supertonic v0.0.1
+-- a drum machine with a brain
+--
+-- llllllll.co/t/supertonic
 --
 --
+--
+--    ▼ instructions below ▼
+--
+-- E2 changes track
+-- E3 changes position in track
+-- K2 clears track
+-- K3 toggles hit
+-- (with ai) K1+K3 generates
+-- (with ai) K1+K2 generates
 
 include('lib/p8')
 mode_debug=true

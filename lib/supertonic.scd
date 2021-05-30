@@ -10,13 +10,14 @@ SynthDef("supertonic", {
     nFilFrq=1000,nFilQ=2.5,
     nFilMod=0,nEnvMod=0,nStereo=1,
     oscLevel=1,nLevel=1,
-	oscVel=100,nVel=100,modVel=100
-    ;
+	oscVel=100,nVel=100,modVel=100,
+    vel=64;
 
     // variables
     var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,clapFrequency,decayer;
 
     // convert to seconds from milliseconds
+	vel=LinLin.kr(vel,0,128,0,2);
     oscAtk=DC.kr(oscAtk/1000);
     oscDcy=DC.kr(oscDcy/1000);
     nEnvAtk=DC.kr(nEnvAtk/1000);
@@ -44,7 +45,7 @@ SynthDef("supertonic", {
     ]);
 
     // mix in the the pitch mod
-	pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)**1);
+	pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
 	oscFreq=((oscFreq).cpsmidi+pitchMod).midicps;
 
     // define the oscillator
@@ -67,7 +68,7 @@ SynthDef("supertonic", {
 	osc=osc*EnvGen.ar(Env.new([0.0001,1,0.9,0.0001],[oscAtk,oscDcy*decayer,oscDcy],\exponential),doneAction:oscFreeSelf);
 
     // apply velocity
-    osc=(osc*LinLin.kr(oscVel,0,200,1,0)).softclip;
+    osc=(osc*LinLin.kr(oscVel,0,200,1,0)*vel).softclip;
 
     // generate noise
     noz=wn1;
@@ -96,7 +97,7 @@ SynthDef("supertonic", {
     noz=Splay.ar(nozPostF*nozEnv);
 
 	// apply velocities
-    noz=(noz*LinLin.kr(nVel,0,200,1,0)).softclip;
+    noz=(noz*LinLin.kr(nVel,0,200,1,0)*vel).softclip;
 
     // apply distortion
 	osc=SineShaper.ar(osc,1.0,1+(10/(1+(2.7182**((50-distAmt)/8))))).softclip;

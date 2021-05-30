@@ -23,6 +23,7 @@ Synth("supertonic",[
 \oscFreq,48.060961337325,
 \oscVel,38.951644301414,
 \oscWave,0,
+\vel,64,
 ]);
 )
 // Name: "RD GSn"
@@ -50,6 +51,7 @@ Synth("supertonic",[
 \oscFreq,251.73534018926,
 \oscVel,33.000001311302,
 \oscWave,0,
+\vel,64
 ]);
 )
 // Name: "LV HH HT"
@@ -104,6 +106,7 @@ Synth("supertonic",[
 \oscFreq,2459.9589879903,
 \oscVel,34.999999403954,
 \oscWave,0,
+\vel,80,
 ]);
 )
 // Name: "SC BD Schmack"
