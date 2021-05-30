@@ -24,7 +24,7 @@ function Patterns:random(density_min,density_max)
   local density=-1
   local pattern_string=""
   while density<density_min or density>density_max do
-    pattern_string = os.capture("shuf -n1 /home/we/dust/code/nanotonic/data/patterns.json")
+    pattern_string = os.capture("shuf -n1 /home/we/dust/code/supermicro/data/patterns.json")
     num_xs=0
     num_dashes=0
     for c in pattern_string:gmatch"." do

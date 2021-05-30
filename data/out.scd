@@ -1,6 +1,6 @@
 // Name: "SC BD Toxyk"
 (
-Synth("nanotonic",[
+Synth("supermicro",[
 \distAmt,34.064063429832,
 \eQFreq,80.661909666463,
 \eQGain,30.246815681458,
@@ -24,7 +24,7 @@ Synth("nanotonic",[
 )
 // Name: "RD GSn"
 (
-Synth("nanotonic",[
+Synth("supermicro",[
 \distAmt,35.499998927116,
 \eQFreq,59.707651558903,
 \eQGain,-40.0,
@@ -48,7 +48,7 @@ Synth("nanotonic",[
 )
 // Name: "LV HH HT"
 (
-Synth("nanotonic",[
+Synth("supermicro",[
 \distAmt,1.9999999552965,
 \eQFreq,111.80335896926,
 \eQGain,-36.059684753418,
@@ -72,7 +72,7 @@ Synth("nanotonic",[
 )
 // Name: "VT-808 CP"
 (
-Synth("nanotonic",[
+Synth("supermicro",[
 \distAmt,18.334101140499,
 \eQFreq,981.49547151245,
 \eQGain,28.736724853516,
@@ -96,7 +96,7 @@ Synth("nanotonic",[
 )
 // Name: "SC BD Schmack"
 (
-Synth("nanotonic",[
+Synth("supermicro",[
 \distAmt,33.160901069641,
 \eQFreq,479.95005904163,
 \eQGain,-40.0,
@@ -120,7 +120,7 @@ Synth("nanotonic",[
 )
 // Name: "SC SD Zeroto9 Short"
 (
-Synth("nanotonic",[
+Synth("supermicro",[
 \distAmt,30.679792165756,
 \eQFreq,347.20036170848,
 \eQGain,-17.492098808289,
@@ -144,7 +144,7 @@ Synth("nanotonic",[
 )
 // Name: "LV HH HT"
 (
-Synth("nanotonic",[
+Synth("supermicro",[
 \distAmt,1.9999999552965,
 \eQFreq,111.80335896926,
 \eQGain,-36.059684753418,
@@ -168,7 +168,7 @@ Synth("nanotonic",[
 )
 // Name: "VT-LM2 Cabasa"
 (
-Synth("nanotonic",[
+Synth("supermicro",[
 \distAmt,55.417519807816,
 \eQFreq,3564.8802316542,
 \eQGain,17.545299530029,

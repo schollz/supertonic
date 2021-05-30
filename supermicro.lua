@@ -1,4 +1,4 @@
--- thirtythree v0.1.0
+-- supermicro v0.0.0
 --
 --
 
@@ -8,8 +8,8 @@ mode_debug=true
 --json
 print(_VERSION)
 print(package.cpath)
-if not string.find(package.cpath,"/home/we/dust/code/nanotonic/lib/") then
-  package.cpath=package.cpath..";/home/we/dust/code/nanotonic/lib/?.so"
+if not string.find(package.cpath,"/home/we/dust/code/supermicro/lib/") then
+  package.cpath=package.cpath..";/home/we/dust/code/supermicro/lib/?.so"
 end
 json=require("cjson")
 
@@ -26,7 +26,7 @@ current_page=1
 current_pos=1
 
 -- engine
-engine.name="Nanotonic"
+engine.name="Supermicro"
 
 -- individual libraries
 lattice=include("thirtythree/lib/lattice")
@@ -37,7 +37,7 @@ dev_=include("lib/dev")
 patterns_=include("lib/patterns")
 drum_pattern=patterns_:new()
 patches_=include("lib/patches")
-nanotonic_patches=patches_:new()
+supermicro_patches=patches_:new()
 menu_=include("lib/menu")
 menu__=menu_:new()
 db_=include("lib/db")

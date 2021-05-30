@@ -62,7 +62,7 @@ patches=patchloader:load(arg[1])
 for _,p in ipairs(patches) do
 	print("// "..p.name)
 	print("(")
-	print('Synth("nanotonic",[')
+	print('Synth("supermicro",[')
 	keys={}
 	for k,v in pairs(p) do
 		table.insert(keys,k)
@@ -81,7 +81,7 @@ end
 
 
 -- for _,p in ipairs(patches) do
--- 	print('engine.nanotonic=(')
+-- 	print('engine.supermicro=(')
 -- 	keys={}
 -- 	for k,v in pairs(p) do
 -- 		table.insert(keys,k)

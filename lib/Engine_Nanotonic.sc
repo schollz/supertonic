@@ -1,21 +1,21 @@
-// Engine_Nanotonic
+// Engine_Supermicro
 
 // Inherit methods from CroneEngine
-Engine_Nanotonic : CroneEngine {
+Engine_Supermicro : CroneEngine {
 
-    // Nanotonic specific v0.1.0
-    var synNanotonic;
-    // Nanotonic ^
+    // Supermicro specific v0.1.0
+    var synSupermicro;
+    // Supermicro ^
 
     *new { arg context, doneCallback;
         ^super.new(context, doneCallback);
     }
 
     alloc {
-        // Nanotonic specific v0.0.1
-        synNanotonic=Array.new(maxSize:5);
+        // Supermicro specific v0.0.1
+        synSupermicro=Array.new(maxSize:5);
 
-        SynthDef("nanotonic", {
+        SynthDef("supermicro", {
             arg out,
             mix=50,level=(-5),distAmt=2,
             eQFreq=632.4,eQGain=(-20),
@@ -135,18 +135,18 @@ Engine_Nanotonic : CroneEngine {
 
         context.server.sync;
 
-        synNanotonic = Array.fill(5,{arg i;
-            Synth("nanotonic", [\level,-100],target:context.xg);
+        synSupermicro = Array.fill(5,{arg i;
+            Synth("supermicro", [\level,-100],target:context.xg);
         });
 
         context.server.sync;
 
-        this.addCommand("nanotonic","ffffffffffffffffffffffi", { arg msg;
+        this.addCommand("supermicro","ffffffffffffffffffffffi", { arg msg;
             // lua is sending 1-index
-            synNanotonic[msg[20]-1].free;
-            // if (synNanotonic[msg[20]-1].isRunning,{
+            synSupermicro[msg[20]-1].free;
+            // if (synSupermicro[msg[20]-1].isRunning,{
             // });
-            synNanotonic[msg[23]-1]=Synth("nanotonic",[
+            synSupermicro[msg[23]-1]=Synth("supermicro",[
                 \out,0,
                 \distAmt, msg[1],
                 \eQFreq, msg[2],
@@ -172,13 +172,13 @@ Engine_Nanotonic : CroneEngine {
                 \modVel, msg[22],
             ], target:context.server);
         });
-        // ^ Nanotonic specific
+        // ^ Supermicro specific
 
     }
 
     free {
-        // Nanotonic Specific v0.0.1
-        (0..5).do({arg i; synNanotonic[i].free});
-        // ^ Nanotonic specific
+        // Supermicro Specific v0.0.1
+        (0..5).do({arg i; synSupermicro[i].free});
+        // ^ Supermicro specific
     }
 }
