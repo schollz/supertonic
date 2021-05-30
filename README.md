@@ -3,7 +3,7 @@
 
 a microtonic-based drum engine and AI-based drum machine.
 
-![Image]()
+![Image](https://user-images.githubusercontent.com/6550035/120124212-22d3d680-c168-11eb-9b83-6d9b29303972.png)
 
 why.
 
