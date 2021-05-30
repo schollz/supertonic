@@ -139,6 +139,8 @@ function key(k,z)
         if pid2~=nil then 
           drummer[params:get("selected")]:set_pattern(pattern_string:sub(1,16)..db_pattern:num_to_pattern(pid2))
         end
+      else
+        drummer[params:get("selected")]:set_pattern("--------------------------------")
       end
     end
   end
@@ -168,7 +170,7 @@ function redraw()
   p8p=p8p+k
   p8q=p8q+l
   srand()
-  for d=1,10,.1 do
+  for d=1,14,.1 do
     local x=(p8r(146)+p8p*d/8)%146-9
     local y=(p8r(146)+p8q*d/8)%146-9
     local a=d+t()*(1+p8r())/2
@@ -178,25 +180,25 @@ function redraw()
     line(x+u,y+v)
   end
   screen.level(0)
-  screen.rect(0,19,128,64)
+  screen.rect(0,25,128,64)
   screen.fill()
 
   if shift then
     -- show basis
     local i=math.floor(params:get(params:get("selected").."basis"))
     screen.level(4)
-    screen.rect(0,10+(i*9),128,8)
+    screen.rect(0,17+(i*8),128,8)
     screen.fill()
   end
 
   -- draw beat
   screen.level(4)
-  screen.rect((timekeeper.step-1)*4,19,4,64)
+  screen.rect((timekeeper.step-1)*4,25,4,64)
   screen.fill()
 
   -- draw current position
   screen.level(3)
-  screen.rect((current_pos-1)*4,10+(params:get("selected")*9),3,8)
+  screen.rect((current_pos-1)*4,17+(params:get("selected")*8),3,8)
   screen.fill()
 
   -- draw tracks
@@ -208,7 +210,7 @@ function redraw()
     else
       screen.level(4)
     end
-    screen.move(0,16+(i*9))
+    screen.move(0,23+(i*8))
     screen.text(params:get(i.."pattern"))
   end
   screen.update()
