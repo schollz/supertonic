@@ -4,12 +4,12 @@ a microtonic-based drum engine and AI-based drum machine.
 
 ![Image](https://user-images.githubusercontent.com/6550035/120124212-22d3d680-c168-11eb-9b83-6d9b29303972.png)
 
-this script contains two musical aspirations:
+this script is a product two personal musical aspirations:
 
-1) generating new drum rhythms based on known rhythms
-2) generating all drum sounds from a single engine
+1) to generate "new" drum rhythms based on known rhythms
+2) to generate drum sounds from a single engine (using shared parameters)
 
-the first aspiration simply uses [Google's "variational autoencoder" for drum performances](https://github.com/magenta/magenta/tree/master/magenta/models/music_vae). [their blog post](https://magenta.tensorflow.org/groovae) explains it best (and [their paper explains it better](https://arxiv.org/pdf/1803.05428.pdf)), but essentially they had professional drummers play and electronic drum-set for 12+ hours which was later used to feed a special kind of neural network. I used their model from this network and sampled it randomly to produce "new" drum rhythms, and then I created prior distributions for each instrument in the set. so for example, this can be used ot generate a snare drum pattern based on a kick drum, or generate a hihat pattern based on a snare drum, etc. etc.
+the first aspiration to make generative rhythms was accomplished here using [Google's "variational autoencoder" for drum performances](https://github.com/magenta/magenta/tree/master/magenta/models/music_vae). [their blog post](https://magenta.tensorflow.org/groovae) explains it best (and [their paper explains it better](https://arxiv.org/pdf/1803.05428.pdf)), but essentially they had professional drummers play and electronic drum-set for 12+ hours which was later used to feed a special kind of neural network. I used their model from this network and sampled it randomly to produce "new" drum rhythms (>~1,000,000 of them), and then I created prior distributions from those for each instrument in the set for fast indexing. the finals result is a probability table that can generate a snare drum pattern based on a kick drum pattern, or generate a hihat pattern based on a snare drum pattern, etc. etc.
 
 the second aspiration was to try out using a single engine for all the drum sounds (kick, snare, closed hat, open hat, clap). to do this I attempted to "port" the [microtonic VST by SonicCharge](https://soniccharge.com/microtonic). the act of porting is not straightforward and the experience itself was a big part of the aspiration - it helped me to learn how to use SuperCollider as I tried to match up sounds between the VST and SuperCollider using my ear. I learned there is a lot of beautiful magic in microtonic that makes it sounds wonderful, and I doubt I got half of the magic that's in the actual VST, but it turned out pretty close. a little example of the trials of porting include trying to find this strange non-linear relationship between the "attack time" and the "retrigger rate" to get the modulation for the noise envelope (which is important for the clap sound), I ended up plotting waveforms, measuring peak-to-peaks, and fitting a random nonlinear curve which "works":
 
