@@ -17,7 +17,7 @@ these generative rhythms are accomplished using [Google's "variational autoencod
 
 the sounds for this drum machine come from a new engine which I call "supertonic" because it is a as-close-as-I-can port of the [microtonic VST by SonicCharge](https://soniccharge.com/microtonic). 
 
-the act of porting is not straightforward and the experience itself was a motivation for this script - it helped me to learn how to use SuperCollider as I tried to match up sounds between the VST and SuperCollider using my ear. I learned there is a lot of beautiful magic in microtonic that makes it sounds wonderful, and I doubt I got half of the magic that's in the actual VST. looking at the resulting engine you might notice some weird equations...
+the act of porting is not straightforward and the experience itself was a motivation for this script - it helped me to learn how to use SuperCollider as I tried to match up sounds between the VST and SuperCollider using my ear. I learned there is a lot of beautiful magic in microtonic that makes it sounds wonderful, and I doubt I got half of the magic that's in the actual VST. looking at the resulting engine you might notice some weird equations that are supposed to be approximating this behavior.
 
 ### drummer in a box
 
