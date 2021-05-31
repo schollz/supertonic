@@ -118,7 +118,7 @@ SynthDef("supertonic", {
 
 	snd=snd*level.dbamp*0.2;
 	// free self if its quiet
-	FreeSelf.kr((Amplitude.kr(snd)<0.0001)*TDelay.kr(DC.kr(1),0.1));
+	FreeSelf.kr((Amplitude.kr(snd)<0.0001)*TDelay.kr(DC.kr(1),0.05));
 
 	// level
 	Out.ar(0, snd);
