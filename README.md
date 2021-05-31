@@ -3,7 +3,6 @@
 
 ![Image](https://user-images.githubusercontent.com/6550035/120124212-22d3d680-c168-11eb-9b83-6d9b29303972.png)
 
-
 an introspective drum machine that looks into itself and produces rhythm from its own self-examination.
 
 https://vimeo.com/557258118
@@ -12,7 +11,7 @@ https://vimeo.com/557258118
 
 this drum machine introspects by looking at any of the current drum patterns and generating a new drum pattern based specifically on that pattern and which instruments they are (e.g. a snare rhythm based on the kick pattern).
 
-these generative rhythms are accomplished using [Google's "variational autoencoder"](https://github.com/magenta/magenta/tree/master/magenta/models/music_vae) for drum performances. [their blog post](https://magenta.tensorflow.org/groovae) explains it best (and [their paper](https://arxiv.org/pdf/1803.05428.pdf) explains it better), but essentially they had professional drummers play and electronic drum-set for 12+ hours which was later used to feed a special kind of neural network. I used their model from this network and sampled it randomly to produce "new" groups of drum rhythms (>~1,000,000 of them). then I created probability distributions from calculating bayesian probabilities from each instrument to each other instrument, within each rhythm grouping. this probability table can then generate a snare drum pattern based on a kick drum pattern, or generate a hihat pattern based on a snare drum pattern, etc. etc.
+these generative rhythms are accomplished using [Google's "variational autoencoder"](https://github.com/magenta/magenta/tree/master/magenta/models/music_vae) for drum performances. [their blog post](https://magenta.tensorflow.org/groovae) explains it best (and [their paper](https://arxiv.org/pdf/1803.05428.pdf) explains it better), but essentially they had professional drummers play an electronic drum-set for 12+ hours which was later used to feed a special kind of neural network. I used their model from this network and sampled it randomly to produce "new" groups of drum rhythms (>~1,000,000 of them). then I created probability distributions from calculating bayesian probabilities from each instrument to each other instrument, within each rhythm grouping. this probability table can then generate a snare drum pattern based on a kick drum pattern, or generate a hihat pattern based on a snare drum pattern, etc. etc.
 
 
 ### sounds
@@ -20,6 +19,8 @@ these generative rhythms are accomplished using [Google's "variational autoencod
 the sounds for this drum machine come from a new engine which I call "supertonic" because it is a as-close-as-I-can port of the [microtonic VST by SonicCharge](https://soniccharge.com/microtonic). 
 
 the act of porting is not straightforward and the experience itself was a motivation for this script - it helped me to learn how to use SuperCollider as I tried to match up sounds between the VST and SuperCollider using my ear. I learned there is a lot of beautiful magic in microtonic that makes it sounds wonderful, and I doubt I got half of the magic that's in the actual VST (so this is by no means a replacement). looking at the resulting engine you might notice some weird equations that are supposed to be approximating the magic behavior in the true microtonic. this script also includes a standalone SuperCollider drum machine to use with this engine (and conversion scripts to convert microtonic patches).
+
+here is a [demo comparing microtonic and this engine](https://www.instagram.com/p/CPghuJUB2Of/?utm_source=ig_web_copy_link).
 
 ### drummer in a box
 
@@ -80,8 +81,7 @@ if you aren't seeing any new randomly generate patterns when pressing K1+K3/K2, 
 
 **thanks**
 
-the ex-dash patterning functions are from @license from the collaborative [song](https://github.com/northern-information/song/) project. the flying confetti is from @eigen's brilliant [pico-8 wrapper](https://llllllll.co/t/p8-pico-8-wrapper-lib/37947).
-
+the ex-dash patterning functions are from @license from the collaborative [song](https://github.com/northern-information/song/) project. the flying confetti is from @eigen's brilliant [pico-8 wrapper](https://llllllll.co/t/p8-pico-8-wrapper-lib/37947). also thanks @dan_derks, out little discussion helped me figure out the beginnings of this thing. finally, big big thanks to @midouest who shared their microtonic supercollider project which showed me some tricks I had missed and also showed me I was on the right track (because our implementations had a lot of parallels).
 
 ### Download
 
@@ -94,11 +94,4 @@ install via maiden or
 make sure to restart after installing because it includes a new engine.
 
 https://github.com/schollz/supertonic
-
-## license 
-
-mit 
-
-
-
 
