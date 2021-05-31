@@ -27,6 +27,7 @@ Engine_Supertonic : CroneEngine {
             nFilMod=0,nEnvMod=0,nStereo=1,
             oscLevel=1,nLevel=1,
             oscVel=100,nVel=100,modVel=100,
+            fx_lowpass_freq=20000,fx_lowpass_rq=1,
             vel=64;
 
             // variables
@@ -135,6 +136,10 @@ Engine_Supertonic : CroneEngine {
             snd=snd*level.dbamp*0.2;
             // free self if its quiet
             FreeSelf.kr((Amplitude.kr(snd)<0.0001)*TDelay.kr(DC.kr(1),0.05));
+
+            // apply some global fx
+            snd=RLPF.ar(snd,fx_lowpass_freq,fx_lowpass_rq);
+
             Out.ar(0, snd);
         }).add;
 
