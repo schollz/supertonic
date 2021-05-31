@@ -33,10 +33,10 @@ all the parameters for the engine are in the `PARAM` menu, as well as preset loa
 
 on the main screen:
 
+- K2 starts/stops
+- K3 toggles hit
 - E2 changes track (current is bright)
 - E3 changes position in track
-- K2 clears track
-- K3 toggles hit
 
 **introspection** 
 

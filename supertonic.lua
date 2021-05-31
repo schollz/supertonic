@@ -7,10 +7,10 @@
 --
 --    ▼ instructions below ▼
 --
+-- K2 starts/stops
+-- K3 toggles hit
 -- E2 changes track
 -- E3 changes position in track
--- K2 clears track
--- K3 toggles hit
 -- (with ai) K1+K3 generates
 -- (with ai) K1+K2 generates
 
@@ -91,7 +91,25 @@ function startup()
     drummer[i]:enable()
   end
 
-  timekeeper:start()
+  timekeeper:stop()
+
+
+  -- listen to all midi
+  for i,dev in pairs(midi.devices) do
+    if dev.port~=nil then
+      print("listening to "..dev.name.." to port "..dev.port)
+      local m=midi.connect(dev.port)
+      m.event=function(data)
+        local msg=midi.to_msg(data)
+        -- OP-1 fix for transport
+        if msg.type=='start' or msg.type=='continue' then
+          timekeeper:start()
+        elseif msg.type=="stop" then
+          timekeeper:stop()
+        end
+      end
+    end
+  end
 
   startup_done=true
   redraw()
@@ -136,33 +154,38 @@ function key(k,z)
   end
   if current_page==1 then
     if k==3 and z==1 then
-      if shift then 
-        local insbase=math.floor(params:get(params:get("selected").."basis"))
-        local pattern_string_base=params:get(insbase.."pattern")
-        local pid1=db_pattern:pattern_to_num(pattern_string_base:sub(1,16))
-        local pid2=db_pattern:pattern_to_num(pattern_string_base:sub(17))
-        print(pattern_string_base:sub(1,16),pid1)
-        print(pattern_string_base:sub(17),pid2)
-        local pid1new=db_pattern:like(params:get("selected"),insbase,pid1)
-        local pid2new=db_pattern:like(params:get("selected"),insbase,pid2)
-        print(pid1new,pid2new)
-        if pid1new ~= nil and pid2new~=nil then
-          local pattern_string=db_pattern:num_to_pattern(pid1new)..db_pattern:num_to_pattern(pid2new)
-          drummer[params:get("selected")]:set_pattern(pattern_string)
-        end
+      if shift then
+        clock.run(function()
+          local insbase=math.floor(params:get(params:get("selected").."basis"))
+          local pattern_string_base=params:get(insbase.."pattern")
+          local pid1=db_pattern:pattern_to_num(pattern_string_base:sub(1,16))
+          local pid2=db_pattern:pattern_to_num(pattern_string_base:sub(17))
+          print(pattern_string_base:sub(1,16),pid1)
+          print(pattern_string_base:sub(17),pid2)
+          local pid1new=db_pattern:like(params:get("selected"),insbase,pid1)
+          local pid2new=db_pattern:like(params:get("selected"),insbase,pid2)
+          print(pid1new,pid2new)
+          if pid1new ~= nil and pid2new~=nil then
+            local pattern_string=db_pattern:num_to_pattern(pid1new)..db_pattern:num_to_pattern(pid2new)
+            drummer[params:get("selected")]:set_pattern(pattern_string)
+          end
+        end)
       else
         drummer[params:get("selected")]:toggle_pattern(current_pos)
       end
     elseif k==2 and z==1 then
       if shift then
-        local pattern_string=params:get(params:get("selected").."pattern")
-        local pid1=db_pattern:pattern_to_num(pattern_string:sub(1,16))
-        local pid2=db_pattern:adj(params:get("selected"),pid1)
-        if pid2~=nil then 
-          drummer[params:get("selected")]:set_pattern(pattern_string:sub(1,16)..db_pattern:num_to_pattern(pid2))
-        end
+        clock.run(function()
+          local pattern_string=params:get(params:get("selected").."pattern")
+          local pid1=db_pattern:pattern_to_num(pattern_string:sub(1,16))
+          local pid2=db_pattern:adj(params:get("selected"),pid1)
+          if pid2~=nil then 
+            drummer[params:get("selected")]:set_pattern(pattern_string:sub(1,16)..db_pattern:num_to_pattern(pid2))
+          end
+        end)
       else
-        drummer[params:get("selected")]:set_pattern("--------------------------------")
+        timekeeper:toggle()
+        -- drummer[params:get("selected")]:set_pattern("--------------------------------")
       end
     end
   end
@@ -215,9 +238,11 @@ function redraw()
   end
 
   -- draw beat
-  screen.level(4)
-  screen.rect((timekeeper.step-1)*4,25,4,64)
-  screen.fill()
+  if timekeeper.playing then
+    screen.level(4)
+    screen.rect((timekeeper.step-1)*4,25,4,64)
+    screen.fill()
+  end
 
   -- draw current position
   screen.level(3)
