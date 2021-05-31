@@ -62,6 +62,12 @@ you can also use the engine directly with SuperCollider. the engine file is sync
 lua ~/dust/code/supertonic/lib/mtpreset2sc.lua /location/to/your/<name>.mtpreset ~/dust/data/supertonic/default.preset > presets.sc
 ```
 
+**known bugs**
+
+the supertonic engine is pretty cpu-intensive, so if you have 4-5 instruments all doing fast patterns (or fast tempo) you will hit cpu walls and hear crunching.
+
+the pattern generation (k1+k3 or k1+k2) runs asynchronously but I've noticed that sometimes it might cause a little latency when using it while performing (generating patterns while playing).
+
 ## license 
 
 mit 
