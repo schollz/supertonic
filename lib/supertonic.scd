@@ -12,10 +12,19 @@ SynthDef("supertonic", {
     oscLevel=1,nLevel=1,
     oscVel=100,nVel=100,modVel=100,
     fx_lowpass_freq=20000,fx_lowpass_rq=1,
+	fx_reverse=0,
     vel=64;
 
     // variables
-    var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,clapFrequency,decayer;
+	var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,clapFrequency,decayer,tempVar;
+
+	// fx reverse
+	tempVar=oscAtk;
+	oscAtk=((1-fx_reverse)*oscAtk)+(fx_reverse*oscDcy);
+	oscDcy=((1-fx_reverse)*oscDcy)+(fx_reverse*tempVar);
+	tempVar=nEnvAtk;
+	nEnvAtk=((1-fx_reverse)*nEnvAtk)+(fx_reverse*nEnvDcy);
+	nEnvDcy=((1-fx_reverse)*nEnvDcy)+(fx_reverse*tempVar);
 
     // convert to seconds from milliseconds
     vel=LinLin.kr(vel,0,128,0,2);
@@ -119,7 +128,7 @@ SynthDef("supertonic", {
 
     snd=snd*level.dbamp*0.2;
     // free self if its quiet
-    FreeSelf.kr((Amplitude.kr(snd)<0.001)*TDelay.kr(DC.kr(1),0.05));
+	FreeSelf.kr((Amplitude.kr(snd)<0.001)*TDelay.kr(DC.kr(1),0.03)*(1-fx_reverse));
 
     // apply some global fx
     snd=RLPF.ar(snd,fx_lowpass_freq,fx_lowpass_rq);
@@ -129,6 +138,35 @@ SynthDef("supertonic", {
 }).add;
 )
 
+
+// Name: "SC BD Toxyk"
+(
+Synth("supertonic",[
+\distAmt,34.064063429832,
+\eQFreq,80.661909666463,
+\eQGain,30.246815681458,
+\level,-5.1201522322287,
+\mix,88.153877258301,
+\modAmt,33.019509360458,
+\modMode,0,
+\modRate,4.0523291566457,
+\modVel,35.558253526688,
+\nEnvAtk,2.1977363693469,
+\nEnvDcy,104.977660676,
+\nEnvMod,0,
+\nFilFrq,392.00617432122,
+\nFilMod,0,
+\nFilQ,1.463421337541,
+\nStereo,1,
+\nVel,40.751650929451,
+\oscAtk,0,
+\oscDcy,526.5732892423,
+\oscFreq,48.060961337325,
+\oscVel,38.951644301414,
+\oscWave,0,
+\vel,64,
+]);
+)
 
 // Name: "SC BD Toxyk"
 (
