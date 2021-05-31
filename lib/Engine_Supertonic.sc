@@ -134,8 +134,9 @@ Engine_Supertonic : CroneEngine {
             snd=HPF.ar(snd,20);
 
             snd=snd*level.dbamp*0.2;
+
             // free self if its quiet
-            FreeSelf.kr((Amplitude.kr(snd)<0.0001)*TDelay.kr(DC.kr(1),0.05));
+            FreeSelf.kr((Amplitude.kr(snd)<0.001)*TDelay.kr(DC.kr(1),0.05));
 
             // apply some global fx
             snd=RLPF.ar(snd,fx_lowpass_freq,fx_lowpass_rq);

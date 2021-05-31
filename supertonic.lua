@@ -1,5 +1,5 @@
 -- supertonic v0.0.1
--- a drum machine with a brain
+-- an introspective drum machine
 --
 -- llllllll.co/t/supertonic
 --
@@ -16,14 +16,6 @@
 
 include('lib/p8')
 mode_debug=true
-
---json
-print(_VERSION)
-print(package.cpath)
-if not string.find(package.cpath,"/home/we/dust/code/supertonic/lib/") then
-  package.cpath=package.cpath..";/home/we/dust/code/supertonic/lib/?.so"
-end
-json=require("cjson")
 
 -- globals
 include("lib/utils")
@@ -47,8 +39,8 @@ timekeeper_=include("lib/timekeeper")
 timekeeper=timekeeper_:new()
 drummer_=include("lib/drummer")
 dev_=include("lib/dev")
-patterns_=include("lib/patterns")
-drum_pattern=patterns_:new()
+-- patterns_=include("lib/patterns")
+-- drum_pattern=patterns_:new()
 patches_=include("lib/patches")
 supertonic_patches=patches_:new()
 menu_=include("lib/menu")
@@ -90,7 +82,16 @@ function startup()
   timekeeper:init()
 
   -- init dev
-  dev_:new()
+  local patches=supertonic_patches:load("/home/we/dust/data/supertonic/presets/default.mtpreset")
+  for i=1,5 do 
+    drummer[i]:set_patch(patches[i])
+  end
+
+  for i=1,5 do 
+    drummer[i]:enable()
+  end
+
+  timekeeper:start()
 
   startup_done=true
   redraw()
