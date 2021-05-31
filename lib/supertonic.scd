@@ -1,6 +1,15 @@
 (
+~delayBus=Bus.audio(s,2);
+~delayer=SynthDef("delayer",{
+	arg in,out,fx=0,amp=1;
+	var snd;
+	amp=Lag.kr(amp,4);
+	snd=In.ar(in,2);
+	snd=((1-fx)*snd)+(CombC.ar(snd,decaytime:4)*amp*fx);
+	Out.ar(out,snd);
+}).play(s,[\in,~delayBus,\out,0]);
 SynthDef("supertonic", {
-    arg out,
+    arg out=0,
 	bpm=120,
     mix=50,level=(-5),distAmt=2,
     eQFreq=632.4,eQGain=(-20),
@@ -141,7 +150,7 @@ SynthDef("supertonic", {
 	snd=((1-fx_delay)*snd)+CombN.ar(snd,0.2,60/bpm/4,mul:fx_delay);
 
     // level
-    Out.ar(0, snd);
+    Out.ar(out, snd);
 }).add;
 )
 

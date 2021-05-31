@@ -25,6 +25,7 @@
 \oscFreq,48.060961337325,
 \oscVel,38.951644301414,
 \oscWave,0,
+\out,~delayBus,
 ])};
 ~hhsound={Synth("supertonic",[
 \distAmt,1.9999999552965,
@@ -106,13 +107,14 @@
 ~kick=~er.(0);
 ~kick=~er.(2).rotate(2);
 ~kick=~er.(3).rotate(2)+~er.(1);
+~kick=~er.(2).rotate(2);
 ~hh={~er.(4).rotate(2)+~er.(7)};
 ~hh={~er.(14).rotate(2)};
 ~sd={~er.(2)+~er.(rrand(5,6)).rotate(2)};
-~sd=~er.(0);
 ~sd={~er.(2)+~er.(6).rotate(2)};
 ~sd=~er.(2).rotate(6);
 ~sd=~er.(2).rotate(6)+~er.(1).rotate(5);
+~sd=~er.(0);
 ~clap={~er.(5)+~er.(2).rotate(3)-~er.(4,16)};
 ~clap=~er.(2).rotate(4)+~er.(3).rotate(7);
 ~clap=~er.(0);
