@@ -216,7 +216,7 @@ function redraw()
   p8p=p8p+k
   p8q=p8q+l
   srand()
-  for d=1,math.floor(math.sin(2*math.pi*t()/(clock.get_beat_sec()*16))*6+7),.1 do
+  for d=1,math.floor(math.sin(2*math.pi*t()/(clock.get_beat_sec()*16))*6+9),.1 do
     local x=(p8r(146)+p8p*d/8)%146-9
     local y=(p8r(146)+p8q*d/8)%146-9
     local a=d+t()*(1+p8r())/2

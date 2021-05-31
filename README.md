@@ -39,23 +39,25 @@ all the parameters for the engine are in the `PARAM` menu, as well as preset loa
 on the main screen:
 
 - K2 starts/stops
-- K3 toggles hit
+- K3 toggles hit 
 - E2 changes track (current is bright)
 - E3 changes position in track
 
 this script automatically detects all midi keyboards and will start/stop based on midi start/stop events.
+
+you can hold K3 and move E2 to lay down a lot of beats.
 
 **introspection** 
 
 introspection requires downloading a prior table (~100 mb, not included in repo) and `sqlite3`. both of these can be installed by running this command in maiden:
 
 ```
-os.execute("sudo apt install -y sqlite3; mkdir -p /home/we/dust/data/supertonic/; curl --progress-bar https://github.com/schollz/supertonic/releases/download/v1_ai/drum_ai_patterns.db > /home/we/dust/data/supertonic/drum_ai_patterns.db")
+os.execute("sudo apt install -y sqlite3; mkdir -p /home/we/dust/data/supertonic/; curl -L --progress-bar https://github.com/schollz/supertonic/releases/download/v1_ai/drum_ai_patterns.db > /home/we/dust/data/supertonic/drum_ai_patterns.db")
 ```
 
-- K1+K3 generates new drum pattern based on highlighted pattern
-- K1+E2 changes highlighted pattern
-- K1+K2 generates new drum pattern based on first sixteen beats
+- hold K1, then press K3 to generate a new pattern based on the highlighted pattern
+- hold K1 and turn E2 to change the highlighted pattern (basis of the generation)
+- hold K1 and press K2 to generate beats 17-32 based on beats 1-16 for current instrument
 
 **using your own microtonic presets**
 
