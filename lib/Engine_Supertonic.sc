@@ -5,6 +5,9 @@ Engine_Supertonic : CroneEngine {
 
     // Supertonic specific v0.1.0
     var synSupertonic;
+    var synVoice=0;
+    var isFree;
+    var maxVoices=5;
     // Supertonic ^
 
     *new { arg context, doneCallback;
@@ -13,8 +16,6 @@ Engine_Supertonic : CroneEngine {
 
     alloc {
         // Supertonic specific v0.0.1
-        synSupertonic=Array.new(maxSize:5);
-
         SynthDef("supertonic", {
             arg out,
             mix=50,level=(-5),distAmt=2,
@@ -136,7 +137,7 @@ Engine_Supertonic : CroneEngine {
             snd=snd*level.dbamp*0.2;
 
             // free self if its quiet
-            FreeSelf.kr((Amplitude.kr(snd)<0.001)*TDelay.kr(DC.kr(1),0.05));
+            FreeSelf.kr((Amplitude.kr(snd)<0.001)*TDelay.kr(DC.kr(1),0.03));
 
             // apply some global fx
             snd=RLPF.ar(snd,fx_lowpass_freq,fx_lowpass_rq);
@@ -146,18 +147,28 @@ Engine_Supertonic : CroneEngine {
 
         context.server.sync;
 
-        synSupertonic = Array.fill(5,{arg i;
+        synSupertonic = Array.fill(maxVoices,{arg i;
             Synth("supertonic", [\level,-100],target:context.xg);
+        });
+
+        isFree = Array.fill(maxVoices,{arg i;
+            1
         });
 
         context.server.sync;
 
         this.addCommand("supertonic","ffffffffffffffffffffffffi", { arg msg;
             // lua is sending 1-index
-            synSupertonic[msg[20]-1].free;
-            // if (synSupertonic[msg[20]-1].isRunning,{
-            // });
-            synSupertonic[msg[25]-1]=Synth("supertonic",[
+            var thisVoice;
+            synVoice=synVoice+1;
+            if (synVoice>(maxVoices-1),{synVoice=0});
+            thisVoice=synVoice;
+
+            if (isFree[thisVoice]<1,{
+                // ("freeing "++synVoice).postln;
+                synSupertonic[thisVoice].free;
+            });
+            synSupertonic[thisVoice]=Synth("supertonic",[
                 \out,0,
                 \distAmt, msg[1],
                 \eQFreq, msg[2],
@@ -183,7 +194,11 @@ Engine_Supertonic : CroneEngine {
                 \modVel, msg[22],
                 \fx_lowpass_freq,msg[23],
                 \fx_lowpass_rq,msg[24],
-            ], target:context.server);
+            ], target:context.server).onFree({
+                isFree[thisVoice]=1;
+                // ("done "++thisVoice).postln;
+            });
+            isFree[thisVoice]=0;
         });
 
         this.addCommand("supertonic_lpf","iff",{ arg msg;
@@ -198,7 +213,7 @@ Engine_Supertonic : CroneEngine {
 
     free {
         // Supertonic Specific v0.0.1
-        (0..5).do({arg i; synSupertonic[i].free});
+        (0..maxVoices).do({arg i; synSupertonic[i].free});
         // ^ Supertonic specific
     }
 }
