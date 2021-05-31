@@ -1,4 +1,4 @@
--- supertonic v0.0.1
+-- supertonic v0.1.0
 -- an introspective drum machine
 --
 -- llllllll.co/t/supertonic
