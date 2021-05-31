@@ -133,7 +133,7 @@ MicrotonicPresetV3: {
 			OscWave: "Saw"
 			OscFreq: "2459.9589879902987 Hz"
 			OscAtk: "0.4435228739634368 ms"
-			OscDcy: "1402.737897994724 ms"
+			OscDcy: "702.737897994724 ms"
 			ModMode: "Noise"
 			ModRate: "10995.781200950345 Hz"
 			ModAmt: "-48.0 sm"

@@ -13,7 +13,7 @@ MicrotonicPresetV3: {
 			OscWave: "Sine"
 			OscFreq: "50.922805746447 Hz"
 			OscAtk: "0.0 ms"
-			OscDcy: "3336.232447325014 ms"
+			OscDcy: "1336.232447325014 ms"
 			ModMode: "Decay"
 			ModRate: "228.25140737151509 ms"
 			ModAmt: "31.036142213757557 sm"
