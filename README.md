@@ -68,6 +68,11 @@ the supertonic engine is pretty cpu-intensive, so if you have 4-5 instruments al
 
 the pattern generation (k1+k3 or k1+k2) runs asynchronously but I've noticed that sometimes it might cause a little latency when using it while performing (generating patterns while playing).
 
+**thanks**
+
+the ex-dash patterning functions are from @license from the collaborative [song](https://github.com/northern-information/song/) project. the flying confetti is from @p3r7's brilliant [pico-8 wrapper](https://llllllll.co/t/p8-pico-8-wrapper-lib/37947).
+
+
 ## license 
 
 mit 
