@@ -140,7 +140,7 @@ function Menu:init()
     {id="pattern",name="pattern",hidden=true,textmenu=true},
     {id="basis",name="basis",range={1,5},default=1,increment=1,hidden=true},
   }
-  params:add_group("SUPERTONIC",2+#self.parameters*drummer_number)
+  params:add_group("SUPERTONIC",4+#self.parameters*drummer_number)
   local drum_options={}
   for i=1,drummer_number do 
     table.insert(drum_options,i)
@@ -159,6 +159,16 @@ function Menu:init()
       end
     end
   end)
+  params:add{type="control",id="global lpf freq",name="global lpf freq",controlspec=controlspec.new(20,20000,'exp',0,20000,'Hz',100/20000),formatter=Formatters.format_freq,action=function(v)
+    for i=1,5 do 
+      engine.supertonic_lpf(i,v,params:get("global lpf rq"))
+    end
+  end}
+  params:add{type="control",id="global lpf rq",name="global lpf rq",controlspec=controlspec.new(0.05,1,'lin',0,1,'',0.01/0.95),action=function(v)
+    for i=1,5 do 
+      engine.supertonic_lpf(i,params:get("global lpf freq"),v)
+    end
+  end}
   params:add{type="option",id="selected",name="selected",options=drum_options,default=1,action=function(v)
     self:rebuild_menu(v)
     if _menu.mode then

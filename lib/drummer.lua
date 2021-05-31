@@ -88,6 +88,8 @@ function Drummer:step(beat)
       params:get(id.."oscVel"),
       params:get(id.."nVel"),
       params:get(id.."modVel"),
+      params:get("global lpf freq"),
+      params:get("global lpf rq"),
       id
     )
   end

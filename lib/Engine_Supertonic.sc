@@ -151,12 +151,12 @@ Engine_Supertonic : CroneEngine {
 
         context.server.sync;
 
-        this.addCommand("supertonic","ffffffffffffffffffffffi", { arg msg;
+        this.addCommand("supertonic","ffffffffffffffffffffffffi", { arg msg;
             // lua is sending 1-index
             synSupertonic[msg[20]-1].free;
             // if (synSupertonic[msg[20]-1].isRunning,{
             // });
-            synSupertonic[msg[23]-1]=Synth("supertonic",[
+            synSupertonic[msg[25]-1]=Synth("supertonic",[
                 \out,0,
                 \distAmt, msg[1],
                 \eQFreq, msg[2],
@@ -180,7 +180,16 @@ Engine_Supertonic : CroneEngine {
                 \oscVel, msg[20],
                 \nVel, msg[21],
                 \modVel, msg[22],
+                \fx_lowpass_freq,msg[23],
+                \fx_lowpass_rq,msg[24],
             ], target:context.server);
+        });
+
+        this.addCommand("supertonic_lpf","iff",{ arg msg;
+            synSupertonic[msg[1]-1].set(
+                \fx_lowpass_freq,msg[2],
+                \fx_lowpass_rq,msg[3],
+            );
         });
         // ^ Supertonic specific
 
