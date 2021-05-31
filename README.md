@@ -11,20 +11,20 @@ the introspective drum machine looks into itself and produces rhythm from its ow
 
 ### introspection
 
-this drum machine introspects by looking at any of the currently playing drum sounds and generating a drum pattern for another sound based on its rhythm (e.g. a snare rhythm based on the kick pattern).
+this drum machine introspects by looking at any of the current drum patterns and generating a new drum pattern based specifically on that pattern (e.g. a snare rhythm based on the kick pattern).
 
-these generative rhythms are accomplished using [Google's "variational autoencoder" for drum performances](https://github.com/magenta/magenta/tree/master/magenta/models/music_vae). [their blog post](https://magenta.tensorflow.org/groovae) explains it best (and [their paper explains it better](https://arxiv.org/pdf/1803.05428.pdf)), but essentially they had professional drummers play and electronic drum-set for 12+ hours which was later used to feed a special kind of neural network. I used their model from this network and sampled it randomly to produce "new" drum rhythms (>~1,000,000 of them). then I created prior distributions for calculating bayesian probabilities for each instrument in this sampled dataset. the final result is a probability table that can generate a snare drum pattern based on a kick drum pattern, or generate a hihat pattern based on a snare drum pattern, etc. etc.
+these generative rhythms are accomplished using [Google's "variational autoencoder" for drum performances](https://github.com/magenta/magenta/tree/master/magenta/models/music_vae). [their blog post](https://magenta.tensorflow.org/groovae) explains it best (and [their paper explains it better](https://arxiv.org/pdf/1803.05428.pdf)), but essentially they had professional drummers play and electronic drum-set for 12+ hours which was later used to feed a special kind of neural network. I used their model from this network and sampled it randomly to produce "new" groups of drum rhythms (>~1,000,000 of them). then I created prior distributions for calculating bayesian probabilities for each instrument in this sampled dataset. the final result is a probability table that can generate a snare drum pattern based on a kick drum pattern, or generate a hihat pattern based on a snare drum pattern, etc. etc.
 
 
 ### sounds
 
 the sounds for this drum machine come from a new engine which I call "supertonic" because it is a as-close-as-I-can port of the [microtonic VST by SonicCharge](https://soniccharge.com/microtonic). 
 
-the act of porting is not straightforward and the experience itself was a motivation for this script - it helped me to learn how to use SuperCollider as I tried to match up sounds between the VST and SuperCollider using my ear. I learned there is a lot of beautiful magic in microtonic that makes it sounds wonderful, and I doubt I got half of the magic that's in the actual VST. looking at the resulting engine you might notice some weird equations that are supposed to be approximating this behavior.
+the act of porting is not straightforward and the experience itself was a motivation for this script - it helped me to learn how to use SuperCollider as I tried to match up sounds between the VST and SuperCollider using my ear. I learned there is a lot of beautiful magic in microtonic that makes it sounds wonderful, and I doubt I got half of the magic that's in the actual VST (so this is by no means a replacement). looking at the resulting engine you might notice some weird equations that are supposed to be approximating the magic behavior in the true microtonic.
 
 ### drummer in a box
 
-so in the end, this script itself is a little drum machine in a box and a new drum machine engine for norns, a little like @21echoes's [cyrene](https://norns.community/authors/21echoes/cyrene), @pangrus's [hachi](https://norns.community/authors/pangrus/hachi), or @justmat's [foulplay](https://norns.community/authors/justmat/foulplay). 
+this script is a little drum machine in a box and also a new drum machine engine for norns, a little like @21echoes's [cyrene](https://norns.community/authors/21echoes/cyrene), @pangrus's [hachi](https://norns.community/authors/pangrus/hachi), or @justmat's [foulplay](https://norns.community/authors/justmat/foulplay). 
 
 for me personally, this script is an experiment. to try to answer the question: what is it like to perform with an AI generated rhythm section (i.e. paralleling [what its like to play with a AI generated piano](https://github.com/schollz/pianoai))? is it good? surprisingly so, sometimes.
 
