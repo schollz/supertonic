@@ -1,6 +1,7 @@
 (
 SynthDef("supertonic", {
     arg out,
+	bpm=120,
     mix=50,level=(-5),distAmt=2,
     eQFreq=632.4,eQGain=(-20),
     oscAtk=0,oscDcy=500,
@@ -12,7 +13,7 @@ SynthDef("supertonic", {
     oscLevel=1,nLevel=1,
     oscVel=100,nVel=100,modVel=100,
     fx_lowpass_freq=20000,fx_lowpass_rq=1,
-	fx_reverse=0,
+	fx_reverse=0,fx_delay=0,fx_eqsweep=0,
     vel=64;
 
     // variables
@@ -25,6 +26,9 @@ SynthDef("supertonic", {
 	tempVar=nEnvAtk;
 	nEnvAtk=((1-fx_reverse)*nEnvAtk)+(fx_reverse*nEnvDcy);
 	nEnvDcy=((1-fx_reverse)*nEnvDcy)+(fx_reverse*tempVar);
+
+	// fx eq sweep
+	eQFreq=((1-fx_eqsweep)*eQFreq)+(fx_eqsweep*LinExp.kr(LFTri.kr(1),-1,1,10,20000));
 
     // convert to seconds from milliseconds
     vel=LinLin.kr(vel,0,128,0,2);
@@ -132,6 +136,9 @@ SynthDef("supertonic", {
 
     // apply some global fx
     snd=RLPF.ar(snd,fx_lowpass_freq,fx_lowpass_rq);
+
+	// delay
+	snd=((1-fx_delay)*snd)+CombN.ar(snd,0.2,60/bpm/4,mul:fx_delay);
 
     // level
     Out.ar(0, snd);

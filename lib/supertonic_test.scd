@@ -11,7 +11,7 @@ Synth("supertonic",[
 \modRate,4.0523291566457,
 \modVel,35.558253526688,
 \nEnvAtk,2.1977363693469,
-\nEnvDcy,1104.977660676,
+\nEnvDcy,704.977660676,
 \nEnvMod,0,
 \nFilFrq,392.00617432122,
 \nFilMod,0,
@@ -19,11 +19,13 @@ Synth("supertonic",[
 \nStereo,1,
 \nVel,40.751650929451,
 \oscAtk,0,
-\oscDcy,726.5732892423,
+\oscDcy,826.5732892423,
 \oscFreq,48.060961337325,
 \oscVel,38.951644301414,
 \oscWave,0,
 \vel,64,
+\fx_reverse,0,
+\fx_delay,0,
 ]);
 )
 // Name: "RD GSn"
@@ -51,7 +53,10 @@ Synth("supertonic",[
 \oscFreq,251.73534018926,
 \oscVel,33.000001311302,
 \oscWave,0,
-\vel,64
+\vel,64,
+\fx_reverse,0,
+\fx_delay,0,
+\fx_eqsweep,0,
 ]);
 )
 // Name: "LV HH HT"
@@ -79,6 +84,7 @@ Synth("supertonic",[
 \oscFreq,20,
 \oscVel,40.999999642372,
 \oscWave,0,
+\fx_reverse,0,
 ]);
 )
 // Name: "VT-808 CP"
