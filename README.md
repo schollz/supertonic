@@ -1,8 +1,11 @@
 ## supertonic
 
-an introspective drum machine.
 
 ![Image](https://user-images.githubusercontent.com/6550035/120124212-22d3d680-c168-11eb-9b83-6d9b29303972.png)
+
+an introspective drum machine.
+
+https://vimeo.com/557258118
 
 the introspective drum machine looks into itself, and its own self-examination produces the rhythm.
 
