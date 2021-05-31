@@ -41,9 +41,11 @@ on the main screen:
 - E2 changes track (current is bright)
 - E3 changes position in track
 
+this script automatically detects all midi keyboards and will start/stop based on midi start/stop events.
+
 **introspection** 
 
-introspection requires installing the prior table and `sqlite3. both of these can be installed by running this command in maiden:
+introspection requires downloading a prior table (~100 mb, not included in repo) and `sqlite3`. both of these can be installed by running this command in maiden:
 
 ```
 os.execute("sudo apt install -y sqlite3; mkdir -p /home/we/dust/data/supertonic/; curl --progress-bar https://github.com/schollz/supertonic/releases/download/v1_ai/drum_ai_patterns.db > /home/we/dust/data/supertonic/drum_ai_patterns.db")
