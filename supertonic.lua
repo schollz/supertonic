@@ -71,7 +71,11 @@ function startup()
   startup_initiated=true
 
   if not util.file_exists(_path.data.."supertonic/presets/default.mtpreset") then
-    os.execute("mkdir -p ".._path.data.."supertonic/presets/; cp ".._path.code.."supertonic/data/defaults1 ".._path.data.."supertonic/presets/default.mtpreset")
+    os.execute("mkdir -p ".._path.data.."supertonic/presets/")
+    os.execute("cp ".._path.code.."supertonic/data/default.mtpreset ".._path.data.."supertonic/presets/")
+    os.execute("cp ".._path.code.."supertonic/data/blue.mtpreset ".._path.data.."supertonic/presets/")
+    os.execute("cp ".._path.code.."supertonic/data/chonk.mtpreset ".._path.data.."supertonic/presets/")
+    os.execute("cp ".._path.code.."supertonic/data/tough.mtpreset ".._path.data.."supertonic/presets/")
   end
 
   -- initialize menu
