@@ -70,6 +70,10 @@ end
 function startup()
   startup_initiated=true
 
+  if not util.file_exists(_path.data.."supertonic/default.mtpreset") then
+    os.execute("cp ".._path.code.."supertonic/data/defaults1 ".._path.data.."supertonic/default.mtpreset")
+  end
+
   -- initialize menu
   menu__:init()
 

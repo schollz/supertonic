@@ -49,6 +49,17 @@ using the AI requires installing the database (~100 mb) and also installing `sql
 os.execute("sudo apt install -y sqlite3; mkdir -p /home/we/dust/data/supertonic/; curl --progress-bar https://github.com/schollz/supertonic/releases/download/v1_ai/drum_ai_patterns.db > /home/we/dust/data/supertonic/drum_ai_patterns.db")
 ```
 
+**using your own microtonic presets**
+
+if you have microtonic you can easily use your own microtonic preset. simply copy your microtonic preset file (something like `<name>.mtpreset`) and and save it as `/home/we/dust/data/supertonic/default.mtpreset`, overwriting the existing one. the first five presets in the file will be use as instruments 1-5.
+
+**converting microtonic presets for use with SuperCollider**
+
+you can also use the engine directly with SuperCollider. the engine file is is `lib/supertonic.scd` and then an example drumset is in `lib/supertonic_drumset.scd`. you can easily get a SuperCollider file with your microtonic presets by running this lua script:
+
+```
+lua ~/dust/code/supertonic/lib/mtpreset2sc.lua /location/to/your/<name>.mtpreset ~/dust/data/supertonic/default.preset > presets.sc
+```
 
 ## license 
 
