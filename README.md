@@ -21,7 +21,7 @@ the act of porting is not straightforward and the experience itself was a motiva
 
 ### drummer in a box
 
-so in the end, this script itself is a little drum machine in a box and a new drum machine engine for norns, a little like [cyrene](https://norns.community/authors/21echoes/cyrene), [hachi](https://norns.community/authors/pangrus/hachi), or [foulplay](https://norns.community/authors/justmat/foulplay). but with fewer features. its interesting to play with though, to see what does a AI generated drum loop sound like to perform with? its surprisngly good sometimes.
+so in the end, this script itself is a little drum machine in a box and a new drum machine engine for norns, a little like [cyrene](https://norns.community/authors/21echoes/cyrene), [hachi](https://norns.community/authors/pangrus/hachi), or [foulplay](https://norns.community/authors/justmat/foulplay). but with fewer features. its interesting to play with though, to see what does a AI generated drum loop sound like to perform with maybe? its surprisngly good sometimes.
 
 ### Requirements
 
