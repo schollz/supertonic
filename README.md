@@ -7,7 +7,7 @@ an introspective drum machine.
 
 https://vimeo.com/557258118
 
-the introspective drum machine looks into itself, and its own self-examination produces the rhythm.
+the introspective drum machine looks into itself and produces rhythm from its own self-examination.
 
 ### introspection
 
@@ -24,7 +24,9 @@ the act of porting is not straightforward and the experience itself was a motiva
 
 ### drummer in a box
 
-so in the end, this script itself is a little drum machine in a box and a new drum machine engine for norns, a little like [cyrene](https://norns.community/authors/21echoes/cyrene), [hachi](https://norns.community/authors/pangrus/hachi), or [foulplay](https://norns.community/authors/justmat/foulplay). but with fewer features. its interesting to play with though, to see what does a AI generated drum loop sound like to perform with maybe? its surprisngly good sometimes.
+so in the end, this script itself is a little drum machine in a box and a new drum machine engine for norns, a little like @21echoes's [cyrene](https://norns.community/authors/21echoes/cyrene), @pangrus's [hachi](https://norns.community/authors/pangrus/hachi), or @justmat's [foulplay](https://norns.community/authors/justmat/foulplay). 
+
+for me personally, this script is an experiment. to try to answer the question: what is it like to perform with an AI generated rhythm section (i.e. paralleling [what its like to play with a AI generated piano](https://github.com/schollz/pianoai))? is it good? surprisingly so, sometimes.
 
 ### Requirements
 
