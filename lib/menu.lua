@@ -29,6 +29,12 @@ function Menu:rebuild_menu(v)
 end
 
 function Menu:init()
+  params.action_read=function(filename,silent)
+    print("read file!")
+    for i=1,5 do 
+       drummer[i]:set_pattern(params:get(i.."pattern"))
+    end
+  end
   -- setup parameters
     -- \distAmt,34.064063429832,
     -- \eQFreq,80.661909666463,
@@ -134,7 +140,7 @@ function Menu:init()
     {id="pattern",name="pattern",hidden=true,textmenu=true},
     {id="basis",name="basis",range={1,5},default=1,increment=1,hidden=true},
   }
-  params:add_group("DRUMMY",2+#self.parameters*drummer_number)
+  params:add_group("SUPERTONIC",2+#self.parameters*drummer_number)
   local drum_options={}
   for i=1,drummer_number do 
     table.insert(drum_options,i)
