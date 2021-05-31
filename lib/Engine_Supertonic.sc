@@ -26,13 +26,14 @@ Engine_Supertonic : CroneEngine {
             nFilFrq=1000,nFilQ=2.5,
             nFilMod=0,nEnvMod=0,nStereo=1,
             oscLevel=1,nLevel=1,
-            oscVel=100,nVel=100,modVel=100
-            ;
+            oscVel=100,nVel=100,modVel=100,
+            vel=64;
 
             // variables
             var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,clapFrequency,decayer;
 
             // convert to seconds from milliseconds
+            vel=LinLin.kr(vel,0,128,0,2);
             oscAtk=DC.kr(oscAtk/1000);
             oscDcy=DC.kr(oscDcy/1000);
             nEnvAtk=DC.kr(nEnvAtk/1000);
@@ -60,7 +61,7 @@ Engine_Supertonic : CroneEngine {
             ]);
 
             // mix in the the pitch mod
-            pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)**1);
+            pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
             oscFreq=((oscFreq).cpsmidi+pitchMod).midicps;
 
             // define the oscillator
@@ -83,7 +84,7 @@ Engine_Supertonic : CroneEngine {
             osc=osc*EnvGen.ar(Env.new([0.0001,1,0.9,0.0001],[oscAtk,oscDcy*decayer,oscDcy],\exponential),doneAction:oscFreeSelf);
 
             // apply velocity
-            osc=(osc*LinLin.kr(oscVel,0,200,1,0)).softclip;
+            osc=(osc*LinLin.kr(oscVel,0,200,1,0)*vel).softclip;
 
             // generate noise
             noz=wn1;
@@ -112,10 +113,9 @@ Engine_Supertonic : CroneEngine {
             noz=Splay.ar(nozPostF*nozEnv);
 
             // apply velocities
-            noz=(noz*LinLin.kr(nVel,0,200,1,0)).softclip;
+            noz=(noz*LinLin.kr(nVel,0,200,1,0)*vel).softclip;
 
-            // apply distortion
-            osc=SineShaper.ar(osc,1.0,1+(10/(1+(2.7182**((50-distAmt)/8))))).softclip;
+
 
             // mix oscillator and noise
             snd=SelectX.ar(mix/100*2,[
@@ -124,16 +124,19 @@ Engine_Supertonic : CroneEngine {
                 osc*1
             ]);
 
+            // apply distortion
+            snd=SineShaper.ar(snd,1.0,1+(10/(1+(2.7182**((50-distAmt)/8))))).softclip;
+
             // apply eq after distortion
             snd=BPeakEQ.ar(snd,eQFreq,1,eQGain/2);
 
             snd=HPF.ar(snd,20);
-			// level
-			snd=snd*level.dbamp*0.2;
-			// free self if its quiet
-			FreeSelf.kr(Amplitude.kr(snd)<0.0001);
-			Out.ar(0, snd);
-		}).add;
+
+            snd=snd*level.dbamp*0.2;
+            // free self if its quiet
+            FreeSelf.kr((Amplitude.kr(snd)<0.0001)*TDelay.kr(DC.kr(1),0.1));
+            Out.ar(0, snd);
+        }).add;
 
         context.server.sync;
 

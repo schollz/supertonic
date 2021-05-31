@@ -99,8 +99,7 @@ SynthDef("supertonic", {
 	// apply velocities
     noz=(noz*LinLin.kr(nVel,0,200,1,0)*vel).softclip;
 
-    // apply distortion
-	osc=SineShaper.ar(osc,1.0,1+(10/(1+(2.7182**((50-distAmt)/8))))).softclip;
+
 
     // mix oscillator and noise
 	snd=SelectX.ar(mix/100*2,[
@@ -109,7 +108,8 @@ SynthDef("supertonic", {
   		osc*1
     ]);
 
-
+    // apply distortion
+	snd=SineShaper.ar(snd,1.0,1+(10/(1+(2.7182**((50-distAmt)/8))))).softclip;
 
     // apply eq after distortion
    snd=BPeakEQ.ar(snd,eQFreq,1,eQGain/2);
@@ -118,7 +118,7 @@ SynthDef("supertonic", {
 
 	snd=snd*level.dbamp*0.2;
 	// free self if its quiet
-	FreeSelf.kr(Amplitude.kr(snd)<0.0001);
+	FreeSelf.kr((Amplitude.kr(snd)<0.0001)*TDelay.kr(DC.kr(1),0.1));
 
 	// level
 	Out.ar(0, snd);
@@ -129,23 +129,23 @@ SynthDef("supertonic", {
 // Name: "SC BD Toxyk"
 (
 Synth("supertonic",[
-\distAmt,34.064063429832,
-\eQFreq,80.661909666463,
-\eQGain,30.246815681458,
+\distAmt,50,
+\eQFreq,139,
+\eQGain,-37,
 \level,-5.1201522322287,
-\mix,88.153877258301,
+\mix,0,
 \modAmt,33.019509360458,
 \modMode,0,
 \modRate,4.0523291566457,
 \modVel,35.558253526688,
-\nEnvAtk,2.1977363693469,
-\nEnvDcy,1104.977660676,
-\nEnvMod,0,
-\nFilFrq,392.00617432122,
-\nFilMod,0,
-\nFilQ,1.463421337541,
+\nEnvAtk,0,
+\nEnvDcy,87,
+\nEnvMod,1,
+\nFilFrq,2162,
+\nFilMod,1,
+\nFilQ,1.8,
 \nStereo,1,
-\nVel,40.751650929451,
+\nVel,26,
 \oscAtk,0,
 \oscDcy,726.5732892423,
 \oscFreq,48.060961337325,

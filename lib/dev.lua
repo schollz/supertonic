@@ -19,7 +19,7 @@ function Dev:new(o)
   -- drummer[3]:set_pattern(dp["ch"])
   -- drummer[4]:set_pattern(dp["ch"])
   -- drummer[5]:set_pattern(dp["ch"])
-  local patches=supertonic_patches:load("/home/we/dust/data/supertonic/default.mtpreset")
+  local patches=supertonic_patches:load("/home/we/dust/data/supertonic/presets/default.mtpreset")
   for i=1,5 do 
     drummer[i]:set_patch(patches[i])
   end
