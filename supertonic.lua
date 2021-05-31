@@ -41,7 +41,8 @@ current_pos=1
 engine.name="Supertonic"
 
 -- individual libraries
-lattice=include("thirtythree/lib/lattice")
+include("lib/common")
+lattice=include("lib/lattice")
 timekeeper_=include("lib/timekeeper")
 timekeeper=timekeeper_:new()
 drummer_=include("lib/drummer")

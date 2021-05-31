@@ -85,14 +85,33 @@ function DB:adj(ins,pid_base,not_pid)
   return self:like(ins,ins,pid_base,not_pid)
 end
 
+function DB:random(ins)
+  math.randomseed(clock.get_beats())
+  do return common_pattern[ins][math.random(1,100)] end
+
+  if not_pid==nil then 
+    not_pid=self.last_pattern
+  end
+  local rr=math.random(1,65000)
+  local query=string.format([[SELECT DISTINCT pidbase FROM prob INDEXED BY idx_inspid WHERE ins1==%d AND pidbase>0 AND pidbase<5000 ORDER BY RANDOM() LIMIT 1]],ins)
+  print(query)
+  local cmd=string.format('sqlite3 /home/we/dust/data/supertonic/drum_ai_patterns.db "%s"',query)
+  local result=os.capture(cmd)
+  return tonumber(result)
+end
+
 function DB:like(ins,ins_base,pid_base,not_pid)
   if not_pid==nil then 
     not_pid=self.last_pattern
   end
-  local query=string.format([[SELECT pid,prob*100000 FROM prob INDEXED BY idx_inspid WHERE ins1==%d AND pidbase==%d AND ins2==%d AND pid!=%d]],ins_base,pid_base,ins,not_pid==nil and-1 or not_pid)
-  print(query)
-  self.last_pattern=self:db_sql_weighted_(query)
-  return self.last_pattern
+  if ins==ins_base then
+    return self:random(ins)
+  else
+    local query=string.format([[SELECT pid,prob*100000 FROM prob INDEXED BY idx_inspid WHERE ins1==%d AND pidbase==%d AND ins2==%d AND pid!=%d]],ins_base,pid_base,ins,not_pid==nil and-1 or not_pid)
+    print(query)
+    self.last_pattern=self:db_sql_weighted_(query)
+    return self.last_pattern
+  end
 end
 
 return DB
