@@ -58,7 +58,7 @@ function Menu:init()
   self.parameters={
     -- TODO: add string of the current pattern
     {id="level",name="level",range={-100,10},default=0,unit='dB'},
-    {id="distAmt",name="distortion",range={0,100},default=0,unit=''},
+    {id="distAmt",name="distortion",range={0,100},default=0,unit='',increment=1},
     {id="eQFreq",name="eq freq",range={20,20000},default=1000,freq=true},
     {id="eQGain",name="eq gain",range={-40,40},default=0,unit='dB'},
     {id="mix",name="mix",range={0,100},default=50,unit='',increment=1,formatter=function(v) 
@@ -140,7 +140,7 @@ function Menu:init()
     {id="pattern",name="pattern",hidden=true,textmenu=true},
     {id="basis",name="basis",range={1,5},default=1,increment=1,hidden=true},
   }
-  params:add_group("SUPERTONIC",4+#self.parameters*drummer_number)
+  params:add_group("SUPERTONIC",5+#self.parameters*drummer_number)
   local drum_options={}
   for i=1,drummer_number do 
     table.insert(drum_options,i)
@@ -169,7 +169,8 @@ function Menu:init()
       engine.supertonic_lpf(i,params:get("global lpf freq"),v)
     end
   end}
-  params:add{type="option",id="selected",name="selected",options=drum_options,default=1,action=function(v)
+  params:add_separator("supertonic engine params")
+  params:add{type="option",id="selected",name="selected",options={"kick","snare","hi-hat","open hat","clap"},default=1,action=function(v)
     self:rebuild_menu(v)
     if _menu.mode then
       _menu.rebuild_params()

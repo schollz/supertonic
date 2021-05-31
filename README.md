@@ -84,6 +84,16 @@ if you aren't seeing any new randomly generate patterns when pressing K1+K3/K2, 
 the ex-dash patterning functions are from @license from the collaborative [song](https://github.com/northern-information/song/) project. the flying confetti is from @p3r7's brilliant [pico-8 wrapper](https://llllllll.co/t/p8-pico-8-wrapper-lib/37947).
 
 
+## install
+
+install via maiden or
+
+```
+;install https://github.com/schollz/supertonic
+```
+
+make sure to restart after installing because it includes a new engine.
+
 ## license 
 
 mit 
