@@ -17,13 +17,7 @@ these generative rhythms are accomplished using [Google's "variational autoencod
 
 the sounds for this drum machine come from a new engine which I call "supertonic" because it is a as-close-as-I-can port of the [microtonic VST by SonicCharge](https://soniccharge.com/microtonic). 
 
-the act of porting is not straightforward and the experience itself was a motivation for this script - it helped me to learn how to use SuperCollider as I tried to match up sounds between the VST and SuperCollider using my ear. I learned there is a lot of beautiful magic in microtonic that makes it sounds wonderful, and I doubt I got half of the magic that's in the actual VST, but it turned out pretty close. a little example of the trials of porting include trying to find this strange non-linear relationship between the "attack time" and the "retrigger rate" to get the modulation for the noise envelope (which is important for the clap sound), I ended up plotting waveforms, measuring peak-to-peaks, and fitting a random nonlinear curve which "works":
-
-![plotting spectrum](https://user-images.githubusercontent.com/6550035/120140273-0b5c1400-c18f-11eb-8d49-0c47e794b24b.png)
-
-
-![fit](https://user-images.githubusercontent.com/6550035/120140271-0ac37d80-c18f-11eb-8cc5-9b350b9ef7d4.PNG)
-
+the act of porting is not straightforward and the experience itself was a motivation for this script - it helped me to learn how to use SuperCollider as I tried to match up sounds between the VST and SuperCollider using my ear. I learned there is a lot of beautiful magic in microtonic that makes it sounds wonderful, and I doubt I got half of the magic that's in the actual VST. looking at the resulting engine you might notice some weird equations...
 
 ### drummer in a box
 
