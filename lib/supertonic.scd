@@ -1,6 +1,53 @@
 (
+SynthDef("oscWave0",{
+    arg freq,out;
+    Out.ar(out,SinOsc.ar(freq));
+}).add;
+SynthDef("oscWave1",{
+    arg freq,out;
+    Out.ar(out,LFTri.ar(freq,mul:0.5));
+}).add;
+SynthDef("oscWave2",{
+    arg freq,out;
+    Out.ar(out,SawDPW.ar(freq,mul:0.5));
+}).add;
+SynthDef("nStereo0",{
+    arg out;
+	var snd = WhiteNoise.ar();
+	Out.ar(out,[snd,snd]);
+}).add;
+SynthDef("nStereo1",{
+    arg out;
+	Out.ar(out,[WhiteNoise.ar(),WhiteNoise.ar()]);
+}).add;
+SynthDef("nEnvMod0",{
+    arg out,nEnvAtk,nEnvDcy,distAmt;
+	var decayer,env;
+    nEnvAtk=DC.kr(nEnvAtk/1000);
+    nEnvDcy=DC.kr(nEnvDcy/1000*1.4);
+	env=EnvGen.ar(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential));
+	Out.ar(out,env);
+}).add;
+SynthDef("nEnvMod1",{
+    arg out,nEnvAtk,nEnvDcy,distAmt;
+	var decayer,env;
+    nEnvAtk=DC.kr(nEnvAtk/1000);
+    nEnvDcy=DC.kr(nEnvDcy/1000*1.4);
+	decayer=SelectX.kr(distAmt/100,[0.05,distAmt/100*0.3]);
+	env=EnvGen.ar(Env.new([0.0001,1,0.9,0.0001],[nEnvAtk,nEnvDcy*decayer,nEnvDcy*(1-decayer)],\linear));
+	Out.ar(out,env);
+}).add;
+SynthDef("nEnvMod2",{
+    arg out,nEnvAtk,nEnvDcy,distAmt;
+	var clapFrequency,env;
+    nEnvAtk=DC.kr(nEnvAtk/1000);
+    nEnvDcy=DC.kr(nEnvDcy/1000*1.4);
+	clapFrequency=DC.kr((4311/(nEnvAtk*1000+28.4))+11.44); // fit using matlab
+	env=Decay.ar(Impulse.ar(clapFrequency),1/clapFrequency,0.85,0.15)*Trig.ar(1,nEnvAtk+0.001)+EnvGen.ar(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential));
+	Out.ar(out,env);
+}).add;
 SynthDef("supertonic", {
-    arg out,
+    arg out,inoscWave,innStereo,innEnvMod,
     mix=50,level=(-5),distAmt=2,
     eQFreq=632.4,eQGain=(-20),
     oscAtk=0,oscDcy=500,
@@ -15,7 +62,7 @@ SynthDef("supertonic", {
     vel=64;
 
     // variables
-    var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,clapFrequency,decayer;
+    var osc,noz,nozPostF,snd,pitchMod,nozEnv,numClaps,oscFreeSelf,wn1,wn2,decayer;
 
     // convert to seconds from milliseconds
     vel=LinLin.kr(vel,0,128,0,2);
@@ -30,11 +77,10 @@ SynthDef("supertonic", {
     oscFreq=oscFreq+5;
 
     // white noise generators (expensive)
-    wn1=WhiteNoise.ar();
-    wn2=WhiteNoise.ar();
-    wn1=Clip.ar(wn1*100,-1,1);
-    wn2=Clip.ar(wn2*100,-1,1);
-    clapFrequency=DC.kr((4311/(nEnvAtk*1000+28.4))+11.44); // fit using matlab
+	// wn1=WhiteNoise.ar();
+	// wn2=WhiteNoise.ar();
+	// wn1=Clip.ar(wn1*100,-1,1);
+	// wn2=Clip.ar(wn2*100,-1,1);
     // determine who should free
     oscFreeSelf=DC.kr(Select.kr(((oscAtk+oscDcy)>(nEnvAtk+nEnvDcy)),[0,2]));
 
@@ -50,15 +96,17 @@ SynthDef("supertonic", {
     oscFreq=((oscFreq).cpsmidi+pitchMod).midicps;
 
     // define the oscillator
-    osc=Select.ar(oscWave,[
-        SinOsc.ar(oscFreq),
-        LFTri.ar(oscFreq,mul:0.5),
-        SawDPW.ar(oscFreq,mul:0.5),
-    ]);
+    osc=In.ar(inoscWave,1);
+    // osc=Select.ar(oscWave,[
+    // 	SinOsc.ar(oscFreq),
+    // 	LFTri.ar(oscFreq,mul:0.5),
+    // 	SawDPW.ar(oscFreq,mul:0.5),
+    // ]);
+
     osc=Select.ar(modMode>1,[
         osc,
         SelectX.ar(oscDcy<0.1,[
-            LPF.ar(wn2,modRate),
+            LPF.ar(In.ar(innStereo,2),modRate),
             osc,
         ])
     ]);
@@ -72,18 +120,19 @@ SynthDef("supertonic", {
     osc=(osc*LinLin.kr(oscVel,0,200,1,0)*vel).softclip;
 
     // generate noise
-    noz=wn1;
+	noz=In.ar(innStereo,2);
 
     // optional stereo noise
-    noz=Select.ar(nStereo,[wn1,[wn1,wn2]]);
+    //noz=Select.ar(nStereo,[wn1,[wn1,wn2]]);
 
 
     // define noise envelope
-    nozEnv=Select.ar(nEnvMod,[
-        EnvGen.ar(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential),doneAction:(2-oscFreeSelf)),
-        EnvGen.ar(Env.new([0.0001,1,0.9,0.0001],[nEnvAtk,nEnvDcy*decayer,nEnvDcy*(1-decayer)],\linear)),
-        Decay.ar(Impulse.ar(clapFrequency),1/clapFrequency,0.85,0.15)*Trig.ar(1,nEnvAtk+0.001)+EnvGen.ar(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential)),
-    ]);
+	nozEnv=In.ar(innEnvMod,1);
+	// nozEnv=Select.ar(nEnvMod,[
+	// 	EnvGen.ar(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential),doneAction:(2-oscFreeSelf)),
+	// 	EnvGen.ar(Env.new([0.0001,1,0.9,0.0001],[nEnvAtk,nEnvDcy*decayer,nEnvDcy*(1-decayer)],\linear)),
+	// 	Decay.ar(Impulse.ar(clapFrequency),1/clapFrequency,0.85,0.15)*Trig.ar(1,nEnvAtk+0.001)+EnvGen.ar(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential)),
+	// ]);
 
     // apply noise filter
     nozPostF=Select.ar(nFilMod,[
@@ -119,8 +168,8 @@ SynthDef("supertonic", {
 
     snd=snd*level.dbamp*0.2;
     // free self if its quiet
-    FreeSelf.kr((Amplitude.kr(snd)<0.001)*TDelay.kr(DC.kr(1),0.05));
-
+	// FreeSelf.kr((Amplitude.kr(snd)<0.001)*TDelay.kr(DC.kr(1),0.05));
+	DetectSilence.ar(snd,doneAction:2);
     // apply some global fx
     snd=RLPF.ar(snd,fx_lowpass_freq,fx_lowpass_rq);
 
@@ -130,30 +179,54 @@ SynthDef("supertonic", {
 )
 
 
-// Name: "SC BD Toxyk"
 (
-Synth("supertonic",[
-    \distAmt,50,
-    \eQFreq,139,
-    \eQGain,-37,
+~oscWaveBus=Bus.audio(s,1);
+w=Synth("oscWave0",[
+    \freq,220,
+    \out,~oscWaveBus,
+]);
+~nStereoBus=Bus.audio(s,2);
+u=Synth("nStereo0",[
+    \out,~nStereoBus,
+]);
+~nEnvModBus=Bus.audio(s,1);
+v=Synth("nEnvMod0",[
+    \out,~nEnvModBus,
+    \distAmt,34.064063429832,
+    \nEnvAtk,2.1977363693469,
+    \nEnvDcy,1104.977660676,
+]);
+x=Synth.after(w,"supertonic",[
+    \inoscWave,~oscWaveBus,
+	\innStereo,~nStereoBus,
+	\innEnvMod,~nEnvModBus,
+    \distAmt,34.064063429832,
+    \eQFreq,80.661909666463,
+    \eQGain,30.246815681458,
     \level,-5.1201522322287,
-    \mix,0,
+    \mix,50,
     \modAmt,33.019509360458,
     \modMode,0,
     \modRate,4.0523291566457,
     \modVel,35.558253526688,
-    \nEnvAtk,0,
-    \nEnvDcy,87,
-    \nEnvMod,1,
-    \nFilFrq,2162,
-    \nFilMod,1,
-    \nFilQ,1.8,
+    \nEnvAtk,2.1977363693469,
+    \nEnvDcy,1104.977660676,
+    \nEnvMod,0,
+    \nFilFrq,392.00617432122,
+    \nFilMod,0,
+    \nFilQ,1.463421337541,
     \nStereo,1,
-    \nVel,26,
+    \nVel,40.751650929451,
     \oscAtk,0,
     \oscDcy,726.5732892423,
     \oscFreq,48.060961337325,
     \oscVel,38.951644301414,
     \oscWave,0,
-]);
+    \vel,64,
+]).onFree({
+    "freed".postln;
+    w.free;
+	u.free;
+	v.free;
+});
 )
