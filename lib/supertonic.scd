@@ -46,7 +46,7 @@ SynthDef("nEnvMod2",{
 	env=Decay.ar(Impulse.ar(clapFrequency),1/clapFrequency,0.85,0.15)*Trig.ar(1,nEnvAtk+0.001)+EnvGen.ar(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential));
 	Out.ar(out,env);
 }).add;
-SynthDef("supertonic", {
+SynthDef("supertonicBase", {
     arg out,inoscWave,innStereo,innEnvMod,
     mix=50,level=(-5),distAmt=2,
     eQFreq=632.4,eQGain=(-20),
@@ -181,22 +181,25 @@ SynthDef("supertonic", {
 
 (
 ~oscWaveBus=Bus.audio(s,1);
+~nStereoBus=Bus.audio(s,2);
+~nEnvModBus=Bus.audio(s,1);
+)
+// peak 2.56%-2.65%
+(
 w=Synth("oscWave0",[
     \freq,220,
     \out,~oscWaveBus,
 ]);
-~nStereoBus=Bus.audio(s,2);
-u=Synth("nStereo0",[
+u=Synth.after(w,"nStereo0",[
     \out,~nStereoBus,
 ]);
-~nEnvModBus=Bus.audio(s,1);
-v=Synth("nEnvMod0",[
+v=Synth.after(u,"nEnvMod0",[
     \out,~nEnvModBus,
     \distAmt,34.064063429832,
     \nEnvAtk,2.1977363693469,
     \nEnvDcy,1104.977660676,
 ]);
-x=Synth.after(w,"supertonic",[
+x=Synth.after(v,"supertonicBase",[
     \inoscWave,~oscWaveBus,
 	\innStereo,~nStereoBus,
 	\innEnvMod,~nEnvModBus,
