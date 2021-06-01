@@ -2,23 +2,23 @@
 // pitch modulation
 SynthDef("modMode0",{
     arg modRate,modAmt,modVel,vel,out;
-	var pitchMod;
-	vel=LinLin.kr(vel,0,128,0,2);
-	pitchMod=Decay.ar(Impulse.ar(0.0001),(1/(2*modRate)));
+    var pitchMod;
+    vel=LinLin.kr(vel,0,128,0,2);
+    pitchMod=Decay.ar(Impulse.ar(0.0001),(1/(2*modRate)));
     pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
     Out.ar(out,pitchMod);
 }).add;
 SynthDef("modMode1",{
     arg modRate,modAmt,modVel,vel,out;
-	var pitchMod;
-	pitchMod=SinOsc.ar(-1*modRate);
+    var pitchMod;
+    pitchMod=SinOsc.ar(-1*modRate);
     pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
     Out.ar(out,pitchMod);
 }).add;
 SynthDef("modMode2",{
     arg modRate,modAmt,modVel,vel,out;
-	var pitchMod;
-	pitchMod=Lag.ar(LFNoise0.ar(4*modRate),1/(4*modRate));
+    var pitchMod;
+    pitchMod=Lag.ar(LFNoise0.ar(4*modRate),1/(4*modRate));
     pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
     Out.ar(out,pitchMod);
 }).add;
@@ -26,57 +26,58 @@ SynthDef("modMode2",{
 SynthDef("oscWave0",{
     arg oscFreq,out,pitchModIn;
     oscFreq=oscFreq+5;
-	oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
+    oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
     Out.ar(out,SinOsc.ar(oscFreq));
 }).add;
 SynthDef("oscWave1",{
     arg oscFreq,out,pitchModIn;
     oscFreq=oscFreq+5;
-	oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
+    oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
     Out.ar(out,LFTri.ar(oscFreq,mul:0.5));
 }).add;
 SynthDef("oscWave2",{
     arg oscFreq,out,pitchModIn;
     oscFreq=oscFreq+5;
-	oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
+    oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
     Out.ar(out,SawDPW.ar(oscFreq,mul:0.5));
 }).add;
 // noise generation
 SynthDef("nStereo0",{
     arg out;
-	var snd = WhiteNoise.ar();
-	Out.ar(out,[snd,snd]);
+    var snd = WhiteNoise.ar();
+    Out.ar(out,[snd,snd]);
 }).add;
 SynthDef("nStereo1",{
     arg out;
-	Out.ar(out,[WhiteNoise.ar(),WhiteNoise.ar()]);
+    Out.ar(out,[WhiteNoise.ar(),WhiteNoise.ar()]);
 }).add;
 // noise envelope
 SynthDef("nEnvMod0",{
     arg out,nEnvAtk,nEnvDcy,distAmt;
-	var decayer,env;
+    var decayer,env;
     nEnvAtk=DC.kr(nEnvAtk/1000);
     nEnvDcy=DC.kr(nEnvDcy/1000*1.4);
-	env=EnvGen.ar(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential));
-	Out.ar(out,env);
+    env=EnvGen.ar(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential));
+    Out.ar(out,env);
 }).add;
 SynthDef("nEnvMod1",{
     arg out,nEnvAtk,nEnvDcy,distAmt;
-	var decayer,env;
+    var decayer,env;
     nEnvAtk=DC.kr(nEnvAtk/1000);
     nEnvDcy=DC.kr(nEnvDcy/1000*1.4);
-	decayer=SelectX.kr(distAmt/100,[0.05,distAmt/100*0.3]);
-	env=EnvGen.ar(Env.new([0.0001,1,0.9,0.0001],[nEnvAtk,nEnvDcy*decayer,nEnvDcy*(1-decayer)],\linear));
-	Out.ar(out,env);
+    decayer=SelectX.kr(distAmt/100,[0.05,distAmt/100*0.3]);
+    env=EnvGen.ar(Env.new([0.0001,1,0.9,0.0001],[nEnvAtk,nEnvDcy*decayer,nEnvDcy*(1-decayer)],\linear));
+    Out.ar(out,env);
 }).add;
 SynthDef("nEnvMod2",{
     arg out,nEnvAtk,nEnvDcy,distAmt;
-	var clapFrequency,env;
+    var clapFrequency,env;
     nEnvAtk=DC.kr(nEnvAtk/1000);
     nEnvDcy=DC.kr(nEnvDcy/1000*1.4);
-	clapFrequency=DC.kr((4311/(nEnvAtk*1000+28.4))+11.44); // fit using matlab
-	env=Decay.ar(Impulse.ar(clapFrequency),1/clapFrequency,0.85,0.15)*Trig.ar(1,nEnvAtk+0.001)+EnvGen.ar(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential));
-	Out.ar(out,env);
+    clapFrequency=DC.kr((4311/(nEnvAtk*1000+28.4))+11.44); // fit using matlab
+    env=Decay.ar(Impulse.ar(clapFrequency),1/clapFrequency,0.85,0.15)*Trig.ar(1,nEnvAtk+0.001)+
+    EnvGen.ar(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential));
+    Out.ar(out,env);
 }).add;
 // base
 SynthDef("supertonicBase", {
@@ -109,7 +110,7 @@ SynthDef("supertonicBase", {
     // define the oscillator
     osc=In.ar(oscWaveIn,1);
 
-	// special addition
+    // special addition
     osc=Select.ar(modMode>1,[
         osc,
         SelectX.ar(oscDcy<0.1,[
@@ -126,10 +127,10 @@ SynthDef("supertonicBase", {
     osc=(osc*LinLin.kr(oscVel,0,200,1,0)*vel).softclip;
 
     // generate noise
-	noz=In.ar(nStereoIn,2);
+    noz=In.ar(nStereoIn,2);
 
     // define noise envelope
-	nozEnv=In.ar(nEnvModIn,1);
+    nozEnv=In.ar(nEnvModIn,1);
 
     // apply noise filter
     nozPostF=Select.ar(nFilMod,[
@@ -163,8 +164,8 @@ SynthDef("supertonicBase", {
 
     snd=snd*level.dbamp*0.2;
     // free self if its quiet or if it runs out
-	FreeSelf.kr(TDelay.kr(DC.kr(1),ArrayMax.kr([oscAtk+oscDcy,nEnvAtk+nEnvDcy])));
-	DetectSilence.ar(snd,0.0001,doneAction:2);
+    FreeSelf.kr(TDelay.kr(DC.kr(1),ArrayMax.kr([oscAtk+oscDcy,nEnvAtk+nEnvDcy])));
+    DetectSilence.ar(snd,0.0001,doneAction:2);
 
     // apply some global fx
     snd=RLPF.ar(snd,fx_lowpass_freq,fx_lowpass_rq);
@@ -192,28 +193,29 @@ var nEnvMod=0.0;
 var oscWave=0.0;
 var modMode=0.0;
 var nStereo=1.0;
-t=Synth("modMode"++modMode.asInteger,[
+var modModeSyn,oscWaveSyn,nStereoSyn,nEnvModSyn;
+modModeSyn=Synth("modMode"++modMode.asInteger,[
 	\out,pitchModBus,
 	\modAmt,33.019509360458,
 	\modRate,4.0523291566457,
 	\modVel,35.558253526688,
 	\vel,64,
 ],synthGroup);
-w=Synth.after(t,"oscWave"++oscWave.asInteger,[
+oscWaveSyn=Synth.after(modModeSyn,"oscWave"++oscWave.asInteger,[
     \oscFreq,48.060961337325,
     \out,oscWaveBus,
 	\pitchModIn,pitchModBus,
 ],synthGroup);
-u=Synth.after(w,"nStereo"++nStereo.asInteger,[
+nStereoSyn=Synth.after(oscWaveSyn,"nStereo"++nStereo.asInteger,[
     \out,nStereoBus,
 ],synthGroup);
-v=Synth.after(u,"nEnvMod"++nEnvMod.asInteger,[
+nEnvModSyn=Synth.after(nStereoSyn,"nEnvMod"++nEnvMod.asInteger,[
     \out,nEnvModBus,
     \distAmt,34.064063429832,
     \nEnvAtk,2.1977363693469,
     \nEnvDcy,1104.977660676,
 ],synthGroup);
-x=Synth.after(v,"supertonicBase",[
+x=Synth.after(nEnvModSyn,"supertonicBase",[
     \oscWaveIn,oscWaveBus,
 	\nStereoIn,nStereoBus,
 	\nEnvModIn,nEnvModBus,
