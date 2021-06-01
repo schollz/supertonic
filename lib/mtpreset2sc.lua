@@ -209,31 +209,34 @@ end
 patchloader=Patches
 patches=patchloader:load(arg[1])
 
+keys={}
+for k,v in pairs(patches[1]) do
+  table.insert(keys,k)
+end
+table.sort(keys)
+print(keys)
 print("(")
 for patchi,p in ipairs(patches) do
   print("// "..p.name)
   print("~ins"..patchi.."={")
-  print([[
-var oscWaveBus=Bus.audio(s,1);
-var nStereoBus=Bus.audio(s,2);
-var nEnvModBus=Bus.audio(s,1);
-var pitchModBus=Bus.audio(s,1);
-var synthGroup=Group.new;
-var modModeSyn,oscWaveSyn,nStereoSyn,nEnvModSyn;
-var vel=64;]])
 
-  keys={}
-  for k,v in pairs(p) do
-    table.insert(keys,k)
-  end
-  table.sort(keys)
   for _,k in ipairs(keys) do
     local v=p[k]
     if type(v)=="number" then
       print(string.format("var %s=(%2.2f);",k,v))
     end
   end
-  print([[
+end
+print([[
+~nanotonic={
+arg ]]..table.concat(keys,",")..[[;
+var oscWaveBus=Bus.audio(s,1);
+var nStereoBus=Bus.audio(s,2);
+var nEnvModBus=Bus.audio(s,1);
+var pitchModBus=Bus.audio(s,1);
+var synthGroup=Group.new;
+var modModeSyn,oscWaveSyn,nStereoSyn,nEnvModSyn;
+var vel=64;
 modModeSyn=Synth("modMode"++modMode.asInteger,[
 \out,pitchModBus,\modAmt,modAmt,\modRate,modRate,\modVel,modVel,\vel,vel,
 ],synthGroup);
@@ -253,7 +256,7 @@ x=Synth.after(nEnvModSyn,"supertonicBase",[\oscWaveIn,oscWaveBus,\nStereoIn,nSte
 \nFilFrq,nFilFrq,\nFilMod,nFilMod,\nFilQ,nFilQ,\nStereo,nStereo,\nVel,nVel,
 \oscAtk,oscAtk,\oscDcy,oscDcy,\oscFreq,oscFreq,\oscVel,oscVel,\oscWave,oscWave,
 \vel,vel,],synthGroup).onFree({
-    "ins]]..patchi..[[ freed".postln;
+    "freed".postln;
     synthGroup.free;
     pitchModBus.free;
     oscWaveBus.free;
@@ -261,6 +264,5 @@ x=Synth.after(nEnvModSyn,"supertonicBase",[\oscWaveIn,oscWaveBus,\nStereoIn,nSte
     nEnvModBus.free;
 });
 };
+)
 ]])
-end
-print(")")
