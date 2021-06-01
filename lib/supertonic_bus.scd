@@ -1,16 +1,47 @@
 (
+// pitch modulation
+SynthDef("modMode0",{
+    arg modRate,modAmt,modVel,vel,out;
+	var pitchMod;
+	vel=LinLin.kr(vel,0,128,0,2);
+	pitchMod=Decay.ar(Impulse.ar(0.0001),(1/(2*modRate)));
+    pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
+    Out.ar(out,pitchMod);
+}).add;
+SynthDef("modMode1",{
+    arg modRate,modAmt,modVel,vel,out;
+	var pitchMod;
+	pitchMod=SinOsc.ar(-1*modRate);
+    pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
+    Out.ar(out,pitchMod);
+}).add;
+SynthDef("modMode2",{
+    arg modRate,modAmt,modVel,vel,out;
+	var pitchMod;
+	pitchMod=Lag.ar(LFNoise0.ar(4*modRate),1/(4*modRate));
+    pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
+    Out.ar(out,pitchMod);
+}).add;
+// oscillators
 SynthDef("oscWave0",{
-    arg freq,out;
-    Out.ar(out,SinOsc.ar(freq));
+    arg oscFreq,out,pitchModIn;
+    oscFreq=oscFreq+5;
+	oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
+    Out.ar(out,SinOsc.ar(oscFreq));
 }).add;
 SynthDef("oscWave1",{
-    arg freq,out;
-    Out.ar(out,LFTri.ar(freq,mul:0.5));
+    arg oscFreq,out,pitchModIn;
+    oscFreq=oscFreq+5;
+	oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
+    Out.ar(out,LFTri.ar(oscFreq,mul:0.5));
 }).add;
 SynthDef("oscWave2",{
-    arg freq,out;
-    Out.ar(out,SawDPW.ar(freq,mul:0.5));
+    arg oscFreq,out,pitchModIn;
+    oscFreq=oscFreq+5;
+	oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
+    Out.ar(out,SawDPW.ar(oscFreq,mul:0.5));
 }).add;
+// noise generation
 SynthDef("nStereo0",{
     arg out;
 	var snd = WhiteNoise.ar();
@@ -20,6 +51,7 @@ SynthDef("nStereo1",{
     arg out;
 	Out.ar(out,[WhiteNoise.ar(),WhiteNoise.ar()]);
 }).add;
+// noise envelope
 SynthDef("nEnvMod0",{
     arg out,nEnvAtk,nEnvDcy,distAmt;
 	var decayer,env;
@@ -46,8 +78,9 @@ SynthDef("nEnvMod2",{
 	env=Decay.ar(Impulse.ar(clapFrequency),1/clapFrequency,0.85,0.15)*Trig.ar(1,nEnvAtk+0.001)+EnvGen.ar(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential));
 	Out.ar(out,env);
 }).add;
+// base
 SynthDef("supertonicBase", {
-    arg out,oscWaveIn,nStereoIn,nEnvModIn,
+    arg out,modModeIn,oscWaveIn,nStereoIn,nEnvModIn,
     mix=50,level=(-5),distAmt=2,
     eQFreq=632.4,eQGain=(-20),
     oscAtk=0,oscDcy=500,
@@ -62,7 +95,7 @@ SynthDef("supertonicBase", {
     vel=64;
 
     // variables
-    var osc,noz,nozPostF,snd,pitchMod,nozEnv,decayer;
+    var osc,noz,nozPostF,snd,nozEnv,decayer;
 
     // convert to seconds from milliseconds
     vel=LinLin.kr(vel,0,128,0,2);
@@ -71,30 +104,12 @@ SynthDef("supertonicBase", {
     nEnvAtk=DC.kr(nEnvAtk/1000);
     nEnvDcy=DC.kr(nEnvDcy/1000*1.4);
     level=DC.kr(level);
-    // add logistic curve to the mix
-    mix=DC.kr(100/(1+(2.7182**((50-mix)/8))));
-    // this is important at low freq
-    oscFreq=oscFreq+5;
-
-    // define pitch modulation1
-    pitchMod=Select.ar(modMode,[
-        Decay.ar(Impulse.ar(0.0001),(1/(2*modRate))), // decay
-        SinOsc.ar(-1*modRate), // sine
-        Lag.ar(LFNoise0.ar(4*modRate),1/(4*modRate)), // random
-    ]);
-
-    // mix in the the pitch mod
-    pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
-    oscFreq=((oscFreq).cpsmidi+pitchMod).midicps;
+    mix=DC.kr(100/(1+(2.7182**((50-mix)/8)))); // logistic curve
 
     // define the oscillator
     osc=In.ar(oscWaveIn,1);
-    // osc=Select.ar(oscWave,[
-    // 	SinOsc.ar(oscFreq),
-    // 	LFTri.ar(oscFreq,mul:0.5),
-    // 	SawDPW.ar(oscFreq,mul:0.5),
-    // ]);
 
+	// special addition
     osc=Select.ar(modMode>1,[
         osc,
         SelectX.ar(oscDcy<0.1,[
@@ -102,7 +117,6 @@ SynthDef("supertonicBase", {
             osc,
         ])
     ]);
-
 
     // add oscillator envelope
     decayer=SelectX.kr(distAmt/100,[0.05,distAmt/100*0.3]);
@@ -114,17 +128,8 @@ SynthDef("supertonicBase", {
     // generate noise
 	noz=In.ar(nStereoIn,2);
 
-    // optional stereo noise
-    //noz=Select.ar(nStereo,[wn1,[wn1,wn2]]);
-
-
     // define noise envelope
 	nozEnv=In.ar(nEnvModIn,1);
-	// nozEnv=Select.ar(nEnvMod,[
-	// 	EnvGen.ar(Env.new(levels: [0.001, 1, 0.0001], times: [nEnvAtk, nEnvDcy],curve:\exponential),doneAction:(2-oscFreeSelf)),
-	// 	EnvGen.ar(Env.new([0.0001,1,0.9,0.0001],[nEnvAtk,nEnvDcy*decayer,nEnvDcy*(1-decayer)],\linear)),
-	// 	Decay.ar(Impulse.ar(clapFrequency),1/clapFrequency,0.85,0.15)*Trig.ar(1,nEnvAtk+0.001)+EnvGen.ar(Env.new(levels: [0.001, 0.001, 1,0.0001], times: [nEnvAtk,0.001, nEnvDcy],curve:\exponential)),
-	// ]);
 
     // apply noise filter
     nozPostF=Select.ar(nFilMod,[
@@ -140,8 +145,6 @@ SynthDef("supertonicBase", {
 
     // apply velocities
     noz=(noz*LinLin.kr(nVel,0,200,1,0)*vel).softclip;
-
-
 
     // mix oscillator and noise
     snd=SelectX.ar(mix/100*2,[
@@ -172,15 +175,24 @@ SynthDef("supertonicBase", {
 
 
 (
+~pitchModBus=Bus.audio(s,1);
 ~oscWaveBus=Bus.audio(s,1);
 ~nStereoBus=Bus.audio(s,2);
 ~nEnvModBus=Bus.audio(s,1);
 )
-// peak 2.56%-2.65%
+// peak 1.62
 (
-w=Synth("oscWave0",[
-    \freq,48.060961337325,
+t=Synth("modMode0",[
+	\out,~pitchModBus,
+	\modAmt,33.019509360458,
+	\modRate,4.0523291566457,
+	\modVel,35.558253526688,
+	\vel,64,
+]);
+w=Synth.after(t,"oscWave0",[
+    \oscFreq,48.060961337325,
     \out,~oscWaveBus,
+	\pitchModIn,~pitchModBus,
 ]);
 u=Synth.after(w,"nStereo1",[
     \out,~nStereoBus,
@@ -201,9 +213,9 @@ x=Synth.after(v,"supertonicBase",[
 	\level,-5.1201522322287,
 	\mix,88.153877258301,
 	\modAmt,33.019509360458,
-	\modMode,0,
 	\modRate,4.0523291566457,
 	\modVel,35.558253526688,
+	\modMode,0,
 	\nEnvAtk,2.1977363693469,
 	\nEnvDcy,1104.977660676,
 	\nEnvMod,0,
@@ -223,5 +235,6 @@ x=Synth.after(v,"supertonicBase",[
     w.free;
 	u.free;
 	v.free;
+	t.free;
 });
 )
