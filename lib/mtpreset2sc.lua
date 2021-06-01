@@ -16,19 +16,19 @@ end
 
 
 function Patches:lines_from(file)
-  lines = {}
-  for line in io.lines(file) do 
-    lines[#lines + 1] = line
+  lines={}
+  for line in io.lines(file) do
+    lines[#lines+1]=line
   end
   return lines
 end
 
 function Patches:trim(s)
-   return (s:gsub("^%s*(.-)%s*$", "%1"))
+  return (s:gsub("^%s*(.-)%s*$","%1"))
 end
 
 function Patches:load(preset_file)
-  local lines = self:lines_from(preset_file)
+  local lines=self:lines_from(preset_file)
 
   drum_patches=false
   local patches={}
@@ -53,19 +53,19 @@ function Patches:load(preset_file)
         end
       elseif line:find("OscFreq")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
         patches[i].oscFreq=val
       elseif line:find("OscAtk")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
         patches[i].oscAtk=val
       elseif line:find("OscDcy")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
         patches[i].oscDcy=val
@@ -80,7 +80,7 @@ function Patches:load(preset_file)
         end
       elseif line:find("ModRate")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
         if string.find(line,"Hz") then
@@ -90,11 +90,11 @@ function Patches:load(preset_file)
         end
       elseif line:find("ModAmt")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
-        if string.find(line,"-") then 
-          val = val * -1
+        if string.find(line,"-") then
+          val=val*-1
         end
         patches[i].modAmt=val
       elseif line:find("NFilMod")==1 then
@@ -108,13 +108,13 @@ function Patches:load(preset_file)
         end
       elseif line:find("NFilFrq")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
         patches[i].nFilFrq=val
       elseif line:find("NFilQ")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
         patches[i].nFilQ=val
@@ -134,69 +134,69 @@ function Patches:load(preset_file)
         end
       elseif line:find("NEnvAtk")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
         patches[i].nEnvAtk=val
       elseif line:find("NEnvDcy")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
         patches[i].nEnvDcy=val
       elseif line:find("Mix")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
           break
         end
         patches[i].mix=val
       elseif line:find("DistAmt")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
         patches[i].distAmt=val
       elseif line:find("EQFreq")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
         patches[i].eQFreq=val
       elseif line:find("OscVel")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
         patches[i].oscVel=val
       elseif line:find("NVel")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
         patches[i].nVel=val
       elseif line:find("ModVel")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
         patches[i].modVel=val
       elseif line:find("EQGain")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
-        if string.find(line,"-") then 
-          val = val * -1
+        if string.find(line,"-") then
+          val=val*-1
         end
         patches[i].eQGain=val
       elseif line:find("Level")==1 then
         local val=0
-        for num in string.gmatch( line, "[0-9]+%.[0-9]+" ) do
+        for num in string.gmatch(line,"[0-9]+%.[0-9]+") do
           val=tonumber(num)
         end
-        if string.find(line,"-") then 
-          val = val * -1
+        if string.find(line,"-") then
+          val=val*-1
         end
         patches[i].level=val
       end
@@ -209,22 +209,56 @@ end
 patchloader=Patches
 patches=patchloader:load(arg[1])
 
-for _,p in ipairs(patches) do
-	print("// "..p.name)
-	print("(")
-	print('Synth("supertonic",[')
-	keys={}
-	for k,v in pairs(p) do
-		table.insert(keys,k)
-	end
-	table.sort(keys)
-	for _,k in ipairs(keys) do
-		local v=p[k]
-		if k=="name" then
-		else
-			print("\\"..k..","..v..",")
-		end
-	end
-	print("]);")
-	print(")")
+print("(")
+for patchi,p in ipairs(patches) do
+  print("// "..p.name)
+  print("~ins"..patchi.."={")
+  print([[
+var oscWaveBus=Bus.audio(s,1);
+var nStereoBus=Bus.audio(s,2);
+var nEnvModBus=Bus.audio(s,1);
+var synthGroup=Group.new;
+var modModeSyn,oscWaveSyn,nStereoSyn,nEnvModSyn;]])
+
+  keys={}
+  for k,v in pairs(p) do
+    table.insert(keys,k)
+  end
+  table.sort(keys)
+  for _,k in ipairs(keys) do
+    local v=p[k]
+    if type(v)=="number" then
+      print(string.format("var %s=%2.2f;",k,v))
+    end
+  end
+  print([[
+modModeSyn=Synth("modMode"++modMode.asInteger,[
+\out,pitchModBus,\modAmt,modAmt,\modRate,modRate,\modVel,modVel,\vel,vel,
+],synthGroup);
+oscWaveSyn=Synth.after(modModeSyn,"oscWave"++oscWave.asInteger,[
+\oscFreq,oscFreq,\out,oscWaveBus,\pitchModIn,pitchModBus,
+],synthGroup);
+nStereoSyn=Synth.after(oscWaveSyn,"nStereo"++nStereo.asInteger,[
+\out,nStereoBus,
+],synthGroup);
+nEnvModSyn=Synth.after(nStereoSyn,"nEnvMod"++nEnvMod.asInteger,[
+\out,nEnvModBus,\distAmt,distAmt,\nEnvAtk,nEnvAtk,\nEnvDcy,nEnvDcy,
+],synthGroup);
+x=Synth.after(nEnvModSyn,"supertonicBase",[\oscWaveIn,oscWaveBus,\nStereoIn,nStereoBus,
+\nEnvModIn,nEnvModBus,\distAmt,distAmt,\eQFreq,eQFreq,\eQGain,eQGain,
+\level,level,\mix,mix,\modAmt,modAmt,\modRate,modRate,\modVel,modVel,
+\modMode,modMode,\nEnvAtk,nEnvAtk, \nEnvDcy,nEnvDcy,\nEnvMod,nEnvMod,
+\nFilFrq,nFilFrq,\nFilMod,nFilMod,\nFilQ,nFilQ,\nStereo,nStereo,\nVel,nVel,
+\oscAtk,oscAtk,\oscDcy,oscDcy,\oscFreq,oscFreq,\oscVel,oscVel,\oscWave,oscWave,
+\vel,vel,],synthGroup).onFree({
+    "ins]]..patchi..[[ freed".postln;
+    synthGroup.free;
+    pitchModBus.free;
+    oscWaveBus.free;
+    nStereoBus.free;
+    nEnvModBus.free;
+});
+]])
+  print("};")
 end
+print(")")
