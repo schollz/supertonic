@@ -176,15 +176,10 @@ SynthDef("supertonicBase", {
 )
 
 
-(
-~pitchModBus=Bus.audio(s,1);
-~oscWaveBus=Bus.audio(s,1);
-~nStereoBus=Bus.audio(s,2);
-~nEnvModBus=Bus.audio(s,1);
-)
 // peak 1.62
 (
-~kick={var pitchModBus=Bus.audio(s,1);
+~kick={
+var pitchModBus=Bus.audio(s,1);
 var oscWaveBus=Bus.audio(s,1);
 var nStereoBus=Bus.audio(s,2);
 var nEnvModBus=Bus.audio(s,1);

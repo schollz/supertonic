@@ -217,8 +217,10 @@ for patchi,p in ipairs(patches) do
 var oscWaveBus=Bus.audio(s,1);
 var nStereoBus=Bus.audio(s,2);
 var nEnvModBus=Bus.audio(s,1);
+var pitchModBus=Bus.audio(s,1);
 var synthGroup=Group.new;
-var modModeSyn,oscWaveSyn,nStereoSyn,nEnvModSyn;]])
+var modModeSyn,oscWaveSyn,nStereoSyn,nEnvModSyn;
+var vel=64;]])
 
   keys={}
   for k,v in pairs(p) do
@@ -228,7 +230,7 @@ var modModeSyn,oscWaveSyn,nStereoSyn,nEnvModSyn;]])
   for _,k in ipairs(keys) do
     local v=p[k]
     if type(v)=="number" then
-      print(string.format("var %s=%2.2f;",k,v))
+      print(string.format("var %s=(%2.2f);",k,v))
     end
   end
   print([[
