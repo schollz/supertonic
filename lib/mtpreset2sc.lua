@@ -260,7 +260,7 @@ x=Synth.after(nEnvModSyn,"supertonicBase",[\oscWaveIn,oscWaveBus,\nStereoIn,nSte
     nStereoBus.free;
     nEnvModBus.free;
 });
+};
 ]])
-  print("};")
 end
 print(")")
