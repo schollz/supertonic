@@ -199,9 +199,10 @@ Engine_Supertonic : CroneEngine {
         context.server.sync;
 
         this.addCommand("supertonic","ffffffffffffffffffffffffi", { arg msg;
-            var oscWaveBus=Bus.audio(s,1);
-            var nStereoBus=Bus.audio(s,2);
-            var nEnvModBus=Bus.audio(s,1);
+            var oscWaveBus=Bus.audio(context.server,1);
+            var nStereoBus=Bus.audio(context.server,2);
+            var nEnvModBus=Bus.audio(context.server,1);
+            var pitchModBus=Bus.audio(context.server,1);
             var synthGroup=Group.new(context.server);
             var nEnvMod=msg[11];
             var oscWave=msg[19];
