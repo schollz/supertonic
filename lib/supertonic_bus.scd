@@ -162,9 +162,10 @@ SynthDef("supertonicBase", {
     snd=HPF.ar(snd,20);
 
     snd=snd*level.dbamp*0.2;
-    // free self if its quiet
-	// FreeSelf.kr((Amplitude.kr(snd)<0.001)*TDelay.kr(DC.kr(1),0.05));
-	DetectSilence.ar(snd,doneAction:2);
+    // free self if its quiet or if it runs out
+	FreeSelf.kr(TDelay.kr(DC.kr(1),ArrayMax.kr([oscAtk+oscDcy,nEnvAtk+nEnvDcy])));
+	DetectSilence.ar(snd,0.0001,doneAction:2);
+
     // apply some global fx
     snd=RLPF.ar(snd,fx_lowpass_freq,fx_lowpass_rq);
 
@@ -182,27 +183,31 @@ SynthDef("supertonicBase", {
 )
 // peak 1.62
 (
-var pitchModBus=Bus.audio(s,1);
+~kick={var pitchModBus=Bus.audio(s,1);
 var oscWaveBus=Bus.audio(s,1);
 var nStereoBus=Bus.audio(s,2);
 var nEnvModBus=Bus.audio(s,1);
 var synthGroup=Group.new;
-t=Synth("modMode0",[
+var nEnvMod=0.0;
+var oscWave=0.0;
+var modMode=0.0;
+var nStereo=1.0;
+t=Synth("modMode"++modMode.asInteger,[
 	\out,pitchModBus,
 	\modAmt,33.019509360458,
 	\modRate,4.0523291566457,
 	\modVel,35.558253526688,
 	\vel,64,
 ],synthGroup);
-w=Synth.after(t,"oscWave0",[
+w=Synth.after(t,"oscWave"++oscWave.asInteger,[
     \oscFreq,48.060961337325,
     \out,oscWaveBus,
 	\pitchModIn,pitchModBus,
 ],synthGroup);
-u=Synth.after(w,"nStereo1",[
+u=Synth.after(w,"nStereo"++nStereo.asInteger,[
     \out,nStereoBus,
 ],synthGroup);
-v=Synth.after(u,"nEnvMod0",[
+v=Synth.after(u,"nEnvMod"++nEnvMod.asInteger,[
     \out,nEnvModBus,
     \distAmt,34.064063429832,
     \nEnvAtk,2.1977363693469,
@@ -212,7 +217,7 @@ x=Synth.after(v,"supertonicBase",[
     \oscWaveIn,oscWaveBus,
 	\nStereoIn,nStereoBus,
 	\nEnvModIn,nEnvModBus,
-	\distAmt,34.064063429832,
+	\distAmt,94.064063429832,
 	\eQFreq,80.661909666463,
 	\eQGain,30.246815681458,
 	\level,-5.1201522322287,
@@ -243,4 +248,13 @@ x=Synth.after(v,"supertonicBase",[
 	nStereoBus.free;
 	nEnvModBus.free;
 });
+};
+~kick.(1);
 )
+
+a=[1,3];
+a.maxItem;
+ArrayMax(a)
+
+s.plotTree;
+~kick.(1)
