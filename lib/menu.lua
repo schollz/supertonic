@@ -37,6 +37,13 @@ function Menu:rebuild_menu(selected,selected_patch)
       end
     end
   end
+  for patch=1,2 do
+    if patch==selected_patch then
+      params:show(patch.."preset")
+    else
+      params:hide(patch.."preset")
+    end
+  end
 end
 
 function Menu:init()
