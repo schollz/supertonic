@@ -115,7 +115,7 @@ function startup()
     if params:string("clock_source") == "link" then
       clock.run(
         function()
-          clock.sync(4)
+          clock.sync(params:get("link_quantum"))
           timekeeper:start()
         end
       )
