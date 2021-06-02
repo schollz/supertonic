@@ -154,25 +154,27 @@ function Menu:init()
     {id="pattern",name="pattern",hidden=true,textmenu=true},
     {id="basis",name="basis",range={1,5},default=1,increment=1,hidden=true},
   }
-  params:add_group("SUPERTONIC",5+#self.parameters*drummer_number+(#self.parameters_morph+1)*drummer_number)
+  params:add_group("SUPERTONIC",6+#self.parameters*drummer_number+(#self.parameters_morph+1)*drummer_number)
   local drum_options={}
   for i=1,drummer_number do
     table.insert(drum_options,i)
   end
   local preset_dir=_path.data.."supertonic/presets/"
-  params:add_file("preset","preset",preset_dir)
-  params:set_action("preset",function(v)
-    if v==preset_dir then
-      do return end
-    end
-    print(preset_dir)
-    local patches=supertonic_patches:load(v)
-    if patches~=nil then
-      for i=1,5 do
-        drummer[i]:set_patch(patches[i])
+  for i=1,2 do
+    params:add_file(i.."preset","preset "..i,preset_dir)
+    params:set_action("preset",function(v)
+      if v==preset_dir then
+        do return end
       end
-    end
-  end)
+      print(preset_dir)
+      local patches=supertonic_patches:load(v)
+      if patches~=nil then
+        for dnum=1,5 do
+          drummer[dnum]:set_patch(i,patches[dnum])
+        end
+      end
+    end)
+  end
   params:add{type="control",id="global lpf freq",name="global lpf freq",controlspec=controlspec.new(20,20000,'exp',0,20000,'Hz',100/20000),formatter=Formatters.format_freq,action=function(v)
     for i=1,5 do
       engine.supertonic_lpf(i,v,params:get("global lpf rq"))
@@ -200,9 +202,9 @@ function Menu:init()
     for _,p in ipairs(i,self.parameters) do
       self:add_menu(i,p)
     end
-    for morph=1,2 do
+    for patch=1,2 do
       for _,p in ipairs(i,self.parameters_morph) do
-        self:add_menu(i..""..morph,p)
+        self:add_menu(i..""..patch,p)
       end
     end
   end
