@@ -211,7 +211,9 @@ patches=patchloader:load(arg[1])
 
 keys={}
 for k,v in pairs(patches[1]) do
-  table.insert(keys,k)
+  if k~="name" then
+    table.insert(keys,k)
+  end
 end
 table.sort(keys)
 print(keys)
@@ -221,11 +223,17 @@ for patchi,p in ipairs(patches) do
   print("~ins"..patchi.."={")
 
   for _,k in ipairs(keys) do
-    local v=p[k]
-    if type(v)=="number" then
-      print(string.format("var %s=(%2.2f);",k,v))
+    if k~="name" then
+      local v=p[k]
+      if type(v)=="number" then
+        print(string.format("var %s=(%2.2f);",k,v))
+      end
     end
   end
+  print([[
+~nanotonic.(distAmt,eQFreq,eQGain,level,mix,modAmt,modMode,modRate,modVel,nEnvAtk,nEnvDcy,nEnvMod,nFilFrq,nFilMod,nFilQ,nStereo,nVel,oscAtk,oscDcy,oscFreq,oscVel,oscWave);
+};
+]])
 end
 print([[
 ~nanotonic={
@@ -265,4 +273,14 @@ x=Synth.after(nEnvModSyn,"supertonicBase",[\oscWaveIn,oscWaveBus,\nStereoIn,nSte
 });
 };
 )
+]])
+
+print([[
+// play with
+
+~ins1.();
+~ins2.();
+~ins3.();
+~ins4.();
+~ins5.();
 ]])

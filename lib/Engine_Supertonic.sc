@@ -15,12 +15,13 @@ Engine_Supertonic : CroneEngine {
 
     alloc {
         // Supertonic specific v0.0.1
+
         // pitch modulation
         SynthDef("modMode0",{
             arg modRate,modAmt,modVel,vel,out;
             var pitchMod;
-            vel=LinLin.kr(vel,0,128,0,2);
             pitchMod=Decay.ar(Impulse.ar(0.0001),(1/(2*modRate)));
+            vel=LinLin.kr(vel,0,128,0,2);
             pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
             Out.ar(out,pitchMod);
         }).add;
@@ -28,6 +29,7 @@ Engine_Supertonic : CroneEngine {
             arg modRate,modAmt,modVel,vel,out;
             var pitchMod;
             pitchMod=SinOsc.ar(-1*modRate);
+            vel=LinLin.kr(vel,0,128,0,2);
             pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
             Out.ar(out,pitchMod);
         }).add;
@@ -35,25 +37,23 @@ Engine_Supertonic : CroneEngine {
             arg modRate,modAmt,modVel,vel,out;
             var pitchMod;
             pitchMod=Lag.ar(LFNoise0.ar(4*modRate),1/(4*modRate));
+            vel=LinLin.kr(vel,0,128,0,2);
             pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
             Out.ar(out,pitchMod);
         }).add;
         // oscillators
         SynthDef("oscWave0",{
             arg oscFreq,out,pitchModIn;
-            oscFreq=oscFreq+5;
             oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
             Out.ar(out,SinOsc.ar(oscFreq));
         }).add;
         SynthDef("oscWave1",{
             arg oscFreq,out,pitchModIn;
-            oscFreq=oscFreq+5;
             oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
             Out.ar(out,LFTri.ar(oscFreq,mul:0.5));
         }).add;
         SynthDef("oscWave2",{
             arg oscFreq,out,pitchModIn;
-            oscFreq=oscFreq+5;
             oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
             Out.ar(out,SawDPW.ar(oscFreq,mul:0.5));
         }).add;
@@ -180,8 +180,10 @@ Engine_Supertonic : CroneEngine {
 
             snd=snd*level.dbamp*0.2;
             // free self if its quiet or if it runs out
-            FreeSelf.kr(TDelay.kr(DC.kr(1),ArrayMax.kr([oscAtk+oscDcy,nEnvAtk+nEnvDcy])));
-            DetectSilence.ar(snd,0.0001,doneAction:2);
+            FreeSelf.kr(TDelay.kr(DC.kr(1),Select.kr((oscAtk+oscDcy)>(nEnvAtk+nEnvDcy),[
+                nEnvAtk+nEnvDcy,oscAtk+oscDcy
+            ])));
+            // DetectSilence.ar(snd,0.0001,doneAction:2);
 
             // apply some global fx
             snd=RLPF.ar(snd,fx_lowpass_freq,fx_lowpass_rq);

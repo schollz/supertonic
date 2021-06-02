@@ -3,8 +3,8 @@
 SynthDef("modMode0",{
     arg modRate,modAmt,modVel,vel,out;
     var pitchMod;
-    vel=LinLin.kr(vel,0,128,0,2);
     pitchMod=Decay.ar(Impulse.ar(0.0001),(1/(2*modRate)));
+    vel=LinLin.kr(vel,0,128,0,2);
     pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
     Out.ar(out,pitchMod);
 }).add;
@@ -12,6 +12,7 @@ SynthDef("modMode1",{
     arg modRate,modAmt,modVel,vel,out;
     var pitchMod;
     pitchMod=SinOsc.ar(-1*modRate);
+    vel=LinLin.kr(vel,0,128,0,2);
     pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
     Out.ar(out,pitchMod);
 }).add;
@@ -19,25 +20,23 @@ SynthDef("modMode2",{
     arg modRate,modAmt,modVel,vel,out;
     var pitchMod;
     pitchMod=Lag.ar(LFNoise0.ar(4*modRate),1/(4*modRate));
+    vel=LinLin.kr(vel,0,128,0,2);
     pitchMod=pitchMod*modAmt/2*(LinLin.kr(modVel,0,200,2,0)*vel);
     Out.ar(out,pitchMod);
 }).add;
 // oscillators
 SynthDef("oscWave0",{
     arg oscFreq,out,pitchModIn;
-    oscFreq=oscFreq+5;
     oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
     Out.ar(out,SinOsc.ar(oscFreq));
 }).add;
 SynthDef("oscWave1",{
     arg oscFreq,out,pitchModIn;
-    oscFreq=oscFreq+5;
     oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
     Out.ar(out,LFTri.ar(oscFreq,mul:0.5));
 }).add;
 SynthDef("oscWave2",{
     arg oscFreq,out,pitchModIn;
-    oscFreq=oscFreq+5;
     oscFreq=((oscFreq).cpsmidi+In.ar(pitchModIn,1)).midicps;
     Out.ar(out,SawDPW.ar(oscFreq,mul:0.5));
 }).add;
@@ -164,8 +163,10 @@ SynthDef("supertonicBase", {
 
     snd=snd*level.dbamp*0.2;
     // free self if its quiet or if it runs out
-    FreeSelf.kr(TDelay.kr(DC.kr(1),ArrayMax.kr([oscAtk+oscDcy,nEnvAtk+nEnvDcy])));
-    DetectSilence.ar(snd,0.0001,doneAction:2);
+    FreeSelf.kr(TDelay.kr(DC.kr(1),Select.kr((oscAtk+oscDcy)>(nEnvAtk+nEnvDcy),[
+        nEnvAtk+nEnvDcy,oscAtk+oscDcy
+    ])));
+    // DetectSilence.ar(snd,0.0001,doneAction:2);
 
     // apply some global fx
     snd=RLPF.ar(snd,fx_lowpass_freq,fx_lowpass_rq);
@@ -179,72 +180,72 @@ SynthDef("supertonicBase", {
 // peak 1.62
 (
 ~kick={
-var pitchModBus=Bus.audio(s,1);
-var oscWaveBus=Bus.audio(s,1);
-var nStereoBus=Bus.audio(s,2);
-var nEnvModBus=Bus.audio(s,1);
-var synthGroup=Group.new;
-var nEnvMod=0.0;
-var oscWave=0.0;
-var modMode=0.0;
-var nStereo=1.0;
-var modModeSyn,oscWaveSyn,nStereoSyn,nEnvModSyn;
-modModeSyn=Synth("modMode"++modMode.asInteger,[
-	\out,pitchModBus,
-	\modAmt,33.019509360458,
-	\modRate,4.0523291566457,
-	\modVel,35.558253526688,
-	\vel,64,
-],synthGroup);
-oscWaveSyn=Synth.after(modModeSyn,"oscWave"++oscWave.asInteger,[
-    \oscFreq,48.060961337325,
-    \out,oscWaveBus,
-	\pitchModIn,pitchModBus,
-],synthGroup);
-nStereoSyn=Synth.after(oscWaveSyn,"nStereo"++nStereo.asInteger,[
-    \out,nStereoBus,
-],synthGroup);
-nEnvModSyn=Synth.after(nStereoSyn,"nEnvMod"++nEnvMod.asInteger,[
-    \out,nEnvModBus,
-    \distAmt,34.064063429832,
-    \nEnvAtk,2.1977363693469,
-    \nEnvDcy,1104.977660676,
-],synthGroup);
-x=Synth.after(nEnvModSyn,"supertonicBase",[
-    \oscWaveIn,oscWaveBus,
-	\nStereoIn,nStereoBus,
-	\nEnvModIn,nEnvModBus,
-	\distAmt,94.064063429832,
-	\eQFreq,80.661909666463,
-	\eQGain,30.246815681458,
-	\level,-5.1201522322287,
-	\mix,88.153877258301,
-	\modAmt,33.019509360458,
-	\modRate,4.0523291566457,
-	\modVel,35.558253526688,
-	\modMode,0,
-	\nEnvAtk,2.1977363693469,
-	\nEnvDcy,1104.977660676,
-	\nEnvMod,0,
-	\nFilFrq,392.00617432122,
-	\nFilMod,0,
-	\nFilQ,1.463421337541,
-	\nStereo,1,
-	\nVel,40.751650929451,
-	\oscAtk,0,
-	\oscDcy,726.5732892423,
-	\oscFreq,48.060961337325,
-	\oscVel,38.951644301414,
-	\oscWave,0,
-	\vel,64,
-],synthGroup).onFree({
-    "freed".postln;
-	synthGroup.free;
-	pitchModBus.free;
-	oscWaveBus.free;
-	nStereoBus.free;
-	nEnvModBus.free;
-});
+    var pitchModBus=Bus.audio(s,1);
+    var oscWaveBus=Bus.audio(s,1);
+    var nStereoBus=Bus.audio(s,2);
+    var nEnvModBus=Bus.audio(s,1);
+    var synthGroup=Group.new;
+    var nEnvMod=0.0;
+    var oscWave=0.0;
+    var modMode=0.0;
+    var nStereo=1.0;
+    var modModeSyn,oscWaveSyn,nStereoSyn,nEnvModSyn;
+    modModeSyn=Synth("modMode"++modMode.asInteger,[
+        \out,pitchModBus,
+        \modAmt,33.019509360458,
+        \modRate,4.0523291566457,
+        \modVel,35.558253526688,
+        \vel,64,
+    ],synthGroup);
+    oscWaveSyn=Synth.after(modModeSyn,"oscWave"++oscWave.asInteger,[
+        \oscFreq,45.060961337325,
+        \out,oscWaveBus,
+        \pitchModIn,pitchModBus,
+    ],synthGroup);
+    nStereoSyn=Synth.after(oscWaveSyn,"nStereo"++nStereo.asInteger,[
+        \out,nStereoBus,
+    ],synthGroup);
+    nEnvModSyn=Synth.after(nStereoSyn,"nEnvMod"++nEnvMod.asInteger,[
+        \out,nEnvModBus,
+        \distAmt,34.064063429832,
+        \nEnvAtk,2.1977363693469,
+        \nEnvDcy,1104.977660676,
+    ],synthGroup);
+    x=Synth.after(nEnvModSyn,"supertonicBase",[
+        \oscWaveIn,oscWaveBus,
+        \nStereoIn,nStereoBus,
+        \nEnvModIn,nEnvModBus,
+        \distAmt,34.064063429832,
+        \eQFreq,80.661909666463,
+        \eQGain,30.246815681458,
+        \level,-5.1201522322287,
+        \mix,88,
+        \modAmt,33.019509360458,
+        \modMode,0,
+        \modRate,4.0523291566457,
+        \modVel,35.558253526688,
+        \nEnvAtk,2.1977363693469,
+        \nEnvDcy,1104.977660676,
+        \nEnvMod,0,
+        \nFilFrq,392.00617432122,
+        \nFilMod,0,
+        \nFilQ,1.463421337541,
+        \nStereo,1,
+        \nVel,40.751650929451,
+        \oscAtk,0,
+        \oscDcy,726.5732892423,
+        \oscFreq,48.060961337325,
+        \oscVel,38.951644301414,
+        \oscWave,0,
+        \vel,64,
+    ],synthGroup).onFree({
+        "freed".postln;
+        synthGroup.free;
+        pitchModBus.free;
+        oscWaveBus.free;
+        nStereoBus.free;
+        nEnvModBus.free;
+    });
 };
 ~kick.(1);
 )
