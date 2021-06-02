@@ -111,6 +111,23 @@ function startup()
     end
   end
 
+  function clock.transport.start()
+    if params:string("clock_source") == "link" then
+      clock.run(
+        function()
+          clock.sync(params:get("link_quantum"))
+          timekeeper:start()
+        end
+      )
+    end
+  end
+
+  function clock.transport.stop()
+    if params:string("clock_source") == "link" then
+      timekeeper:stop()
+    end
+  end
+
   startup_done=true
   redraw()
 end
@@ -184,7 +201,11 @@ function key(k,z)
           end
         end)
       else
-        timekeeper:toggle()
+        if params:string("clock_source") ~= "link" then
+          timekeeper:toggle()
+        else
+          print(">>> clock source is Link \n>>> to play, engage transport on another Link'd device with Start/Stop Sync enabled")
+        end
         -- drummer[params:get("selected")]:set_pattern("--------------------------------")
       end
     end
