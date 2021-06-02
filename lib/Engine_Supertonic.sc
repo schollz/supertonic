@@ -6,7 +6,7 @@ Engine_Supertonic : CroneEngine {
     // Supertonic specific v0.1.0
     var synSupertonic;
     var synVoice=0;
-    var maxVoices=10;
+    var maxVoices=7;
     // Supertonic ^
 
     *new { arg context, doneCallback;
@@ -183,7 +183,7 @@ Engine_Supertonic : CroneEngine {
             FreeSelf.kr(TDelay.kr(DC.kr(1),Select.kr((oscAtk+oscDcy)>(nEnvAtk+nEnvDcy),[
                 nEnvAtk+nEnvDcy,oscAtk+oscDcy
             ])));
-            // DetectSilence.ar(snd,0.0001,doneAction:2);
+            DetectSilence.ar(snd,0.0001,doneAction:2);
 
             // apply some global fx
             snd=RLPF.ar(snd,fx_lowpass_freq,fx_lowpass_rq);
