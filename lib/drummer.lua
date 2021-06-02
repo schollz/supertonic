@@ -19,10 +19,10 @@ function Drummer:new(o)
   return o
 end
 
-function Drummer:set_patch(patch)
+function Drummer:set_patch(patch,num)
   for k,v in pairs(patch) do
     if k~="name" then
-      params:set(self.id..k,v)
+      params:set(self.id..num..k,v)
     end
   end
 end
@@ -66,7 +66,7 @@ function Drummer:step(beat)
   end
   if self.pattern(beat) then
     engine.supertonic(
-      params:get(id.."distAmt"),
+      util.linlin(0,1,params:get(id.."1distAmt"),params:get(id.."2distAmt"),params:get(id.."morph")),
       params:get(id.."eQFreq"),
       params:get(id.."eQGain"),
       params:get(id.."level"),
