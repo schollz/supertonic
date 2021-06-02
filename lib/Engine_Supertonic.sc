@@ -6,7 +6,7 @@ Engine_Supertonic : CroneEngine {
     // Supertonic specific v0.1.0
     var synSupertonic;
     var synVoice=0;
-    var maxVoices=10;
+    var maxVoices=7;
     // Supertonic ^
 
     *new { arg context, doneCallback;
