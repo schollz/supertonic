@@ -134,28 +134,98 @@ SynthDef("supertonic", {
 // Name: "SC BD Toxyk"
 (
 Synth("supertonic",[
-\distAmt,34.064063429832,
-\eQFreq,80.661909666463,
-\eQGain,30.246815681458,
-\level,-5.1201522322287,
-\mix,88.153877258301,
-\modAmt,33.019509360458,
-\modMode,0,
-\modRate,4.0523291566457,
-\modVel,35.558253526688,
-\nEnvAtk,2.1977363693469,
-\nEnvDcy,1104.977660676,
-\nEnvMod,0,
-\nFilFrq,392.00617432122,
-\nFilMod,0,
-\nFilQ,1.463421337541,
-\nStereo,1,
-\nVel,40.751650929451,
-\oscAtk,0,
-\oscDcy,726.5732892423,
-\oscFreq,48.060961337325,
-\oscVel,38.951644301414,
-\oscWave,0,
-\vel,64,
+    \distAmt,34.064063429832,
+    \eQFreq,80.661909666463,
+    \eQGain,30.246815681458,
+    \level,-5.1201522322287,
+    \mix,88.153877258301,
+    \modAmt,33.019509360458,
+    \modMode,0,
+    \modRate,4.0523291566457,
+    \modVel,35.558253526688,
+    \nEnvAtk,2.1977363693469,
+    \nEnvDcy,1104.977660676,
+    \nEnvMod,0,
+    \nFilFrq,392.00617432122,
+    \nFilMod,0,
+    \nFilQ,1.463421337541,
+    \nStereo,1,
+    \nVel,40.751650929451,
+    \oscAtk,0,
+    \oscDcy,726.5732892423,
+    \oscFreq,48.060961337325,
+    \oscVel,38.951644301414,
+    \oscWave,0,
+    \vel,64,
 ]);
+)
+
+
+(
+var mixG,mixV;
+w = Window.new("supertonic");
+
+w.layout=HLayout(
+    VLayout(
+        HLayout(
+            StaticText().string_("mix"),
+            mixV=StaticText().string_("0"),
+            mixG=Slider().orientation_(\horizontal).action_({
+                mixV.string=ControlSpec(0,100,\linear,0.1).map(mixG.value)
+            }).maxHeight_(40),
+        ),
+    ),
+    VLayout(
+        Slider();
+
+    ),
+    VLayout(
+        Slider();
+
+    ),
+);
+w.front;
+)
+
+(
+w = Window.new("supertonic");
+
+b = Button(w, Rect(20, 20, 80, 30)).string_("play")
+.action_({ arg butt;
+    Synth("supertonic",[
+        \distAmt,34.064063429832,
+        \eQFreq,80.661909666463,
+        \eQGain,30.246815681458,
+        \level,-5.1201522322287,
+        \mix,88.153877258301,
+        \modAmt,33.019509360458,
+        \modMode,0,
+        \modRate,4.0523291566457,
+        \modVel,35.558253526688,
+        \nEnvAtk,2.1977363693469,
+        \nEnvDcy,1104.977660676,
+        \nEnvMod,0,
+        \nFilFrq,392.00617432122,
+        \nFilMod,0,
+        \nFilQ,1.463421337541,
+        \nStereo,1,
+        \nVel,40.751650929451,
+        \oscAtk,0,
+        \oscDcy,726.5732892423,
+        \oscFreq,48.060961337325,
+        \oscVel,38.951644301414,
+        \oscWave,0,
+        \vel,64,
+    ])
+});
+w.front;
+)
+
+(
+w = Window.new("GUI Introduction").layout_(
+    VLayout(
+        HLayout( Button(), TextField(), Button() ),
+        TextView()
+    )
+).front;
 )
