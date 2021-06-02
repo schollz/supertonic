@@ -6,7 +6,7 @@ Engine_Supertonic : CroneEngine {
     // Supertonic specific v0.1.0
     var synSupertonic;
     var synVoice=0;
-    var maxVoices=5;
+    var maxVoices=10;
     // Supertonic ^
 
     *new { arg context, doneCallback;
@@ -195,7 +195,7 @@ Engine_Supertonic : CroneEngine {
         context.server.sync;
 
         synSupertonic = Array.fill(maxVoices,{arg i;
-            Synth("supertonic", [\level,-100],target:context.xg);
+            Synth("supertonicBase", [\level,-100],target:context.xg);
         });
 
         context.server.sync;
