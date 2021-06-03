@@ -123,6 +123,12 @@ function Drummer:step(beat)
   return true
 end
 
+-- function Drummer:random_patch()
+--   for _, p in ipairs(menu__.parameters_morph) do
+--     params:set(params:get("selected")..params:get("patch")..p.id,util.linlin(0,1,p.range[1],p.range[2],math.random()))
+--   end
+-- end
+
 function Drummer:xox(riddim)
   -- return riddim detector
   -- beat starts on 1
