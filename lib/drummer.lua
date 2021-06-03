@@ -61,7 +61,6 @@ function Drummer:disable()
 end
 
 function Drummer:update_patch()
-  print("updating drummer "..self.id)
   for k,_ in pairs(self.patch) do 
     self.patch[k]=util.linlin(0,1,params:get(self.id.."1"..k),params:get(self.id.."2"..k),params:get(self.id.."morph"))
   end

@@ -193,18 +193,18 @@ function Menu:init()
       end
     end)
   end
+  params:add{type="option",id="selected",name="instrument",options={"kick","snare","hi-hat","open hat","clap"},default=1,action=function(v)
+    self:rebuild_menu(v,params:get("patch"))
+    if _menu.mode then
+      _menu.rebuild_params()
+    end
+  end}
   params:add{type="option",id="patch",name="patch",options={"1","2"},default=1,action=function(v)
     self:rebuild_menu(params:get("selected"),v)
     if _menu.mode then
       _menu.rebuild_params()
     end
     params:set(params:get("selected").."morph",v-1)
-  end}
-  params:add{type="option",id="selected",name="selected",options={"kick","snare","hi-hat","open hat","clap"},default=1,action=function(v)
-    self:rebuild_menu(v,params:get("patch"))
-    if _menu.mode then
-      _menu.rebuild_params()
-    end
   end}
   for dnum=1,drummer_number do
     for _,p in ipairs(self.parameters) do
