@@ -157,7 +157,9 @@ function Menu:init()
     {id="nVel",name="noise velocity",range={0,200},default=100,increment=1,unit='%'},
   }
   self.parameters={
-    {id="morph",name="morph blend",range={0,1},default=0,increment=0.01},
+    {id="morph",name="patch blend",range={0,1},default=0,increment=0.01,formatter=function(v)
+      return string.format("%d%% a, %d%% b",math.floor(100*(1-v.raw)),math.floor(100*v.raw))
+    end},
     {id="swing",name="swing",range={0,100},default=50,increment=1,unit='%'},
     {id="pattern",name="pattern",hidden=true,textmenu=true},
     {id="basis",name="basis",range={1,5},default=1,increment=1,hidden=true},
@@ -200,7 +202,7 @@ function Menu:init()
       _menu.rebuild_params()
     end
   end}
-  params:add{type="option",id="patch",name="patch",options={"1","2"},default=1,action=function(v)
+  params:add{type="option",id="patch",name="patch",options={"a","b"},default=1,action=function(v)
     self:rebuild_menu(params:get("selected"),v)
     if _menu.mode then
       _menu.rebuild_params()
