@@ -86,6 +86,10 @@ function startup()
     drummer[i]:set_pattern("--------------------------------")
     drummer[i]:enable()
   end
+  for i=1,4 do
+    crow.output[i].slew=0
+  end
+
 
   timekeeper:stop()
 

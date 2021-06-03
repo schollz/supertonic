@@ -112,6 +112,13 @@ function Drummer:step(beat)
       params:get("global lpf rq"),
       id
     )
+    if self.id<5 then
+      clock.run(function()
+        crow.output[self.id].volts=5
+        clock.sync(1/8)
+        crow.output[self.id].volts=0
+      end)
+    end
   end
   return true
 end
