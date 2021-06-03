@@ -115,7 +115,7 @@ function Drummer:step(beat)
     if self.id<5 then
       clock.run(function()
         crow.output[self.id].volts=5
-        clock.sync(1/8)
+        clock.sync(1/8-1/16)
         crow.output[self.id].volts=0
       end)
     end
