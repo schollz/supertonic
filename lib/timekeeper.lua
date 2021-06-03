@@ -31,7 +31,7 @@ function Timekeeper:init()
           self.step=(t/(self.ppqn/4)+1)%32+1
         end
         local next_step=util.round(t/(self.ppqn/4)+1)
-        if self.playing and next_step~=self.last_step[i] then
+        if self.playing then
           drummer[i]:step(next_step)
           self.last_step[i]=next_step
         end

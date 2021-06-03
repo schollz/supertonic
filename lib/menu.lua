@@ -158,6 +158,7 @@ function Menu:init()
   }
   self.parameters={
     {id="morph",name="morph blend",range={0,1},default=0,increment=0.01},
+    {id="swing",name="swing",range={0,100},default=50,increment=1,unit='%'},
     {id="pattern",name="pattern",hidden=true,textmenu=true},
     {id="basis",name="basis",range={1,5},default=1,increment=1,hidden=true},
   }
@@ -223,6 +224,9 @@ function Menu:init()
     end
   end
   for dnum=1,drummer_number do 
+    params:set_action(dnum.."swing",function(v)
+      timekeeper:set_swing(dnum,v)
+    end)
     params:set_action(dnum.."morph",function(v)
       if v==0 then 
         params:set("patch",1)
