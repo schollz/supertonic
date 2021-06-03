@@ -35,16 +35,18 @@ engine.name="Supertonic"
 -- individual libraries
 include("lib/common")
 lattice=include("lib/lattice")
-timekeeper_=include("lib/timekeeper")
-timekeeper=timekeeper_:new()
 drummer_=include("lib/drummer")
-dev_=include("lib/dev")
--- patterns_=include("lib/patterns")
--- drum_pattern=patterns_:new()
-patches_=include("lib/patches")
-supertonic_patches=patches_:new()
+-- initialize drummers
+for i=1,drummer_number do 
+  table.insert(drummer,drummer_:new({name=""..i,id=i}))
+end
 menu_=include("lib/menu")
 menu__=menu_:new()
+dev_=include("lib/dev")
+timekeeper_=include("lib/timekeeper")
+timekeeper=timekeeper_:new()
+patches_=include("lib/patches")
+supertonic_patches=patches_:new()
 db_=include("lib/db")
 db_pattern=db_:new()
 
@@ -73,21 +75,15 @@ function startup()
   -- initialize menu
   menu__:init()
 
-  -- initialize drummers
-  for i=1,drummer_number do 
-    drummer[i]=drummer_:new({name=""..i,id=i})
-  end
 
   -- after initializing operators, intialize time keeper
   timekeeper:init()
 
   -- init dev
-  local patches=supertonic_patches:load("/home/we/dust/data/supertonic/presets/default.mtpreset")
-  for i=1,5 do 
-    drummer[i]:set_patch(patches[i])
-  end
-
-  for i=1,5 do 
+  params:set("1preset","/home/we/dust/data/supertonic/presets/default.mtpreset")
+  params:set("2preset","/home/we/dust/data/supertonic/presets/blue.mtpreset")
+  for i=1,drummer_number do
+    drummer[i]:set_pattern("--------------------------------")
     drummer[i]:enable()
   end
 

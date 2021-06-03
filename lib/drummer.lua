@@ -12,14 +12,19 @@ function Drummer:new(o)
   o=o or {}
   setmetatable(o,self)
   self.__index=self
-  self.enabled=false
-  self.id=o.id
-  self.name=o.name 
-  o:set_pattern("--------------------------------")
+  o.enabled=false
+  o.id=o.id
+  o.name=o.name 
+  o.update=true
+  o.patch={}
+  for _,v in ipairs({"distAmt","eQFreq","eQGain","level","mix","modAmt","modMode","modRate","nEnvAtk","nEnvDcy","nEnvMod","nFilFrq","nFilMod","nFilQ","nStereo","oscAtk","oscDcy","oscFreq","oscWave","oscVel","nVel","modVel"}) do
+    o.patch[v]=0
+  end
+  print(o.patch)
   return o
 end
 
-function Drummer:set_patch(patch,num)
+function Drummer:set_patch(num,patch)
   for k,v in pairs(patch) do
     if k~="name" then
       params:set(self.id..num..k,v)
@@ -55,9 +60,25 @@ function Drummer:disable()
   self.enabled=false 
 end
 
+function Drummer:update_patch()
+  print("updating drummer "..self.id)
+  for k,_ in pairs(self.patch) do 
+    self.patch[k]=util.linlin(0,1,params:get(self.id.."1"..k),params:get(self.id.."2"..k),params:get(self.id.."morph"))
+  end
+  -- binary parameters
+  local v=(params:get(self.id.."morph")>0.5) and 2 or 1
+  for _,k in ipairs({"oscWave","modMode","nFilMod","nEnvMod","nStereo"}) do
+    self.patch[k]=params:get(self.id..v..k)
+  end  
+  self.update=false
+end
+
 function Drummer:step(beat)
   if not self.enabled then 
     do return false end
+  end
+  if self.update then 
+    self:update_patch()
   end
   local id=self.id
   if id==nil then
@@ -66,28 +87,28 @@ function Drummer:step(beat)
   end
   if self.pattern(beat) then
     engine.supertonic(
-      util.linlin(0,1,params:get(id.."1distAmt"),params:get(id.."2distAmt"),params:get(id.."morph")),
-      params:get(id.."eQFreq"),
-      params:get(id.."eQGain"),
-      params:get(id.."level"),
-      params:get(id.."mix"),
-      params:get(id.."modAmt"),
-      params:get(id.."modMode"),
-      params:get(id.."modRate"),
-      params:get(id.."nEnvAtk"),
-      params:get(id.."nEnvDcy"),
-      params:get(id.."nEnvMod"),
-      params:get(id.."nFilFrq"),
-      params:get(id.."nFilMod"),
-      params:get(id.."nFilQ"),
-      params:get(id.."nStereo"),
-      params:get(id.."oscAtk"),
-      params:get(id.."oscDcy"),
-      params:get(id.."oscFreq"),
-      params:get(id.."oscWave"),
-      params:get(id.."oscVel"),
-      params:get(id.."nVel"),
-      params:get(id.."modVel"),
+      self.patch["distAmt"],
+      self.patch["eQFreq"],
+      self.patch["eQGain"],
+      self.patch["level"],
+      self.patch["mix"],
+      self.patch["modAmt"],
+      self.patch["modMode"],
+      self.patch["modRate"],
+      self.patch["nEnvAtk"],
+      self.patch["nEnvDcy"],
+      self.patch["nEnvMod"],
+      self.patch["nFilFrq"],
+      self.patch["nFilMod"],
+      self.patch["nFilQ"],
+      self.patch["nStereo"],
+      self.patch["oscAtk"],
+      self.patch["oscDcy"],
+      self.patch["oscFreq"],
+      self.patch["oscWave"],
+      self.patch["oscVel"],
+      self.patch["nVel"],
+      self.patch["modVel"],
       params:get("global lpf freq"),
       params:get("global lpf rq"),
       id

@@ -157,30 +157,14 @@ function Menu:init()
     {id="nVel",name="noise velocity",range={0,200},default=100,increment=1,unit='%'},
   }
   self.parameters={
-    {id="morph",name="morph blend",range={0,1},default=0,increment=0.1},
+    {id="morph",name="morph blend",range={0,1},default=0,increment=0.01},
     {id="pattern",name="pattern",hidden=true,textmenu=true},
     {id="basis",name="basis",range={1,5},default=1,increment=1,hidden=true},
   }
-  params:add_group("SUPERTONIC",6+#self.parameters*drummer_number+(#self.parameters_morph+1)*drummer_number)
+  params:add_group("SUPERTONIC",7+(#self.parameters*drummer_number)+(#self.parameters_morph*drummer_number*2))
   local drum_options={}
   for i=1,drummer_number do
     table.insert(drum_options,i)
-  end
-  local preset_dir=_path.data.."supertonic/presets/"
-  for i=1,2 do
-    params:add_file(i.."preset","preset "..i,preset_dir)
-    params:set_action("preset",function(v)
-      if v==preset_dir then
-        do return end
-      end
-      print(preset_dir)
-      local patches=supertonic_patches:load(v)
-      if patches~=nil then
-        for dnum=1,5 do
-          drummer[dnum]:set_patch(i,patches[dnum])
-        end
-      end
-    end)
   end
   params:add{type="control",id="global lpf freq",name="global lpf freq",controlspec=controlspec.new(20,20000,'exp',0,20000,'Hz',100/20000),formatter=Formatters.format_freq,action=function(v)
     for i=1,5 do
@@ -193,30 +177,62 @@ function Menu:init()
     end
   end}
   params:add_separator("supertonic engine params")
+  local preset_dir=_path.data.."supertonic/presets/"
+  for i=1,2 do
+    params:add_file(i.."preset","preset",preset_dir)
+    params:set_action(i.."preset",function(v)
+      if v==preset_dir then
+        do return end
+      end
+      print(preset_dir)
+      local patches=supertonic_patches:load(v)
+      if patches~=nil then
+        for dnum=1,5 do
+          drummer[dnum]:set_patch(i,patches[dnum])
+        end
+      end
+    end)
+  end
+  params:add{type="option",id="patch",name="patch",options={"1","2"},default=1,action=function(v)
+    self:rebuild_menu(params:get("selected"),v)
+    if _menu.mode then
+      _menu.rebuild_params()
+    end
+    params:set(params:get("selected").."morph",v-1)
+  end}
   params:add{type="option",id="selected",name="selected",options={"kick","snare","hi-hat","open hat","clap"},default=1,action=function(v)
-    self:rebuild_menu(v,params:get(v.."patch"))
+    self:rebuild_menu(v,params:get("patch"))
     if _menu.mode then
       _menu.rebuild_params()
     end
   end}
-  for i=1,drummer_number do
-    params:add{type="option",id=i.."patch",name="patch",options={"1","2"},default=1,action=function(v)
-      self:rebuild_menu(params:get("selected"),v)
-      if _menu.mode then
-        _menu.rebuild_params()
-      end
-    end}
-    for _,p in ipairs(i,self.parameters) do
-      self:add_menu(i,p)
+  for dnum=1,drummer_number do
+    for _,p in ipairs(self.parameters) do
+      self:add_menu(dnum,p)
+      params:set_action(dnum..p.id,function(v)
+        drummer[dnum].update=true
+      end)
     end
     for patch=1,2 do
-      for _,p in ipairs(i,self.parameters_morph) do
-        self:add_menu(i..""..patch,p)
+      for _,p in ipairs(self.parameters_morph) do
+        self:add_menu(dnum..""..patch,p,true)
+        params:set_action(dnum..""..patch..p.id,function(v)
+          drummer[dnum].update=true
+        end)
       end
     end
   end
-
-  self:rebuild_menu(1)
+  for dnum=1,drummer_number do 
+    params:set_action(dnum.."morph",function(v)
+      if v==0 then 
+        params:set("patch",1)
+      elseif v==1 then 
+        params:set("patch",2)
+      end
+      drummer[dnum].update=true
+    end)
+  end
+  self:rebuild_menu(1,1)
 end
 
 function Menu:add_menu(i,p)

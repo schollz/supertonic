@@ -44,6 +44,7 @@ function Timekeeper:get_swing(i)
 end
 
 function Timekeeper:start()
+  print("starting")
   self.playing=true
   self.lattice:hard_restart()
 end
