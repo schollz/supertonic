@@ -38,14 +38,20 @@ function Drummer:set_pattern(pattern_string)
   self.pattern=self:xox(pattern_string)
 end
 
-function Drummer:toggle_pattern(pos)
-  pos=math.floor(pos)
-  local current=self.pattern_string:sub(pos,pos)
-  if current=="-" then
-    current="x"
-  else
-    current="-"
+function Drummer:toggle_pattern(pos,on)
+  local current="-"
+  if on==true then 
+    current="+"
   end
+  if on==nil then 
+    current=self.pattern_string:sub(pos,pos)
+    if current=="-" then
+      current="x"
+    else
+      current="-"
+    end
+  end
+  pos=math.floor(pos)
   self:set_pattern(self.pattern_string:sub(0,pos-1)..current..self.pattern_string:sub(pos+1))
 end
 

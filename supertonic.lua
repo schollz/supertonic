@@ -11,6 +11,7 @@
 -- K3 toggles hit
 -- E2 changes track
 -- E3 changes position in track
+-- K1+K3 erases track
 -- (with ai) K1+K3 generates
 -- (with ai) K1+K2 generates
 
@@ -154,6 +155,9 @@ function enc(k,d)
         current_pos=1
       elseif current_pos < 1 then 
         current_pos = 32
+      end
+      if shift then 
+        drummer[params:get("selected")]:toggle_pattern(current_pos,false)
       end
     end
     if k3 then
