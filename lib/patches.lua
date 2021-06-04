@@ -32,15 +32,15 @@ function Patches:load(preset_file)
 
   drum_patches=false
   local patches={}
-  i=0
+  local i=0
   for _,line in ipairs(lines) do
     line=self:trim(line)
-    -- print(line)
     if string.find(line,"DrumPatches") then
       drum_patches=true
-    end
-    if drum_patches then
-      if line:find("Name")==1 then
+    elseif string.find(line,"Patterns:") then
+      drum_patches=false
+    elseif drum_patches then
+      if string.sub(line,-1)=="{" then
         i=i+1
         patches[i]={}
         patches[i].name=line
@@ -48,7 +48,7 @@ function Patches:load(preset_file)
         patches[i].oscWave=0
         if string.find(line,"Triangle") then
           patches[i].oscWave=1
-        elseif string.find(line,"TODO") then
+        elseif string.find(line,"Saw") then
           patches[i].oscWave=2
         end
       elseif line:find("OscFreq")==1 then
