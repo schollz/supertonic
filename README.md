@@ -42,6 +42,7 @@ on the main screen:
 - K3 toggles hit 
 - E2 changes track (current is bright)
 - E3 changes position in track
+- hold K1 and turn E3 to erase a track
 
 this script automatically detects all midi keyboards and will start/stop based on midi start/stop events.
 
