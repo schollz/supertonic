@@ -47,10 +47,10 @@ Engine_Supertonic : CroneEngine {
 
             // white noise generators (expensive)
             // wn1=SoundIn.ar(0); 
-            wn2=SoundIn.ar(1);
-            wn1=wn2;
-            // wn1=WhiteNoise.ar();
-            // wn2=WhiteNoise.ar();
+            //wn2=SoundIn.ar(1);
+            //wn1=wn2;
+            wn1=WhiteNoise.ar();
+            wn2=WhiteNoise.ar();
             wn1=Clip.ar(wn1*100,-1,1);
             wn2=Clip.ar(wn2*100,-1,1);
             clapFrequency=DC.kr((4311/(nEnvAtk*1000+28.4))+11.44); // fit using matlab
