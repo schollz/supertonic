@@ -48,7 +48,6 @@ Engine_Supertonic : CroneEngine {
             // white noise generators (expensive)
             // wn1=SoundIn.ar(0); 
             //wn2=SoundIn.ar(1);
-            // wn1=wn2;
             wn1=WhiteNoise.ar();
             wn2=WhiteNoise.ar();
             wn1=Clip.ar(wn1*100,-1,1);
