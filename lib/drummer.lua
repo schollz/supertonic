@@ -78,6 +78,42 @@ function Drummer:update_patch()
   self.update=false
 end
 
+function Drummer:update_patch_manually(patch)
+  self.patch=patch
+  for k,v in pairs(self.patch) do
+    self.patch[k]=v
+  end
+end
+
+function Drummer:hit()
+  engine.supertonic(
+    self.patch["distAmt"],
+    self.patch["eQFreq"],
+    self.patch["eQGain"],
+    self.patch["level"],
+    self.patch["mix"],
+    self.patch["modAmt"],
+    self.patch["modMode"],
+    self.patch["modRate"],
+    self.patch["nEnvAtk"],
+    self.patch["nEnvDcy"],
+    self.patch["nEnvMod"],
+    self.patch["nFilFrq"],
+    self.patch["nFilMod"],
+    self.patch["nFilQ"],
+    self.patch["nStereo"],
+    self.patch["oscAtk"],
+    self.patch["oscDcy"],
+    self.patch["oscFreq"],
+    self.patch["oscWave"],
+    self.patch["oscVel"],
+    self.patch["nVel"],
+    self.patch["modVel"],
+    20000,
+    1,
+    self.id
+  )
+end
 function Drummer:step(beat)
   if not self.enabled then 
     do return false end
